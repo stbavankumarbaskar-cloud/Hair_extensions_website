@@ -3,10 +3,7 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { ShoppingCart, Search, Menu, Star, ChevronLeft, ChevronRight, User, ChevronDown, ChevronUp } from 'lucide-react';
-<<<<<<< HEAD
 import CartDrawer from '../components/CartDrawer';
-=======
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
 
 const REVIEWS = [
   {
@@ -49,10 +46,7 @@ const FAQS = [
 export default function Home() {
   const [currentReviewIdx, setCurrentReviewIdx] = useState(0);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-<<<<<<< HEAD
   const [isCartOpen, setIsCartOpen] = useState(false);
-=======
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -77,29 +71,15 @@ export default function Home() {
       <header className="sticky top-0 z-50 bg-[#fdfdfd] border-b border-gray-100">
         <div className="w-full px-4 lg:px-8">
           <div className="flex justify-between items-center h-[90px] lg:h-[110px]">
-<<<<<<< HEAD
              {/* Left Area: Logo + Nav */}
              <div className="flex items-center">
                  {/* Logo */}
                  <div className="flex flex-col items-center flex-shrink-0 cursor-pointer mr-6 lg:mr-10 mt-1">
-                   <div className="text-[#CAA45D] mb-[4px]">
-                      {/* Tree/Heart stylized logo */}
-                      <svg className="w-10 h-10 lg:w-[48px] lg:h-[48px]" viewBox="0 0 24 24" fill="currentColor">
-                         {/* Leaves/canopy shape forming a heart */}
-                         <path d="M12 4.5C8 1.5 3.5 4.5 3.5 9c0 4.5 8.5 9.5 8.5 9.5s8.5-5 8.5-9.5C20.5 4.5 16 1.5 12 4.5Z" opacity="0.9"/>
-                         {/* Trunk lines */}
-                         <path d="M12 18.5C12 18.5 11 14 9 10" stroke="white" strokeWidth="1.2" fill="none" />
-                         <path d="M12 18.5C12 18.5 13 14 15 10" stroke="white" strokeWidth="1.2" fill="none" />
-                         <path d="M12 18.5L12 9" stroke="white" strokeWidth="1.2" fill="none" />
-                         {/* Little gaps */}
-                         <circle cx="8" cy="8" r="1.2" fill="white" />
-                         <circle cx="16" cy="8" r="1.2" fill="white" />
-                         <circle cx="12" cy="6" r="1.2" fill="white" />
-                         <circle cx="10" cy="11" r="1" fill="white" />
-                         <circle cx="14" cy="11" r="1" fill="white" />
-                      </svg>
-                   </div>
-                   <span className="font-serif font-medium text-[8px] lg:text-[10px] tracking-[0.2em] text-[#CAA45D]">ONE LOVE HAIR</span>
+                   <img
+                     src="/logo1.png"
+                     alt="One Love Hair Logo"
+                     className="h-28 w-auto object-contain mix-blend-multiply"
+                   />
                  </div>
 
                  {/* Desktop Navigation */}
@@ -131,48 +111,6 @@ export default function Home() {
 
                <div onClick={() => setIsCartOpen(true)} className="flex items-center cursor-pointer hover:text-[#CAA45D] transition">
                  <span className="hidden sm:inline text-[14px] font-normal text-[#1a202c]">Cart</span>
-=======
-            {/* Left Area: Logo + Nav */}
-            <div className="flex items-center">
-              {/* Logo */}
-              <div className="flex flex-col items-center flex-shrink-0 cursor-pointer mr-6 lg:mr-10 mt-1">
-                <img
-                  src="/logo1.png"
-                  alt="One Love Hair Logo"
-                  className="h-28 w-auto object-contain mix-blend-multiply"
-                />
-              </div>
-
-              {/* Desktop Navigation */}
-              <nav className="hidden xl:flex items-center space-x-6 lg:space-x-[28px] mt-2">
-                <a href="#" className="text-[#1a202c] hover:text-[#CAA45D] font-medium text-sm lg:text-[15px] transition-colors">Home</a>
-                <a href="#" className="text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[15px] transition-colors">Premium Hair Extensions</a>
-                <a href="#" className="text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[15px] transition-colors">Premium Clip-In Hair Extensions</a>
-                <a href="#" className="text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[15px] transition-colors">Premium Keratin Bond Extensions</a>
-                <a href="#" className="text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[15px] transition-colors">More</a>
-              </nav>
-            </div>
-
-            {/* Right Area: Action Icons */}
-            <div className="flex items-center space-x-5 lg:space-x-[26px] text-[#2c3e50] mt-2">
-              <div className="hidden sm:flex items-center cursor-pointer text-[14px] font-normal hover:text-[#CAA45D] transition">
-                CHF / EN <ChevronDown className="w-[14px] h-[14px] ml-[2px] opacity-70" strokeWidth={2} />
-              </div>
-              <div className="hidden sm:flex items-center cursor-pointer text-[14px] font-normal hover:text-[#CAA45D] transition">
-                Search
-              </div>
-
-              {/* S element wrapped with purple ring */}
-              <div className="relative flex items-center justify-center cursor-pointer group px-1">
-                <div className="absolute inset-0 rounded-full border-[1.5px] border-indigo-700 scale-125 opacity-80 group-hover:scale-110 transition-transform"></div>
-                <div className="flex bg-black text-white rounded-full w-7 h-7 lg:w-[26px] lg:h-[26px] items-center justify-center font-bold text-[12px] relative z-10 transition tracking-tighter">
-                  S
-                </div>
-              </div>
-
-              <div className="flex items-center cursor-pointer hover:text-[#CAA45D] transition">
-                <span className="hidden sm:inline text-[14px] font-normal text-[#1a202c]">Cart</span>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
               </div>
               <Menu className="w-6 h-6 xl:hidden cursor-pointer text-gray-800" />
             </div>
@@ -183,24 +121,14 @@ export default function Home() {
       <main>
         {/* Hero Section */}
         <div className="relative h-[600px] w-full flex items-center justify-center overflow-hidden bg-zinc-900">
-<<<<<<< HEAD
            <img 
             src="https://images.unsplash.com/photo-1562322140-8baeececf3ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
             alt="Luxury Hair Salon" 
-=======
-          <img
-            src="https://images.unsplash.com/photo-1562322140-8baeececf3ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-            alt="Luxury Hair Salon"
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
             className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay animate-[scale_20s_ease-in-out_infinite_alternate]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
           <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex flex-col items-center transform transition-all duration-700 translate-y-0 opacity-100">
-<<<<<<< HEAD
              <div className="w-24 h-1 bg-amber-500 mb-8 mx-auto"></div>
-=======
-            <div className="w-24 h-1 bg-amber-500 mb-8 mx-auto"></div>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
             <h1 className="text-4xl md:text-6xl font-serif text-white font-bold mb-6 drop-shadow-lg leading-tight uppercase tracking-tight">
               Love Your Hair with <span className="text-amber-400 font-style-italic inline-block drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]">Love Hair</span>
             </h1>
@@ -225,58 +153,34 @@ export default function Home() {
             </div>
             <a href="#" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">View All →</a>
           </div>
-<<<<<<< HEAD
           
-=======
-
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
             {[
               { id: 1, name: "Love Hair 3 Bundles 9A Grade Brazilian Human Hair Water Wave", price: "$86.00", oldPrice: "$120.00", img: "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 124 },
               { id: 2, name: "Queen Hair 10A Brazilian Hair Straight 3 Bundles Virgin Human Hair", price: "$75.00", oldPrice: "$95.00", img: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 89 },
               { id: 3, name: "Love Hair Body Wave 3 Bundles With Closure Brazilian Human Hair", price: "$98.50", oldPrice: "$140.00", img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 312 },
               { id: 4, name: "Loose Deep Wave 3 Bundles With Frontal 100% Unprocessed Virgin Hair", price: "$112.00", oldPrice: "$160.00", img: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 67 },
-<<<<<<< HEAD
                { id: 5, name: "Peruvian Straight Hair 4 Bundles Deal Virgin Human Hair Weave", price: "$105.00", oldPrice: "$150.00", img: "https://images.unsplash.com/photo-1560963683-162e24d35eef?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 45 },
                { id: 6, name: "Malaysian Curly Hair 3 Bundles Kinky Curly Virgin Human Hair", price: "$92.00", oldPrice: "$130.00", img: "https://images.unsplash.com/photo-1616428789366-a3d5e21fb2b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 290 },
                { id: 7, name: "Indian Deep Wave 3 Bundles With 4x4 Lace Closure Human Hair", price: "$118.00", oldPrice: "$170.00", img: "https://images.unsplash.com/photo-1586521995874-ce6cf16eb512?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 156 },
                { id: 8, name: "Brazilian Water Wave 4 Bundles Wet and Wavy Human Hair", price: "$125.00", oldPrice: "$180.00", img: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 88 }
-=======
-              { id: 5, name: "Peruvian Straight Hair 4 Bundles Deal Virgin Human Hair Weave", price: "$105.00", oldPrice: "$150.00", img: "https://images.unsplash.com/photo-1560963683-162e24d35eef?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 45 },
-              { id: 6, name: "Malaysian Curly Hair 3 Bundles Kinky Curly Virgin Human Hair", price: "$92.00", oldPrice: "$130.00", img: "https://images.unsplash.com/photo-1616428789366-a3d5e21fb2b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 290 },
-              { id: 7, name: "Indian Deep Wave 3 Bundles With 4x4 Lace Closure Human Hair", price: "$118.00", oldPrice: "$170.00", img: "https://images.unsplash.com/photo-1586521995874-ce6cf16eb512?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 156 },
-              { id: 8, name: "Brazilian Water Wave 4 Bundles Wet and Wavy Human Hair", price: "$125.00", oldPrice: "$180.00", img: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 88 }
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
             ].map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
-<<<<<<< HEAD
            <div className="mt-8 text-center sm:hidden">
              <button className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition">View All Products</button>
-=======
-          <div className="mt-8 text-center sm:hidden">
-            <button className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition">View All Products</button>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
           </div>
         </section>
 
         {/* Truth / Virgin Hair Wigs */}
         <section className="py-20 px-2 sm:px-4 lg:px-6 bg-gray-50 border-t border-b border-gray-100">
-<<<<<<< HEAD
            <div className="flex justify-between items-end mb-12">
-=======
-          <div className="flex justify-between items-end mb-12">
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
             <div>
               <h2 className="text-[28px] font-serif font-bold text-[#1a202c] mb-2 tracking-tight">Truth / Virgin Hair Wigs</h2>
               <div className="w-16 h-[3px] bg-[#e65c00]"></div>
             </div>
-<<<<<<< HEAD
              <a href="#" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">View All Wigs →</a>
-=======
-            <a href="#" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">View All Wigs →</a>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
             {[
@@ -284,49 +188,28 @@ export default function Home() {
               { id: 2, name: "Body Wave Lace Front Wigs Human Hair 180% Density", price: "$135.00", oldPrice: "$195.00", img: "https://images.unsplash.com/photo-1542452255191-c85a98f2cb59?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 84 },
               { id: 3, name: "Water Wave Headband Wig Human Hair Glueless Wigs", price: "$85.00", oldPrice: "$115.00", img: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 49 },
               { id: 4, name: "Highlight Lace Front Wigs Human Hair Ombre Straight Wig", price: "$145.00", oldPrice: "$210.00", img: "https://images.unsplash.com/photo-1605980776566-0486c3ac7617?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 132 },
-<<<<<<< HEAD
                { id: 5, name: "Bone Straight 13x6 HD Lace Front Wig Free Part", price: "$155.00", oldPrice: "$230.00", img: "https://images.unsplash.com/photo-1583001809873-c12ebba3152f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 93 },
                { id: 6, name: "Kinky Straight Headband Wig for Black Women", price: "$75.00", oldPrice: "$99.00", img: "https://images.unsplash.com/photo-1601055904031-645391d84a7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 110 },
                { id: 7, name: "Short Bob Wig Lace Front Human Hair Wigs", price: "$68.00", oldPrice: "$85.00", img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 420 },
                { id: 8, name: "Blonde 613 Lace Front Wig Body Wave Transparent Lace", price: "$140.00", oldPrice: "$200.00", img: "https://images.unsplash.com/photo-1552697611-bba65123d4ee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 315 },
                { id: 9, name: "Deep Wave Lace Closure Wig 4x4 Pre Plucked With Baby Hair", price: "$110.00", oldPrice: "$150.00", img: "https://images.unsplash.com/photo-1531685250784-523c9213197f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 75 }
-=======
-              { id: 5, name: "Bone Straight 13x6 HD Lace Front Wig Free Part", price: "$155.00", oldPrice: "$230.00", img: "https://images.unsplash.com/photo-1583001809873-c12ebba3152f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 93 },
-              { id: 6, name: "Kinky Straight Headband Wig for Black Women", price: "$75.00", oldPrice: "$99.00", img: "https://images.unsplash.com/photo-1601055904031-645391d84a7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 110 },
-              { id: 7, name: "Short Bob Wig Lace Front Human Hair Wigs", price: "$68.00", oldPrice: "$85.00", img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 420 },
-              { id: 8, name: "Blonde 613 Lace Front Wig Body Wave Transparent Lace", price: "$140.00", oldPrice: "$200.00", img: "https://images.unsplash.com/photo-1552697611-bba65123d4ee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 315 },
-              { id: 9, name: "Deep Wave Lace Closure Wig 4x4 Pre Plucked With Baby Hair", price: "$110.00", oldPrice: "$150.00", img: "https://images.unsplash.com/photo-1531685250784-523c9213197f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 75 }
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
             ].map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
-<<<<<<< HEAD
            <div className="mt-8 text-center sm:hidden">
              <button className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition">View All Wigs</button>
-=======
-          <div className="mt-8 text-center sm:hidden">
-            <button className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition">View All Wigs</button>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
           </div>
         </section>
 
         {/* Trending Wigs */}
-<<<<<<< HEAD
          <section className="py-20 px-2 sm:px-4 lg:px-6">
-=======
-        <section className="py-20 px-2 sm:px-4 lg:px-6">
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
           <div className="flex justify-between items-end mb-12">
             <div>
               <h2 className="text-[28px] font-serif font-bold text-[#1a202c] mb-2 tracking-tight">Trending Wigs</h2>
               <div className="w-16 h-[3px] bg-[#e65c00]"></div>
             </div>
-<<<<<<< HEAD
              <a href="#" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">Shop Trending →</a>
-=======
-            <a href="#" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">Shop Trending →</a>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3">
             {[
@@ -342,7 +225,6 @@ export default function Home() {
 
         {/* Hot Search Words */}
         <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-gray-200">
-<<<<<<< HEAD
            <h2 className="text-2xl font-serif font-bold text-center mb-8">Hot search words</h2>
            <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
              {[
@@ -355,31 +237,13 @@ export default function Home() {
                </span>
              ))}
            </div>
-=======
-          <h2 className="text-2xl font-serif font-bold text-center mb-8">Hot search words</h2>
-          <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-            {[
-              "Love hair water wave 3 bundles", "Queen hair 10a brazilian hair", "Love hair body wave",
-              "Loose deep wave bundle details", "Water wave bundle with closure", "Best human hair wigs",
-              "Glueless headband wigs", "HD lace front wig", "Pre plucked lace closure wig"
-            ].map((tag, idx) => (
-              <span key={idx} className="bg-gray-100 hover:bg-amber-100 text-gray-700 hover:text-amber-900 px-4 py-2 rounded-full cursor-pointer transition text-sm font-medium border border-gray-200 hover:border-amber-300 shadow-sm">
-                {tag}
-              </span>
-            ))}
-          </div>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
         </section>
 
         {/* Reviews Section */}
         <section className="py-16 bg-white relative overflow-hidden">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <h2 className="text-[32px] font-sans text-center text-gray-900 mb-3 tracking-tight">Reviews from Our Customers</h2>
-<<<<<<< HEAD
             
-=======
-
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
             <div className="flex items-center justify-center space-x-2 text-[15px] mb-10">
               <div className="flex text-black mr-1">
                 {[...Array(5)].map((_, i) => <Star key={i} className="w-[18px] h-[18px] fill-current" />)}
@@ -390,28 +254,18 @@ export default function Home() {
                 <span>(34)</span>
               </div>
               <div className="flex items-center text-teal-600 ml-2 font-medium">
-<<<<<<< HEAD
                  <svg className="w-[18px] h-[18px] mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
                  <span className="text-black">Verified</span>
-=======
-                <svg className="w-[18px] h-[18px] mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><path d="M22 4 12 14.01l-3-3"></path></svg>
-                <span className="text-black">Verified</span>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
               </div>
             </div>
 
             <div className="bg-[#f8f9fa] px-8 py-10 rounded-sm flex flex-col items-center max-w-4xl mx-auto min-h-[320px] justify-center transition-all duration-300">
-<<<<<<< HEAD
                <div className="text-teal-600 text-[60px] font-serif leading-[0.5] mb-8 font-bold">
-=======
-              <div className="text-teal-600 text-[60px] font-serif leading-[0.5] mb-8 font-bold">
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
                 ”
               </div>
               <p className="text-[19px] leading-relaxed text-center text-gray-900 mb-8 font-sans max-w-[800px] min-h-[85px]">
                 {REVIEWS[currentReviewIdx].text}
               </p>
-<<<<<<< HEAD
               
               <div className="flex justify-center text-teal-600 mb-6 space-x-[2px]">
                 {[...Array(REVIEWS[currentReviewIdx].rating)].map((_, i) => <Star key={i} className="w-[26px] h-[26px] fill-current" />)}
@@ -423,19 +277,6 @@ export default function Home() {
               </div>
             </div>
             
-=======
-
-              <div className="flex justify-center text-teal-600 mb-6 space-x-[2px]">
-                {[...Array(REVIEWS[currentReviewIdx].rating)].map((_, i) => <Star key={i} className="w-[26px] h-[26px] fill-current" />)}
-              </div>
-
-              <div className="text-center">
-                <div className="font-bold text-gray-900 text-[15px] mb-1">{REVIEWS[currentReviewIdx].name}</div>
-                <a href="#" className="text-gray-900 underline text-[15px] hover:text-teal-700 transition">{REVIEWS[currentReviewIdx].company}</a>
-              </div>
-            </div>
-
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
             <div className="flex justify-center mt-8 space-x-6">
               <button aria-label="Previous Review" onClick={handlePrevReview} className="text-black hover:text-teal-600 transition p-2 cursor-pointer">
                 <ChevronLeft className="w-5 h-5 mx-2" strokeWidth={2} />
@@ -448,7 +289,6 @@ export default function Home() {
             <div className="mt-14 text-center">
               <p className="text-[13px] font-semibold text-gray-800 mb-6 tracking-wide">Trusted Swiss Payment Partners</p>
               <div className="flex flex-wrap justify-center items-center gap-3">
-<<<<<<< HEAD
                  {/* Mocking the payment badges with styled divs */}
                  <div className="bg-[#006fcf] text-white text-[10px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm">AMEX</div>
                  <div className="bg-white border border-gray-200 text-black text-[11px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm flex items-center"><svg className="w-3 h-3 mr-[2px]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.16 2.31-.93 3.57-.84 1.5.07 2.65.65 3.33 1.62-2.82 1.62-2.31 5.37.5 6.42-.58 1.6-1.57 3.32-2.48 4.97zm-3.7-14.73c.7-1.07 1.15-2.4 1.01-3.66-1.39.09-2.8.84-3.57 1.83-.69.88-1.2 2.23-1.03 3.5 1.54.1 2.87-.66 3.59-1.67z"/></svg>Pay</div>
@@ -464,23 +304,6 @@ export default function Home() {
                  <div className="bg-black text-white text-[10px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm tracking-widest">TWINT</div>
                  <div className="bg-white border text-[#007b85] border-gray-200 text-[10px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm italic flex items-center"><span className="text-red-600 mr-auto font-sans not-italic font-bold tracking-tighter">Union</span>Pay</div>
                  <div className="bg-white border text-[#1434cb] border-gray-200 text-[12px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm italic leading-none">VISA</div>
-=======
-                {/* Mocking the payment badges with styled divs */}
-                <div className="bg-[#006fcf] text-white text-[10px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm">AMEX</div>
-                <div className="bg-white border border-gray-200 text-black text-[11px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm flex items-center"><svg className="w-3 h-3 mr-[2px]" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.16 2.31-.93 3.57-.84 1.5.07 2.65.65 3.33 1.62-2.82 1.62-2.31 5.37.5 6.42-.58 1.6-1.57 3.32-2.48 4.97zm-3.7-14.73c.7-1.07 1.15-2.4 1.01-3.66-1.39.09-2.8.84-3.57 1.83-.69.88-1.2 2.23-1.03 3.5 1.54.1 2.87-.66 3.59-1.67z" /></svg>Pay</div>
-                <div className="bg-white border text-[#004e9a] border-gray-200 text-[10px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm flex line-through decoration-yellow-400 decoration-2">Bancontact</div>
-                <div className="bg-white border text-gray-600 border-gray-200 text-[11px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm tracking-tighter"><span className="text-blue-500">G</span> <span className="text-red-500">P</span><span className="text-yellow-500">a</span><span className="text-green-500">y</span></div>
-                <div className="bg-[#ffb3c7] text-black text-[10px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm tracking-tight">Klarna.</div>
-                <div className="bg-white border border-gray-200 flex items-center justify-center px-[8px] py-[6px] rounded-[3px] shadow-sm">
-                  <div className="w-[10px] h-[10px] rounded-full bg-red-500 -mr-1 mix-blend-multiply opacity-90"></div>
-                  <div className="w-[10px] h-[10px] rounded-full bg-yellow-500 mix-blend-multiply opacity-90"></div>
-                </div>
-                <div className="bg-white border text-[#003087] border-gray-200 text-[10px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm italic">PayPal</div>
-                <div className="bg-[#5a31f4] text-white border-gray-200 text-[11px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm tracking-tight">shop</div>
-                <div className="bg-black text-white text-[10px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm tracking-widest">TWINT</div>
-                <div className="bg-white border text-[#007b85] border-gray-200 text-[10px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm italic flex items-center"><span className="text-red-600 mr-auto font-sans not-italic font-bold tracking-tighter">Union</span>Pay</div>
-                <div className="bg-white border text-[#1434cb] border-gray-200 text-[12px] font-bold px-[6px] py-[3px] rounded-[3px] shadow-sm italic leading-none">VISA</div>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
               </div>
             </div>
           </div>
@@ -499,21 +322,12 @@ export default function Home() {
                 >
                   <span className="font-medium pr-8">{faq.question}</span>
                   {openFaqIndex === idx ? (
-<<<<<<< HEAD
                      <ChevronUp className="w-4 h-4 text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
                   ) : (
                      <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
                   )}
                 </button>
                 <div 
-=======
-                    <ChevronUp className="w-4 h-4 text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600 flex-shrink-0" />
-                  )}
-                </button>
-                <div
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
                   className={`overflow-hidden transition-all duration-300 ease-in-out ${openFaqIndex === idx ? 'max-h-[500px] mb-5 opacity-100' : 'max-h-0 opacity-0'}`}
                 >
                   <p className="text-gray-600 text-[14px] leading-relaxed">
@@ -527,22 +341,15 @@ export default function Home() {
 
         {/* Black Info Bar */}
         <div className="bg-[#2D2D2D] text-white py-3 text-center flex flex-col md:flex-row justify-between items-center px-4 md:px-32 text-xs font-bold tracking-wide mt-4">
-<<<<<<< HEAD
            <div className="py-1 w-full md:w-auto md:flex-1">Fast Delivery</div>
            <div className="py-1 w-full md:w-auto md:flex-1 border-t border-b border-gray-600 md:border-t-0 md:border-b-0">Free shipping</div>
            <div className="py-1 w-full md:w-auto md:flex-1">Extended return period</div>
-=======
-          <div className="py-1 w-full md:w-auto md:flex-1">Fast Delivery</div>
-          <div className="py-1 w-full md:w-auto md:flex-1 border-t border-b border-gray-600 md:border-t-0 md:border-b-0">Free shipping</div>
-          <div className="py-1 w-full md:w-auto md:flex-1">Extended return period</div>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
         </div>
       </main>
 
       {/* Footer */}
       <footer className="bg-zinc-900 text-white pt-20 pb-10 mt-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<<<<<<< HEAD
           
            {/* Trust Badges */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 border-b border-zinc-800 pb-16 mb-16 text-center">
@@ -574,57 +381,19 @@ export default function Home() {
                 <h4 className="font-semibold text-lg mb-2">30 Days Return</h4>
                 <p className="text-sm text-zinc-400">If you are not satisfied, return it back</p>
              </div>
-=======
-
-          {/* Trust Badges */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 border-b border-zinc-800 pb-16 mb-16 text-center">
-            <div className="flex flex-col items-center group">
-              <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center mb-4 group-hover:bg-amber-600 transition-colors duration-300">
-                <svg className="w-8 h-8 text-amber-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              </div>
-              <h4 className="font-semibold text-lg mb-2">Worldwide Delivery</h4>
-              <p className="text-sm text-zinc-400">Fast & trackable shipping to your doorstep</p>
-            </div>
-            <div className="flex flex-col items-center group">
-              <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center mb-4 group-hover:bg-amber-600 transition-colors duration-300">
-                <svg className="w-8 h-8 text-amber-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>
-              </div>
-              <h4 className="font-semibold text-lg mb-2">Free Gift</h4>
-              <p className="text-sm text-zinc-400">With every order above $100</p>
-            </div>
-            <div className="flex flex-col items-center group">
-              <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center mb-4 group-hover:bg-amber-600 transition-colors duration-300">
-                <svg className="w-8 h-8 text-amber-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-              </div>
-              <h4 className="font-semibold text-lg mb-2">Secure Checkout</h4>
-              <p className="text-sm text-zinc-400">100% secure payment</p>
-            </div>
-            <div className="flex flex-col items-center group">
-              <div className="w-16 h-16 rounded-full bg-zinc-800 flex items-center justify-center mb-4 group-hover:bg-amber-600 transition-colors duration-300">
-                <svg className="w-8 h-8 text-amber-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-              </div>
-              <h4 className="font-semibold text-lg mb-2">30 Days Return</h4>
-              <p className="text-sm text-zinc-400">If you are not satisfied, return it back</p>
-            </div>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
               <div className="flex items-center mb-6">
                 <div className="flex flex-col items-center justify-center border-2 border-amber-600 rounded-full w-10 h-10 mr-2">
-<<<<<<< HEAD
                    <span className="text-amber-600 font-serif font-bold text-sm">LH</span>
-=======
-                  <span className="text-amber-600 font-serif font-bold text-sm">LH</span>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
                 </div>
                 <span className="font-serif font-semibold text-xl tracking-wider text-white">LOVE HAIR</span>
               </div>
               <p className="text-zinc-400 text-sm mb-6 max-w-sm">
                 Premium 100% human hair extensions, wigs, and bundles. Guaranteed luxury & quality.
               </p>
-<<<<<<< HEAD
                <div className="flex space-x-4">
                  {/* Social Icons Placeholders */}
                  <a href="#" className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-600 transition"><span className="sr-only">Facebook</span>f</a>
@@ -633,16 +402,6 @@ export default function Home() {
                </div>
             </div>
             
-=======
-              <div className="flex space-x-4">
-                {/* Social Icons Placeholders */}
-                <a href="#" className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-600 transition"><span className="sr-only">Facebook</span>f</a>
-                <a href="#" className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-600 transition"><span className="sr-only">Instagram</span>ig</a>
-                <a href="#" className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-600 transition"><span className="sr-only">Pinterest</span>P</a>
-              </div>
-            </div>
-
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
             <div>
               <h4 className="font-bold text-lg mb-6 uppercase tracking-wider">Quick Links</h4>
               <ul className="space-y-3">
@@ -674,7 +433,6 @@ export default function Home() {
               </form>
             </div>
           </div>
-<<<<<<< HEAD
           
           <div className="border-t border-zinc-800 pt-8 flex flex-col md:flex-row justify-between items-center text-zinc-500 text-sm">
              <p>&copy; {new Date().getFullYear()} LOVE HAIR Extension Store. All Rights Reserved.</p>
@@ -688,20 +446,6 @@ export default function Home() {
         </div>
       </footer>
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-=======
-
-          <div className="border-t border-zinc-800 pt-8 flex flex-col md:flex-row justify-between items-center text-zinc-500 text-sm">
-            <p>&copy; {new Date().getFullYear()} LOVE HAIR Extension Store. All Rights Reserved.</p>
-            <div className="mt-4 md:mt-0 flex items-center space-x-2">
-              <span className="bg-white text-blue-900 border font-bold px-2 py-1 rounded text-xs">VISA</span>
-              <span className="bg-white text-red-600 border font-bold px-2 py-1 rounded text-xs">MasterCard</span>
-              <span className="bg-white text-blue-500 border font-bold px-2 py-1 rounded text-xs">PayPal</span>
-              <span className="bg-white text-black border font-bold px-2 py-1 rounded text-xs">Apple Pay</span>
-            </div>
-          </div>
-        </div>
-      </footer>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
     </div>
   );
 }
@@ -719,15 +463,9 @@ function ProductCard({ product }: { product: any }) {
   return (
     <Link href={`/product?${queryParams.toString()}`} className="group cursor-pointer flex flex-col h-full bg-transparent">
       <div className="relative aspect-[3/4.2] bg-[#fdfdfd] overflow-hidden mb-3">
-<<<<<<< HEAD
         <img 
           src={product.img} 
           alt={product.name} 
-=======
-        <img
-          src={product.img}
-          alt={product.name}
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
           className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105 mix-blend-multiply"
         />
         {/* Sale Tag */}
@@ -736,21 +474,12 @@ function ProductCard({ product }: { product: any }) {
             Sale
           </div>
         )}
-<<<<<<< HEAD
         
         {/* Quick Add icon */}
         <div className="absolute bottom-3 right-3 bg-white text-gray-800 w-8 h-8 rounded-full shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
            <ShoppingCart className="w-[14px] h-[14px]" strokeWidth={2.5}/>
         </div>
         
-=======
-
-        {/* Quick Add icon */}
-        <div className="absolute bottom-3 right-3 bg-white text-gray-800 w-8 h-8 rounded-full shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <ShoppingCart className="w-[14px] h-[14px]" strokeWidth={2.5} />
-        </div>
-
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
         {/* Arrows (hover) */}
         <div className="absolute top-1/2 left-3 -translate-y-1/2 bg-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <ChevronLeft className="w-5 h-5 text-gray-800" strokeWidth={1.5} />
@@ -759,17 +488,12 @@ function ProductCard({ product }: { product: any }) {
           <ChevronRight className="w-5 h-5 text-gray-800" strokeWidth={1.5} />
         </div>
       </div>
-<<<<<<< HEAD
       
-=======
-
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
       <div className="flex flex-col flex-grow pt-1 px-1">
         {/* Product Name */}
         <h3 className="text-[14px] text-[#2c2c2c] mb-[6px] leading-relaxed font-sans transition group-hover:opacity-80">
           {product.name} • Buy Now Pay Later
         </h3>
-<<<<<<< HEAD
         
         <div className="mt-auto">
             {/* Price */}
@@ -779,17 +503,6 @@ function ProductCard({ product }: { product: any }) {
                     <span className="text-[11px] text-[#9a9a9a] line-through">{product.oldPrice}</span>
                 )}
             </div>
-=======
-
-        <div className="mt-auto">
-          {/* Price */}
-          <div className="flex items-center space-x-[6px]">
-            <span className="text-[12px] font-semibold text-[#3a3a3a]">{product.price}</span>
-            {product.oldPrice && (
-              <span className="text-[11px] text-[#9a9a9a] line-through">{product.oldPrice}</span>
-            )}
-          </div>
->>>>>>> da4d70dc858d6cb6e553bcd0e9b3f56d303c3112
         </div>
       </div>
     </Link>
