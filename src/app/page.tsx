@@ -138,7 +138,7 @@ export default function Home() {
             <p className="text-base md:text-xl text-amber-200 mb-10 font-semibold italic drop-shadow-md">
               Buy 3 Get 1 Free | Up to 40% Off Bundles & Wigs | Best Value for Money
             </p>
-            <button className="bg-amber-600 hover:bg-amber-700 text-white transition-all transform hover:scale-105 duration-300 font-bold uppercase tracking-wider py-4 px-10 rounded shadow-[0_0_20px_rgba(217,119,6,0.4)]">
+            <button suppressHydrationWarning className="bg-amber-600 hover:bg-amber-700 text-white transition-all transform hover:scale-105 duration-300 font-bold uppercase tracking-wider py-4 px-10 rounded shadow-[0_0_20px_rgba(217,119,6,0.4)]">
               Shop 100% Human Hair Bundles & Wigs
             </button>
           </div>
@@ -169,7 +169,7 @@ export default function Home() {
             ))}
           </div>
            <div className="mt-8 text-center sm:hidden">
-             <button className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition">View All Products</button>
+             <button suppressHydrationWarning className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition">View All Products</button>
           </div>
         </section>
 
@@ -198,7 +198,7 @@ export default function Home() {
             ))}
           </div>
            <div className="mt-8 text-center sm:hidden">
-             <button className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition">View All Wigs</button>
+             <button suppressHydrationWarning className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition">View All Wigs</button>
           </div>
         </section>
 
@@ -278,10 +278,10 @@ export default function Home() {
             </div>
             
             <div className="flex justify-center mt-8 space-x-6">
-              <button aria-label="Previous Review" onClick={handlePrevReview} className="text-black hover:text-teal-600 transition p-2 cursor-pointer">
+              <button suppressHydrationWarning aria-label="Previous Review" onClick={handlePrevReview} className="text-black hover:text-teal-600 transition p-2 cursor-pointer">
                 <ChevronLeft className="w-5 h-5 mx-2" strokeWidth={2} />
               </button>
-              <button aria-label="Next Review" onClick={handleNextReview} className="text-black hover:text-teal-600 transition p-2 cursor-pointer">
+              <button suppressHydrationWarning aria-label="Next Review" onClick={handleNextReview} className="text-black hover:text-teal-600 transition p-2 cursor-pointer">
                 <ChevronRight className="w-5 h-5 mx-2" strokeWidth={2} />
               </button>
             </div>
@@ -315,7 +315,7 @@ export default function Home() {
           <div className="space-y-0 text-[15px] font-sans">
             {FAQS.map((faq, idx) => (
               <div key={idx} className="border-b border-gray-100">
-                <button
+                <button suppressHydrationWarning
                   type="button"
                   onClick={() => toggleFaq(idx)}
                   className="w-full flex justify-between items-center py-5 text-left text-gray-800 hover:text-black focus:outline-none transition-colors group"
@@ -428,8 +428,8 @@ export default function Home() {
               <h4 className="font-bold text-lg mb-6 uppercase tracking-wider">Newsletter</h4>
               <p className="text-zinc-400 text-sm mb-4">Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.</p>
               <form className="flex">
-                <input type="email" placeholder="Your email" className="bg-zinc-800 text-white px-4 py-2 w-full focus:outline-none focus:ring-1 focus:ring-amber-500 rounded-l" />
-                <button type="submit" className="bg-amber-600 hover:bg-amber-700 px-4 py-2 text-white font-bold rounded-r transition">Join</button>
+                <input suppressHydrationWarning type="email" placeholder="Your email" className="bg-zinc-800 text-white px-4 py-2 w-full focus:outline-none focus:ring-1 focus:ring-amber-500 rounded-l" />
+                <button suppressHydrationWarning type="submit" className="bg-amber-600 hover:bg-amber-700 px-4 py-2 text-white font-bold rounded-r transition">Join</button>
               </form>
             </div>
           </div>
