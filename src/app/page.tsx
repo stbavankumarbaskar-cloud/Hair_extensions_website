@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { ShoppingCart, Search, Menu, Star, ChevronLeft, ChevronRight, User, ChevronDown, ChevronUp } from 'lucide-react';
 import CartDrawer from '../components/CartDrawer';
 
@@ -463,8 +464,17 @@ export default function Home() {
 }
 
 function ProductCard({ product }: { product: any }) {
+  const queryParams = new URLSearchParams({
+    name: product.name,
+    price: product.price,
+    img: product.img,
+  });
+  if (product.oldPrice) {
+    queryParams.append('oldPrice', product.oldPrice);
+  }
+
   return (
-    <div className="group cursor-pointer flex flex-col h-full bg-transparent">
+    <Link href={`/product?${queryParams.toString()}`} className="group cursor-pointer flex flex-col h-full bg-transparent">
       <div className="relative aspect-[3/4.2] bg-[#fdfdfd] overflow-hidden mb-3">
         <img 
           src={product.img} 
@@ -508,6 +518,6 @@ function ProductCard({ product }: { product: any }) {
             </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
