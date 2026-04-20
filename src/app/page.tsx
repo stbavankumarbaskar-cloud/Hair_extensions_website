@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { ShoppingCart, Search, Menu, Star, ChevronLeft, ChevronRight, User, ChevronDown, ChevronUp } from 'lucide-react';
+import CartDrawer from '../components/CartDrawer';
 
 const REVIEWS = [
   {
@@ -44,6 +45,7 @@ const FAQS = [
 export default function Home() {
   const [currentReviewIdx, setCurrentReviewIdx] = useState(0);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -119,7 +121,7 @@ export default function Home() {
                   </div>
               </div>
 
-               <div className="flex items-center cursor-pointer hover:text-[#CAA45D] transition">
+               <div onClick={() => setIsCartOpen(true)} className="flex items-center cursor-pointer hover:text-[#CAA45D] transition">
                  <span className="hidden sm:inline text-[14px] font-normal text-[#1a202c]">Cart</span>
               </div>
               <Menu className="w-6 h-6 xl:hidden cursor-pointer text-gray-800" />
@@ -455,6 +457,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </div>
   );
 }
