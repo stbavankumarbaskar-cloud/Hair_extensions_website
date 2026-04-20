@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 
 const initialItems = [
   {
@@ -130,7 +131,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
           <div className="text-center text-[13px] text-gray-500 italic mt-2">
             Need help choosing the right length or texture?
           </div>
-          <a href="#" className="text-center text-[13px] font-semibold text-[#25d366] flex items-center justify-center gap-1 hover:underline">
+          <a href="https://wa.me/41765395386" target="_blank" rel="noreferrer" className="text-center text-[13px] font-semibold text-[#25d366] flex items-center justify-center gap-1 hover:underline">
             Chat with us on WhatsApp 💬
           </a>
 
@@ -144,9 +145,9 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
         {/* Footer */}
         <div className="p-4 bg-white border-t border-gray-100 flex flex-col gap-[10px] shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-10">
 
-          <button className="w-full bg-black text-white font-semibold py-3 rounded-md text-[15px] flex justify-center items-center gap-2 hover:bg-gray-900 transition">
+          <Link href="/checkout" onClick={onClose} className="w-full bg-black text-white font-semibold py-3 rounded-md text-[15px] flex justify-center items-center gap-2 hover:bg-gray-900 transition">
             🔒 Checkout • {fmt(subtotal)}
-          </button>
+          </Link>
 
           {/* Payment Icons */}
           <div className="flex gap-1 justify-center flex-wrap">
