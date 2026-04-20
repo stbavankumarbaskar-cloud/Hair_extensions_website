@@ -35,9 +35,11 @@ export default async function AdminDashboard() {
   }
 
   // Format the date helper
-  const formatDate = (dateString: string) => {
-    if (dateString.includes('ago') || dateString === 'Yesterday') return dateString;
-    return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+  const formatDate = (dateInput: any) => {
+    if (typeof dateInput === 'string' && (dateInput.includes('ago') || dateInput === 'Yesterday')) return dateInput;
+    const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    if (isNaN(date.getTime())) return String(dateInput);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
   };
 
   return (
