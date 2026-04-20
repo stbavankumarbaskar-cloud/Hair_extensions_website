@@ -26,7 +26,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="font-medium text-[14px]">Dashboard</span>
           </Link>
           
-          <Link href="/admin" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
+          <Link href="/admin/products" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
             <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" strokeWidth={2}/>
             <span className="font-medium text-[14px]">Products</span>
           </Link>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { DollarSign, ShoppingCart, Users, TrendingUp, MoreHorizontal, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { DollarSign, ShoppingCart, Users, TrendingUp, MoreHorizontal, ArrowUpRight, ArrowDownRight, AlertCircle } from 'lucide-react';
+import pool from '../../lib/db';
 
 const STATS = [
   { id: 1, title: 'Total Revenue', value: '$45,231.89', change: '+20.1%', positive: true, icon: DollarSign },
@@ -8,23 +9,66 @@ const STATS = [
   { id: 4, title: 'Monthly Growth', value: '+35%', change: '+8.1%', positive: true, icon: TrendingUp },
 ];
 
-const RECENT_ORDERS = [
-  { id: '#ORD-001', customer: 'Emma Watson', product: '100% Brazilian Human Hair Bundles', date: '2 mins ago', status: 'Processing', amount: '$345.00' },
-  { id: '#ORD-002', customer: 'Sophia Turner', product: 'Loose Deep Wave wig 13x4 Lace', date: '45 mins ago', status: 'Completed', amount: '$120.00' },
-  { id: '#ORD-003', customer: 'Mia Johnson', product: 'Body Wave Lace Front Wigs', date: '2 hours ago', status: 'Pending', amount: '$135.00' },
-  { id: '#ORD-004', customer: 'Isabella Smith', product: 'Bone Straight 13x6 HD Lace Front Wig', date: '4 hours ago', status: 'Completed', amount: '$155.00' },
-  { id: '#ORD-005', customer: 'Olivia Williams', product: 'Indian Deep Wave 3 Bundles', date: 'Yesterday', status: 'Processing', amount: '$118.00' },
+const FALLBACK_ORDERS = [
+  { id: 1, order_number: '#ORD-001', customer_name: 'Emma Watson', product_name: '100% Brazilian Human Hair Bundles', created_at: '2 mins ago', status: 'Processing', amount: '345.00' },
+  { id: 2, order_number: '#ORD-002', customer_name: 'Sophia Turner', product_name: 'Loose Deep Wave wig 13x4 Lace', created_at: '45 mins ago', status: 'Completed', amount: '120.00' },
+  { id: 3, order_number: '#ORD-003', customer_name: 'Mia Johnson', product_name: 'Body Wave Lace Front Wigs', created_at: '2 hours ago', status: 'Pending', amount: '135.00' },
+  { id: 4, order_number: '#ORD-004', customer_name: 'Isabella Smith', product_name: 'Bone Straight 13x6 HD Lace Front Wig', created_at: '4 hours ago', status: 'Completed', amount: '155.00' },
+  { id: 5, order_number: '#ORD-005', customer_name: 'Olivia Williams', product_name: 'Indian Deep Wave 3 Bundles', created_at: 'Yesterday', status: 'Processing', amount: '118.00' },
 ];
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  let recentOrders = FALLBACK_ORDERS;
+  let dbConnected = false;
+  let dbError = "";
+
+  try {
+    // Attempt to fetch from MySQL database
+    const [rows] = await pool.query('SELECT * FROM orders ORDER BY created_at DESC LIMIT 5');
+    if (Array.isArray(rows) && rows.length > 0) {
+      recentOrders = rows as any[];
+    }
+    dbConnected = true;
+  } catch (error: any) {
+    dbError = error.message;
+    console.log("Database not connected yet, using fallback data. Error:", error.message);
+  }
+
+  // Format the date helper
+  const formatDate = (dateString: string) => {
+    if (dateString.includes('ago') || dateString === 'Yesterday') return dateString;
+    return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
       
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-serif font-bold text-white tracking-tight">Dashboard Overview</h1>
-        <p className="text-gray-400 mt-2 text-sm">Welcome back, here is what's happening with your store today.</p>
+      {/* Page Header and DB Warning */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-serif font-bold text-white tracking-tight">Dashboard Overview</h1>
+          <p className="text-gray-400 mt-2 text-sm">Welcome back, here is what's happening with your store today.</p>
+        </div>
+        
+        {/* Database Connection Status Pill */}
+        <div className={`flex items-center space-x-2 px-4 py-2 rounded-full border text-sm font-medium shadow-sm transition-all
+          ${dbConnected ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/30 text-red-400'}`}>
+          <div className={`w-2 h-2 rounded-full ${dbConnected ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]'}`}></div>
+          <span className="flex items-center">
+            {dbConnected ? 'Database Connected' : 'No Database Connection'}
+          </span>
+        </div>
       </div>
+
+      {!dbConnected && (
+         <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3 text-red-400 text-sm">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <div>
+              <p className="font-semibold">MySQL Connection Failed</p>
+              <p className="opacity-80 text-xs mt-1">Please ensure you have created the `lovehair_db` in MySQL Workbench using the provided setup script. Showing dummy data in the meantime. Error: {dbError}</p>
+            </div>
+         </div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -106,14 +150,14 @@ export default function AdminDashboard() {
           </div>
           
           <div className="space-y-4">
-            {RECENT_ORDERS.slice(0, 4).map((order) => (
+            {recentOrders.slice(0, 4).map((order) => (
               <div key={order.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors group cursor-pointer">
                 <div>
-                  <p className="text-sm font-medium text-white group-hover:text-amber-400 transition-colors">{order.customer}</p>
-                  <p className="text-[11px] text-gray-500 truncate max-w-[150px]">{order.product}</p>
+                  <p className="text-sm font-medium text-white group-hover:text-amber-400 transition-colors">{order.customer_name}</p>
+                  <p className="text-[11px] text-gray-500 truncate max-w-[150px]">{order.product_name}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-white">{order.amount}</p>
+                  <p className="text-sm font-bold text-white">${Number(order.amount).toFixed(2)}</p>
                   <p className={`text-[10px] px-1.5 py-0.5 rounded uppercase mt-1 inline-block font-semibold
                     ${order.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400' : 
                       order.status === 'Processing' ? 'bg-blue-500/10 text-blue-400' : 
@@ -144,11 +188,11 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {RECENT_ORDERS.map((order, idx) => (
+              {recentOrders.map((order, idx) => (
                 <tr key={order.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                  <td className="px-4 py-4 font-medium text-amber-500">{order.id}</td>
-                  <td className="px-4 py-4 text-white">{order.customer}</td>
-                  <td className="px-4 py-4 text-gray-500">{order.date}</td>
+                  <td className="px-4 py-4 font-medium text-amber-500">{order.order_number}</td>
+                  <td className="px-4 py-4 text-white">{order.customer_name}</td>
+                  <td className="px-4 py-4 text-gray-500">{formatDate(order.created_at)}</td>
                   <td className="px-4 py-4">
                     <span className={`px-2 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider
                       ${order.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
@@ -158,7 +202,7 @@ export default function AdminDashboard() {
                       {order.status}
                     </span>
                   </td>
-                  <td className="px-4 py-4 text-right text-white font-medium">{order.amount}</td>
+                  <td className="px-4 py-4 text-right text-white font-medium">${Number(order.amount).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>

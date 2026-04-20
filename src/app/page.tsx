@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { ShoppingCart, Search, Menu, Star, ChevronLeft, ChevronRight, User, ChevronDown, ChevronUp } from 'lucide-react';
@@ -44,20 +44,39 @@ const FAQS = [
 ];
 
 export default function Home() {
+
   const [currentReviewIdx, setCurrentReviewIdx] = useState(0);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [dbProducts, setDbProducts] = useState<any[]>([]);
+  const [dbReviews, setDbReviews] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/api/frontpage')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          if (data.products && data.products.length > 0) setDbProducts(data.products);
+          if (data.reviews && data.reviews.length > 0) setDbReviews(data.reviews);
+        }
+      })
+      .catch(err => console.error("DB Fetch Error:", err));
+  }, []);
+
+  const displayReviews = dbReviews.length > 0 ? dbReviews : REVIEWS;
+  const currentReview = displayReviews[currentReviewIdx] || displayReviews[0];
+
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
   };
 
   const handleNextReview = () => {
-    setCurrentReviewIdx((prev) => (prev + 1) % REVIEWS.length);
+    setCurrentReviewIdx((prev) => (prev + 1) % displayReviews.length);
   };
 
   const handlePrevReview = () => {
-    setCurrentReviewIdx((prev) => (prev - 1 + REVIEWS.length) % REVIEWS.length);
+    setCurrentReviewIdx((prev) => (prev - 1 + displayReviews.length) % displayReviews.length);
   };
 
   return (
@@ -155,7 +174,7 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
-            {[
+            {(dbProducts.length > 0 ? dbProducts.filter(p => p.category === 'Bundle') : [
               { id: 1, name: "Love Hair 3 Bundles 9A Grade Brazilian Human Hair Water Wave", price: "$86.00", oldPrice: "$120.00", img: "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 124 },
               { id: 2, name: "Queen Hair 10A Brazilian Hair Straight 3 Bundles Virgin Human Hair", price: "$75.00", oldPrice: "$95.00", img: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 89 },
               { id: 3, name: "Love Hair Body Wave 3 Bundles With Closure Brazilian Human Hair", price: "$98.50", oldPrice: "$140.00", img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 312 },
@@ -164,7 +183,7 @@ export default function Home() {
                { id: 6, name: "Malaysian Curly Hair 3 Bundles Kinky Curly Virgin Human Hair", price: "$92.00", oldPrice: "$130.00", img: "https://images.unsplash.com/photo-1616428789366-a3d5e21fb2b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 290 },
                { id: 7, name: "Indian Deep Wave 3 Bundles With 4x4 Lace Closure Human Hair", price: "$118.00", oldPrice: "$170.00", img: "https://images.unsplash.com/photo-1586521995874-ce6cf16eb512?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 156 },
                { id: 8, name: "Brazilian Water Wave 4 Bundles Wet and Wavy Human Hair", price: "$125.00", oldPrice: "$180.00", img: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 88 }
-            ].map((product) => (
+            ]).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -183,7 +202,7 @@ export default function Home() {
              <a href="#" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">View All Wigs →</a>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
-            {[
+            {(dbProducts.length > 0 ? dbProducts.filter(p => p.category === 'Wig') : [
               { id: 1, name: "Loose Deep Wave wig 13x4 Lace Front Human Hair Wigs", price: "$120.00", oldPrice: "$180.00", img: "https://images.unsplash.com/photo-1562086254-20b16260bd7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 215 },
               { id: 2, name: "Body Wave Lace Front Wigs Human Hair 180% Density", price: "$135.00", oldPrice: "$195.00", img: "https://images.unsplash.com/photo-1542452255191-c85a98f2cb59?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 84 },
               { id: 3, name: "Water Wave Headband Wig Human Hair Glueless Wigs", price: "$85.00", oldPrice: "$115.00", img: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 49 },
@@ -193,7 +212,7 @@ export default function Home() {
                { id: 7, name: "Short Bob Wig Lace Front Human Hair Wigs", price: "$68.00", oldPrice: "$85.00", img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 420 },
                { id: 8, name: "Blonde 613 Lace Front Wig Body Wave Transparent Lace", price: "$140.00", oldPrice: "$200.00", img: "https://images.unsplash.com/photo-1552697611-bba65123d4ee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 315 },
                { id: 9, name: "Deep Wave Lace Closure Wig 4x4 Pre Plucked With Baby Hair", price: "$110.00", oldPrice: "$150.00", img: "https://images.unsplash.com/photo-1531685250784-523c9213197f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 75 }
-            ].map((product) => (
+            ]).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -212,12 +231,12 @@ export default function Home() {
              <a href="#" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">Shop Trending →</a>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3">
-            {[
+            {(dbProducts.length > 0 ? dbProducts.slice(0, 4) : [
               { id: 1, name: "Loose Deep Wave wig", price: "$120.00", img: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 400 },
               { id: 2, name: "Love Hair Body Wave", price: "$135.00", img: "https://images.unsplash.com/photo-1616428789366-a3d5e21fb2b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 200 },
               { id: 3, name: "Straight Lace Front wig", price: "$145.00", img: "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 150 },
               { id: 4, name: "Curly Bob wig", price: "$85.00", img: "https://images.unsplash.com/photo-1512401777085-c49195e340fa?auto=format&fit=crop&q=80&w=400", reviews: 80 }
-            ].map((product) => (
+            ]).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -264,16 +283,16 @@ export default function Home() {
                 ”
               </div>
               <p className="text-[19px] leading-relaxed text-center text-gray-900 mb-8 font-sans max-w-[800px] min-h-[85px]">
-                {REVIEWS[currentReviewIdx].text}
+                {currentReview.text}
               </p>
               
               <div className="flex justify-center text-teal-600 mb-6 space-x-[2px]">
-                {[...Array(REVIEWS[currentReviewIdx].rating)].map((_, i) => <Star key={i} className="w-[26px] h-[26px] fill-current" />)}
+                {[...Array(currentReview.rating)].map((_, i) => <Star key={i} className="w-[26px] h-[26px] fill-current" />)}
               </div>
               
               <div className="text-center">
-                 <div className="font-bold text-gray-900 text-[15px] mb-1">{REVIEWS[currentReviewIdx].name}</div>
-                 <a href="#" className="text-gray-900 underline text-[15px] hover:text-teal-700 transition">{REVIEWS[currentReviewIdx].company}</a>
+                 <div className="font-bold text-gray-900 text-[15px] mb-1">{currentReview.name}</div>
+                 <a href="#" className="text-gray-900 underline text-[15px] hover:text-teal-700 transition">{currentReview.company}</a>
               </div>
             </div>
             
