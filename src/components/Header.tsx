@@ -3,12 +3,10 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { ChevronDown, Menu } from 'lucide-react';
 import AccountModal from './AccountModal';
+import { useCart } from '@/lib/CartContext';
 
-interface HeaderProps {
-  onOpenCart: () => void;
-}
-
-export default function Header({ onOpenCart }: HeaderProps) {
+export default function Header() {
+  const { setIsCartOpen, totalQty } = useCart();
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
@@ -113,8 +111,13 @@ export default function Header({ onOpenCart }: HeaderProps) {
                  )}
               </div>
 
-               <div onClick={onOpenCart} className="flex items-center whitespace-nowrap cursor-pointer hover:text-[#CAA45D] transition">
+               <div onClick={() => setIsCartOpen(true)} className="flex items-center whitespace-nowrap cursor-pointer hover:text-[#CAA45D] transition relative">
                  <span className="hidden sm:inline text-[14px] font-normal text-[#1a202c]">Cart</span>
+                 {totalQty > 0 && (
+                   <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+                     {totalQty}
+                   </span>
+                 )}
               </div>
               <Menu className="w-6 h-6 xl:hidden cursor-pointer text-gray-800" />
             </div>

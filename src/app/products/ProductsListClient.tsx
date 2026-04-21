@@ -54,7 +54,6 @@ const FILTER_CATEGORIES = [
 export default function ProductsListClient({ initialProducts }: { initialProducts: any[] }) {
   const searchParams = useSearchParams();
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
 
@@ -98,7 +97,7 @@ export default function ProductsListClient({ initialProducts }: { initialProduct
 
   return (
     <div className="min-h-screen bg-white">
-      <Header onOpenCart={() => setIsCartOpen(true)} />
+      <Header />
 
       <main className="max-w-[1600px] mx-auto px-4 md:px-8 py-12">
         {/* Breadcrumb & Title */}
@@ -294,7 +293,7 @@ export default function ProductsListClient({ initialProducts }: { initialProduct
       )}
 
       <Footer />
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartDrawer />
     </div>
   );
 }

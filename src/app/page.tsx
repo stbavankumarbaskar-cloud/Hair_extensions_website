@@ -26,7 +26,6 @@ export default function Home() {
 
   const [currentReviewIdx, setCurrentReviewIdx] = useState(0);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [dbProducts, setDbProducts] = useState<any[]>([]);
   const [dbReviews, setDbReviews] = useState<any[]>([]);
 
@@ -60,7 +59,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
-      <Header onOpenCart={() => setIsCartOpen(true)} />
+      <Header />
 
       <main>
         {/* Hero Section */}
@@ -301,7 +300,7 @@ export default function Home() {
       </main>
 
       <Footer />
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartDrawer />
     </div>
   );
 }

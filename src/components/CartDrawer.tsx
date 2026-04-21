@@ -1,41 +1,20 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useCart } from "@/lib/CartContext";
 
-const initialItems = [
-  {
-    id: 1,
-    name: "Premium Wavy Clip-In Hair Extensions",
-    variant: "Black, 55 CM, Wavy",
-    price: 3432,
-    originalPrice: 4739,
-    qty: 1,
-    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=120&h=120&fit=crop",
-  }
-];
-
-export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const [items, setItems] = useState(initialItems);
+export default function CartDrawer() {
+  const { cart, updateQuantity, removeFromCart, subtotal, totalQty, isCartOpen, setIsCartOpen } = useCart();
   const [instructions, setInstructions] = useState(false);
   const [instructionText, setInstructionText] = useState("");
 
-  const updateQty = (id: number, delta: number) => {
-    setItems((prev) =>
-      prev
-        .map((item) => item.id === id ? { ...item, qty: item.qty + delta } : item)
-        .filter((item) => item.qty > 0)
-    );
-  };
+  const onClose = () => setIsCartOpen(false);
 
-  const removeItem = (id: number) => setItems((prev) => prev.filter((i) => i.id !== id));
-
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
   const fmt = (n: number) => `₹ ${n.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
-  const totalQty = items.reduce((sum, i) => sum + i.qty, 0);
 
   // Stop scrolling when drawer is open
   useEffect(() => {
-    if (isOpen) {
+    if (isCartOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
@@ -43,9 +22,9 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [isOpen]);
+  }, [isCartOpen]);
 
-  if (!isOpen) return null;
+  if (!isCartOpen) return null;
 
   return (
     <>
@@ -74,12 +53,12 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
           </div>
 
           {/* Items */}
-          {items.length === 0 ? (
+          {cart.length === 0 ? (
             <div className="text-center py-10 text-gray-500">Your cart is empty</div>
           ) : (
             <div className="flex flex-col gap-4 mt-2">
-              {items.map((item) => (
-                <div key={item.id} className="flex gap-4 relative">
+              {cart.map((item) => (
+                <div key={`${item.id}-${item.variant}`} className="flex gap-4 relative">
                   <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-md flex-shrink-0 border border-gray-100" />
                   <div className="flex flex-1 flex-col justify-between">
                     <div className="flex justify-between items-start">
@@ -87,19 +66,21 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
                         <p className="text-[13px] font-semibold text-gray-900 leading-snug">{item.name}</p>
                         <p className="text-[12px] text-gray-500 mt-1">{item.variant}</p>
                       </div>
-                      <button onClick={() => removeItem(item.id)} className="text-gray-400 hover:text-gray-800 text-sm absolute right-0 top-0">
+                      <button onClick={() => removeFromCart(item.id)} className="text-gray-400 hover:text-gray-800 text-sm absolute right-0 top-0">
                         🗑️
                       </button>
                     </div>
 
                     <div className="flex justify-between items-center mt-2">
                       <div className="flex items-center border border-gray-300 rounded-md">
-                        <button onClick={() => updateQty(item.id, -1)} className="px-3 py-1 text-gray-600 hover:bg-gray-50 text-sm"> − </button>
+                        <button onClick={() => updateQuantity(item.id, -1)} className="px-3 py-1 text-gray-600 hover:bg-gray-50 text-sm"> − </button>
                         <span className="px-2 text-[13px] font-medium w-6 text-center">{item.qty}</span>
-                        <button onClick={() => updateQty(item.id, 1)} className="px-3 py-1 text-gray-600 hover:bg-gray-50 text-sm"> + </button>
+                        <button onClick={() => updateQuantity(item.id, 1)} className="px-3 py-1 text-gray-600 hover:bg-gray-50 text-sm"> + </button>
                       </div>
                       <div className="text-right flex items-center gap-2">
-                        <p className="text-[11px] text-gray-400 line-through m-0">{fmt(item.originalPrice)}</p>
+                        {item.originalPrice && (
+                          <p className="text-[11px] text-gray-400 line-through m-0">{fmt(item.originalPrice)}</p>
+                        )}
                         <p className="text-[13px] font-semibold m-0">{fmt(item.price * item.qty)}</p>
                       </div>
                     </div>

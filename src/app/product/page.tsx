@@ -6,6 +6,7 @@ import { ShoppingCart, Search, Menu, ChevronDown, ChevronUp, Star, ChevronLeft, 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
+import { useCart } from '@/lib/CartContext';
 
 export default function ProductDetailPage() {
   return (
@@ -16,8 +17,10 @@ export default function ProductDetailPage() {
 }
 
 function ProductDetails() {
+  const { addToCart, setIsCartOpen } = useCart();
   const searchParams = useSearchParams();
   const name = searchParams.get('name') || "Glam Kinky Curly Raw Indian Remy Hair Extensions • Buy Now Pay Later";
+  const id = searchParams.get('id') || "glam-kinky-curly"; // Added ID
   const priceStr = searchParams.get('price') || "₹ 15,500.00";
   const oldPriceStr = searchParams.get('oldPrice');
   const img = searchParams.get('img') || "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
@@ -28,15 +31,26 @@ function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState('40 CM');
   const [selectedColor, setSelectedColor] = useState('Black');
   const [quantity, setQuantity] = useState(1);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: `${id}-${selectedSize}-${selectedColor}`,
+      name: name,
+      variant: `${selectedColor}, ${selectedSize}`,
+      price: numericPrice,
+      originalPrice: oldPriceStr ? parseFloat(oldPriceStr.replace(/[^0-9.]/g, '')) : undefined,
+      qty: quantity,
+      image: img,
+    });
+  };
 
   const sizes = ['40 CM', '45 CM', '50 CM', '55 CM', '60 CM', '65 CM', '70 CM'];
   const colors = ['Black', 'Brown'];
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
-      <Header onOpenCart={() => setIsCartOpen(true)} />
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <Header />
+      <CartDrawer />
 
       {/* Main Content */}
       <main className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 md:py-12 relative">
@@ -175,7 +189,10 @@ function ProductDetails() {
               </div>
 
               {/* Add to Cart Button */}
-              <button className="flex-1 h-[54px] bg-black hover:bg-[#222] text-white flex items-center justify-center space-x-2 rounded-md transition-all font-semibold uppercase tracking-wide text-sm shadow-md hover:shadow-lg">
+              <button 
+                onClick={handleAddToCart}
+                className="flex-1 h-[54px] bg-black hover:bg-[#222] text-white flex items-center justify-center space-x-2 rounded-md transition-all font-semibold uppercase tracking-wide text-sm shadow-md hover:shadow-lg"
+              >
                 <Lock className="w-4 h-4" />
                 <span>Add to cart - {currencySymbol} {(numericPrice * quantity).toFixed(2)}</span>
               </button>
