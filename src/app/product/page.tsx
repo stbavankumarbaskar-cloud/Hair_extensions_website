@@ -43,7 +43,7 @@ function ProductDetails() {
              {/* Left Area: Logo + Nav */}
              <div className="flex items-center">
                  {/* Logo */}
-                 <div className="flex flex-col items-center flex-shrink-0 cursor-pointer mr-6 lg:mr-10 mt-1">
+                 <div className="flex flex-col items-center flex-shrink-0 cursor-pointer mr-6 lg:mr-10">
                    <div className="text-[#CAA45D] mb-[4px]">
                       {/* Tree/Heart stylized logo */}
                       <svg className="w-10 h-10 lg:w-[48px] lg:h-[48px]" viewBox="0 0 24 24" fill="currentColor">
@@ -62,29 +62,29 @@ function ProductDetails() {
                  </div>
 
                  {/* Desktop Navigation */}
-                 <nav className="hidden xl:flex items-center space-x-6 lg:space-x-[24px] mt-2">
-                   <a href="/" className="text-[#1a202c] hover:text-[#CAA45D] font-medium text-sm lg:text-[14px] transition-colors">Home</a>
-                   <a href="#" className="text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[14px] transition-colors">Premium Hair Extensions</a>
-                   <a href="#" className="text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[14px] transition-colors">Premium Clip-In Hair Extensions</a>
-                   <a href="#" className="text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[14px] transition-colors">Premium Keratin Bond Extensions</a>
-                   <a href="#" className="text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[14px] transition-colors">More</a>
+                 <nav className="hidden xl:flex items-center space-x-6 lg:space-x-[24px]">
+                   <a href="/" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-medium text-sm lg:text-[14px] transition-colors">Home</a>
+                   <a href="#" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[14px] transition-colors">Premium Hair Extensions</a>
+                   <a href="#" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[14px] transition-colors">Premium Clip-In Hair Extensions</a>
+                   <a href="#" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[14px] transition-colors">Premium Keratin Bond Extensions</a>
+                   <a href="#" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[14px] transition-colors">More</a>
                  </nav>
              </div>
 
              {/* Right Area: Action Icons */}
-            <div className="flex items-center space-x-5 lg:space-x-[20px] text-[#2c3e50] mt-2">
-              <div className="hidden sm:flex items-center cursor-pointer text-[13px] font-normal hover:text-[#CAA45D] transition">
+            <div className="flex items-center flex-shrink-0 space-x-5 lg:space-x-[20px] text-[#2c3e50]">
+              <div className="hidden sm:flex items-center whitespace-nowrap cursor-pointer text-[13px] font-normal hover:text-[#CAA45D] transition">
                  CHF / EN <ChevronDown className="w-[14px] h-[14px] ml-[2px] opacity-70" strokeWidth={2}/>
               </div>
-              <div className="hidden sm:flex items-center cursor-pointer text-[13px] font-normal hover:text-[#CAA45D] transition">
+              <div className="hidden sm:flex items-center whitespace-nowrap cursor-pointer text-[13px] font-normal hover:text-[#CAA45D] transition">
                  Search
               </div>
               
-              <div className="hidden sm:flex items-center cursor-pointer text-[13px] font-normal hover:text-[#CAA45D] transition">
+              <div className="hidden sm:flex items-center whitespace-nowrap cursor-pointer text-[13px] font-normal hover:text-[#CAA45D] transition">
                  Account
               </div>
 
-               <div className="flex items-center cursor-pointer hover:text-[#CAA45D] transition">
+               <div className="flex items-center whitespace-nowrap cursor-pointer hover:text-[#CAA45D] transition">
                  <span className="hidden sm:inline text-[13px] font-normal text-[#1a202c]">Cart</span>
               </div>
               <Menu className="w-6 h-6 xl:hidden cursor-pointer text-gray-800" />
