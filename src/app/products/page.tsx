@@ -1,6 +1,6 @@
 import React from 'react';
 import pool from '@/lib/db';
-import ProductsListClient from './ProductsListClient';
+import ProductsListClient from '@/app/products/ProductsListClient';
 
 export default async function ProductsPage() {
   let products: any[] = [];
