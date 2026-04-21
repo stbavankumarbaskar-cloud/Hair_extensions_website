@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { LayoutDashboard, ShoppingBag, Users, Star, Settings, LogOut, Search, Bell } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Users, Star, Settings, LogOut, Search, Bell, Truck } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -31,12 +31,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="font-medium text-[14px]">Products</span>
           </Link>
 
-          <Link href="/admin" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
+          <Link href="/admin/orders" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
+            <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" strokeWidth={2}/>
+            <span className="font-medium text-[14px]">Orders</span>
+          </Link>
+
+          <Link href="/admin/customers" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
             <Users className="w-5 h-5 group-hover:scale-110 transition-transform" strokeWidth={2}/>
             <span className="font-medium text-[14px]">Customers</span>
           </Link>
 
-          <Link href="/admin" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
+          <Link href="/admin/vendors" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
+            <Truck className="w-5 h-5 group-hover:scale-110 transition-transform" strokeWidth={2}/>
+            <span className="font-medium text-[14px]">Vendors</span>
+          </Link>
+
+          <Link href="/admin/reviews" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
             <Star className="w-5 h-5 group-hover:scale-110 transition-transform" strokeWidth={2}/>
             <span className="font-medium text-[14px]">Reviews</span>
           </Link>

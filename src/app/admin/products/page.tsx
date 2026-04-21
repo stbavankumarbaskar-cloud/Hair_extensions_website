@@ -1,11 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import pool from '../../../lib/db';
+import pool from '@/lib/db';
+import { revalidatePath } from 'next/cache';
 
-// This is a Server Component, it runs on the server and fetches directly from DB
 export default async function AdminProductsPage() {
-  let products = [];
+  let products: any[] = [];
   let dbError = "";
 
   try {
@@ -13,6 +13,18 @@ export default async function AdminProductsPage() {
     products = rows as any[];
   } catch (err: any) {
     dbError = err.message;
+  }
+
+  // Server Action for deletion
+  async function deleteProduct(formData: FormData) {
+    'use server';
+    const id = formData.get('id');
+    try {
+      await pool.query('DELETE FROM products WHERE id = ?', [id]);
+      revalidatePath('/admin/products');
+    } catch (err) {
+      console.error("Failed to delete product:", err);
+    }
   }
 
   return (
@@ -47,13 +59,14 @@ export default async function AdminProductsPage() {
                 <th className="px-4 py-3">Product Name</th>
                 <th className="px-4 py-3">Category</th>
                 <th className="px-4 py-3">Price</th>
+                <th className="px-4 py-3">Stock</th>
                 <th className="px-4 py-3 rounded-r-lg text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {products.length === 0 && !dbError ? (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-gray-500">No products found. Start by adding one!</td>
+                  <td colSpan={6} className="py-8 text-center text-gray-500">No products found. Start by adding one!</td>
                 </tr>
               ) : (
                 products.map((product) => (
@@ -66,13 +79,29 @@ export default async function AdminProductsPage() {
                       <span className="bg-gray-800 text-gray-300 px-2 py-1 rounded-full text-[10px] uppercase font-bold tracking-wider">{product.category}</span>
                     </td>
                     <td className="px-4 py-3 text-white font-medium">${Number(product.price).toFixed(2)}</td>
-                    <td className="px-4 py-3 text-right space-x-2">
-                       <button className="p-1.5 text-gray-400 hover:text-amber-400 bg-white/5 hover:bg-amber-400/10 rounded-md transition-colors">
-                         <Edit className="w-4 h-4" />
-                       </button>
-                       <button className="p-1.5 text-gray-400 hover:text-red-400 bg-white/5 hover:bg-red-400/10 rounded-md transition-colors">
-                         <Trash2 className="w-4 h-4" />
-                       </button>
+                    <td className="px-4 py-3">
+                      <span className={`font-bold ${product.stock <= 5 ? 'text-red-400' : 'text-gray-400'}`}>
+                        {product.stock || 0}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                       <div className="flex justify-end gap-2">
+                         <Link 
+                           href={`/admin/products/${product.id}`}
+                           className="p-1.5 text-gray-400 hover:text-amber-400 bg-white/5 hover:bg-amber-400/10 rounded-md transition-colors"
+                         >
+                           <Edit className="w-4 h-4" />
+                         </Link>
+                         <form action={deleteProduct}>
+                           <input type="hidden" name="id" value={product.id} />
+                           <button 
+                             type="submit"
+                             className="p-1.5 text-gray-400 hover:text-red-400 bg-white/5 hover:bg-red-400/10 rounded-md transition-colors"
+                           >
+                             <Trash2 className="w-4 h-4" />
+                           </button>
+                         </form>
+                       </div>
                     </td>
                   </tr>
                 ))

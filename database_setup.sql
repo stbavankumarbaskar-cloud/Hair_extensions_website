@@ -35,6 +35,35 @@ CREATE TABLE IF NOT EXISTS orders (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 4. Create OTPs Table (For Sign-in)
+CREATE TABLE IF NOT EXISTS otps (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    code VARCHAR(6) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 5. Create Vendors Table
+CREATE TABLE IF NOT EXISTS vendors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(50),
+    category VARCHAR(100) DEFAULT 'Hair Extensions',
+    status ENUM('Active', 'Inactive') DEFAULT 'Active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 6. Create Customers Table
+CREATE TABLE IF NOT EXISTS customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    total_orders INT DEFAULT 0,
+    total_spent DECIMAL(10, 2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- -----------------------------------------------------------------------------
 -- INSERT DUMMY DATA FOR FRONT PAGE & ADMIN DASHBOARD
 -- -----------------------------------------------------------------------------
@@ -53,10 +82,22 @@ INSERT INTO reviews (text, name, company, rating) VALUES
 ('The clip-in extensions are fantastic. They blend seamlessly with my natural hair and the quality is absolutely top-notch.', 'Sarah', 'Verified Customer', 5),
 ('Exceptional customer service and gorgeous products. I will definitely be repurchasing from them again. Highly recommended!', 'Jessica', 'Salon Owner', 5);
 
--- Insert Dummy Orders for Admin
+-- Insert Dummy Orders
 INSERT INTO orders (order_number, customer_name, product_name, amount, status) VALUES
 ('#ORD-1001', 'Emma Watson', '100% Brazilian Human Hair Bundles', 345.00, 'Processing'),
 ('#ORD-1002', 'Sophia Turner', 'Loose Deep Wave wig 13x4 Lace', 120.00, 'Completed'),
 ('#ORD-1003', 'Mia Johnson', 'Body Wave Lace Front Wigs', 135.00, 'Pending'),
 ('#ORD-1004', 'Isabella Smith', 'Bone Straight 13x6 HD Lace Front Wig', 155.00, 'Completed'),
 ('#ORD-1005', 'Olivia Williams', 'Indian Deep Wave 3 Bundles', 118.00, 'Processing');
+
+-- Insert Dummy Vendors
+INSERT INTO vendors (name, email, phone, category, status) VALUES
+('Premium Hair Co.', 'sales@premiumhair.com', '+1-555-0199', 'Wigs & Bundles', 'Active'),
+('Global Lace Supplies', 'support@globallace.com', '+1-555-0188', 'Lace Materials', 'Active'),
+('Brazilian Virgin Hair Ltd.', 'info@brazilianvirgin.com', '+1-555-0177', 'Virgin Hair', 'Inactive');
+
+-- Insert Dummy Customers
+INSERT INTO customers (name, email, total_orders, total_spent) VALUES
+('Emma Watson', 'emma@gmail.com', 4, 850.00),
+('Sophia Turner', 'sophia@gmail.com', 2, 240.00),
+('Mia Johnson', 'mia@gmail.com', 1, 135.00);

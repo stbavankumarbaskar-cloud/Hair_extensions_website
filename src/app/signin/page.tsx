@@ -1,141 +1,203 @@
 "use client";
-import React, { useState } from "react";
-import Link from "next/link";
+import React, { useState } from 'react';
+import { Mail, Fingerprint, ChevronDown, ArrowRight, X } from 'lucide-react';
+import Link from 'next/link';
 
 export default function SignInPage() {
-  const [isShopModalOpen, setIsShopModalOpen] = useState(false);
+  const [view, setView] = useState<'shop' | 'verify'>('shop');
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
+
+  const handleContinue = async () => {
+    if (!email.includes('@')) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        setView('verify');
+      } else {
+        alert(data.error || "Failed to send OTP");
+      }
+    } catch (err) {
+      console.error("OTP Error:", err);
+      alert("Something went wrong.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerify = async (codeArray: string[]) => {
+    const fullCode = codeArray.join('');
+    if (fullCode.length !== 6) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code: fullCode }),
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        localStorage.setItem('user_email', email);
+        // Trigger storage event for header
+        window.dispatchEvent(new Event('storage'));
+        window.location.href = '/account/profile';
+      } else {
+        alert(data.error || "Invalid code");
+      }
+    } catch (err) {
+      console.error("Verification Error:", err);
+      alert("Verification failed.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (value.length > 1) value = value.slice(-1);
+    const newCode = [...otpCode];
+    newCode[index] = value;
+    setOtpCode(newCode);
+
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+      nextInput?.focus();
+    }
+
+    if (newCode.every(v => v !== '')) {
+      handleVerify(newCode);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[#f7f7f7] flex flex-col items-center justify-center font-sans">
+    <div className="min-h-screen bg-[#f3f4f6] flex flex-col items-center justify-center p-6 font-sans">
       
-      <div className="bg-white p-10 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] w-full max-w-[460px] flex flex-col items-center mb-8">
+      <div className="w-full max-w-[480px] bg-white rounded-[32px] shadow-xl overflow-hidden animate-in fade-in zoom-in duration-500">
         
-        {/* Logo */}
-        <Link href="/" className="flex flex-col items-center mb-8">
-          <svg className="w-12 h-12 text-[#CAA45D] mb-1" viewBox="0 0 24 24" fill="currentColor">
-             <path d="M12 4.5C8 1.5 3.5 4.5 3.5 9c0 4.5 8.5 9.5 8.5 9.5s8.5-5 8.5-9.5C20.5 4.5 16 1.5 12 4.5Z" opacity="0.9"/>
-             <path d="M12 18.5C12 18.5 11 14 9 10" stroke="white" strokeWidth="1.2" fill="none" />
-             <path d="M12 18.5C12 18.5 13 14 15 10" stroke="white" strokeWidth="1.2" fill="none" />
-             <path d="M12 18.5L12 9" stroke="white" strokeWidth="1.2" fill="none" />
-          </svg>
-          <span className="font-serif text-[9px] tracking-[0.2em] text-[#CAA45D]">ONE LOVE HAIR</span>
-        </Link>
+        {view === 'shop' ? (
+          <div className="p-10 flex flex-col items-center">
+             {/* Shop Logo & Hair Thumbnail */}
+             <div className="flex items-center justify-center gap-4 mb-10">
+               <div className="w-16 h-16 rounded-full bg-[#5a31f4] flex items-center justify-center text-white text-2xl font-bold italic shadow-lg">
+                 shɔp
+               </div>
+               <div className="w-1.5 h-1.5 bg-gray-200 rounded-full"></div>
+               <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-lg">
+                 <img src="/logo1.png" alt="Hair Store" className="w-full h-full object-cover" />
+               </div>
+             </div>
 
-        {/* Headings */}
-        <div className="w-full text-left mb-6">
-          <h1 className="text-[28px] font-semibold text-gray-900 mb-1">Sign in</h1>
-          <p className="text-[15px] text-gray-500">Sign in or create an account</p>
-        </div>
+             <h1 className="text-[32px] font-bold text-gray-900 mb-2">Sign in to Shop</h1>
+             <p className="text-gray-500 mb-10 font-medium text-center">To continue to <span className="text-black font-bold">One Love Hair GmbH</span></p>
 
-        {/* Shop Pay Button */}
-        <button onClick={() => setIsShopModalOpen(true)} className="w-full bg-[#5a31f4] hover:bg-[#4d28d6] transition text-white py-4 rounded-md font-bold text-[15px] mb-6 shadow-sm">
-          Continue with shop
-        </button>
+             <div className="w-full space-y-5">
+               <div className="relative group">
+                 <input 
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email" 
+                  className="w-full h-[68px] px-7 bg-white border border-gray-300 rounded-[24px] text-gray-900 text-lg placeholder-gray-500 focus:outline-none focus:border-[#5a31f4] focus:ring-2 focus:ring-[#5a31f4]/20 transition-all shadow-sm"
+                />
+               </div>
 
-        {/* OR Divider */}
-        <div className="w-full flex items-center text-gray-400 text-[13px] mb-6">
-          <div className="flex-1 border-t border-gray-200"></div>
-          <div className="px-4">or</div>
-          <div className="flex-1 border-t border-gray-200"></div>
-        </div>
+               <button 
+                onClick={handleContinue}
+                disabled={isLoading}
+                className="w-full h-[68px] bg-[#5a31f4] hover:bg-[#4d2ad1] text-white rounded-full font-bold text-xl transition-all shadow-lg active:scale-[0.98] disabled:opacity-70 flex items-center justify-center"
+               >
+                 {isLoading ? (
+                   <div className="w-7 h-7 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+                 ) : (
+                   "Continue"
+                 )}
+               </button>
+             </div>
 
-        {/* Email Input */}
-        <div className="w-full mb-4">
-          <input 
-            type="email" 
-            placeholder="Email" 
-            className="w-full border border-blue-500 rounded-md p-[14px] text-[15px] outline-none shadow-[0_0_0_1px_rgba(59,130,246,1)]"
-            autoFocus
-          />
-        </div>
-
-        {/* Continue Button */}
-        <Link href="/checkout" className="w-full bg-[#005bd3] hover:bg-[#004bb0] transition text-white py-[14px] rounded-md font-bold text-[15px] mb-6 text-center shadow-sm block">
-          Continue
-        </Link>
-
-        {/* Checkbox */}
-        <div className="w-full flex items-start gap-3 mb-8">
-          <input type="checkbox" className="w-5 h-5 mt-[2px] border-gray-300 rounded text-blue-600 focus:ring-blue-500 cursor-pointer" />
-          <span className="text-[14px] text-gray-700">Email me with news and offers</span>
-        </div>
-
-        {/* Terms */}
-        <p className="text-[12px] text-gray-500 text-center">
-          By continuing, you agree to our <a href="#" className="underline hover:text-gray-700">Terms of service</a>
-        </p>
-
-      </div>
-
-      {/* Footer Link */}
-      <a href="#" className="text-blue-600 hover:underline text-[13px] font-medium">Privacy policy</a>
-
-      {/* Shop Pay Modal Overlay */}
-      {isShopModalOpen && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-[400px] overflow-hidden flex flex-col relative animate-in fade-in zoom-in duration-200">
-            
-            {/* Close Button */}
-            <button onClick={() => setIsShopModalOpen(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-
-            <div className="p-8 flex flex-col items-center text-center">
-              
-              {/* Logos */}
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-12 h-12 bg-[#5a31f4] rounded-full flex items-center justify-center text-white font-bold text-xl tracking-tighter">
-                  shop
-                </div>
-                <div className="flex gap-1">
-                  <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
-                  <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
-                  <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
-                </div>
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center overflow-hidden border border-gray-100">
-                  <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=100&h=100&fit=crop" alt="Avatar" className="w-full h-full object-cover" />
-                </div>
-              </div>
-
-              {/* Title & Subtitle */}
-              <h2 className="text-[22px] font-bold text-gray-900 mb-1">Sign in to Shop</h2>
-              <p className="text-[14px] text-gray-600 mb-8">To continue to <span className="font-bold text-gray-900">One Love Hair GmbH</span></p>
-
-              {/* Input */}
-              <input 
-                type="email" 
-                placeholder="Enter your email" 
-                className="w-full border border-gray-300 rounded-full px-5 py-[14px] text-[15px] outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition mb-4"
-                autoFocus
-              />
-
-              {/* Continue Button */}
-              <button className="w-full bg-[#5a31f4] hover:bg-[#4d28d6] transition text-white py-[14px] rounded-full font-bold text-[15px] mb-4">
-                Continue
-              </button>
-
-              {/* Passkey Button */}
-              <button className="w-full bg-[#f1f1f1] hover:bg-[#e5e5e5] transition text-gray-900 py-[14px] rounded-full font-bold text-[15px] mb-6 flex items-center justify-center gap-2">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
-                Use a passkey
-              </button>
-
-              {/* Disclaimer */}
-              <p className="text-[11px] text-gray-500 leading-relaxed mb-6">
+             <div className="mt-10 text-center px-6">
+              <p className="text-[13px] text-gray-400 leading-relaxed">
                 By continuing, you agree to Shop's <a href="#" className="underline">terms</a>, <a href="#" className="underline">privacy policy</a>, and to sharing your email, name, and avatar with One Love Hair GmbH. See their <a href="#" className="underline">terms</a> and <a href="#" className="underline">privacy policy</a>.
               </p>
+            </div>
 
-              {/* Language Selector */}
-              <button className="text-[12px] text-gray-500 flex items-center gap-1 hover:text-gray-700">
-                English
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-              </button>
-
+            <div className="mt-10 pt-6 border-t border-gray-100 w-full flex justify-center">
+               <div className="flex items-center gap-2 text-[14px] text-gray-500 font-medium cursor-pointer hover:text-gray-900 transition-colors">
+                <span>English</span>
+                <ChevronDown className="w-4 h-4" />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="p-10 flex flex-col items-center">
+             {/* Phone/Email Illustration */}
+             <div className="relative mb-10">
+               <div className="w-[100px] h-[170px] bg-[#2a138c] rounded-[24px] relative flex flex-col items-center pt-6 shadow-2xl">
+                 <div className="w-3 h-3 bg-black/20 rounded-full mb-6"></div>
+                 <div className="bg-white rounded-xl p-3 shadow-lg animate-bounce">
+                    <Mail className="w-10 h-10 text-[#5a31f4]" />
+                 </div>
+                 <div className="absolute top-6 right-4 w-4 h-4 bg-red-500 rounded-full border-3 border-[#2a138c]"></div>
+               </div>
+             </div>
 
+             <h2 className="text-[36px] font-bold text-gray-900 mb-3 text-center tracking-tight">Confirm it's you</h2>
+             <p className="text-gray-500 text-center mb-12 max-w-[320px] text-lg">
+               Enter code sent to <br/><span className="text-black font-bold break-all">{email}</span>
+             </p>
+
+             {/* Code Inputs */}
+             <div className="flex gap-3 mb-12 relative">
+               {isLoading && (
+                 <div className="absolute inset-0 z-10 bg-white/50 flex items-center justify-center rounded-xl">
+                    <div className="w-10 h-10 border-4 border-[#5a31f4]/30 border-t-[#5a31f4] rounded-full animate-spin" />
+                 </div>
+               )}
+               {[...Array(6)].map((_, i) => (
+                 <React.Fragment key={i}>
+                   <input 
+                    id={`otp-${i}`}
+                    type="text" 
+                    maxLength={1}
+                    value={otpCode[i]}
+                    onChange={(e) => handleOtpChange(i, e.target.value)}
+                    className="w-[60px] h-[76px] border-2 border-gray-200 rounded-[18px] text-center text-3xl font-bold text-gray-900 focus:outline-none focus:border-[#5a31f4] focus:ring-4 focus:ring-[#5a31f4]/10 transition-all"
+                   />
+                   {i === 2 && <div className="flex items-center justify-center w-2 text-gray-300 font-bold text-2xl">•</div>}
+                 </React.Fragment>
+               ))}
+             </div>
+
+             <button 
+              onClick={() => setView('shop')}
+              className="flex items-center gap-2 text-gray-900 font-bold hover:bg-gray-50 px-6 py-3 rounded-xl transition-all"
+             >
+               <ArrowRight className="w-5 h-5 rotate-180" />
+               <span>Use a different account</span>
+             </button>
+
+             <div className="mt-16 pt-8 border-t border-gray-100 w-full flex justify-center">
+               <div className="flex items-center gap-2 text-[14px] text-gray-500 font-medium cursor-pointer hover:text-gray-900 transition-colors">
+                <span>English</span>
+                <ChevronDown className="w-4 h-4" />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-10 flex gap-6">
+        <Link href="#" className="text-[14px] text-blue-600 hover:underline">Privacy policy</Link>
+      </div>
     </div>
   );
 }

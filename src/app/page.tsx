@@ -326,8 +326,9 @@ function ProductCard({ product }: { product: any }) {
     price: product.price,
     img: product.img,
   });
-  if (product.oldPrice) {
-    queryParams.append('oldPrice', product.oldPrice);
+  const oldPriceValue = product.oldPrice || product.old_price;
+  if (oldPriceValue) {
+    queryParams.append('oldPrice', String(oldPriceValue));
   }
 
   return (
@@ -339,7 +340,7 @@ function ProductCard({ product }: { product: any }) {
           className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
         />
         {/* Sale Tag */}
-        {product.oldPrice && (
+        {(product.oldPrice || product.old_price) && (
           <div className="absolute bottom-3 left-3 bg-white text-gray-800 text-[10px] tracking-wide px-3 py-1 rounded-full shadow-sm font-medium">
             Sale
           </div>
@@ -368,9 +369,15 @@ function ProductCard({ product }: { product: any }) {
         <div className="mt-auto">
             {/* Price */}
             <div className="flex items-center space-x-[6px]">
-                <span className="text-[12px] font-semibold text-[#3a3a3a]">{product.price}</span>
-                {product.oldPrice && (
-                    <span className="text-[11px] text-[#9a9a9a] line-through">{product.oldPrice}</span>
+                <span className="text-[12px] font-semibold text-[#3a3a3a]">
+                  {typeof product.price === 'number' ? `$${product.price.toFixed(2)}` : product.price}
+                </span>
+                {(product.oldPrice || product.old_price) && (
+                    <span className="text-[11px] text-[#9a9a9a] line-through">
+                      {typeof (product.oldPrice || product.old_price) === 'number' 
+                        ? `$${(product.oldPrice || product.old_price).toFixed(2)}` 
+                        : (product.oldPrice || product.old_price)}
+                    </span>
                 )}
             </div>
         </div>

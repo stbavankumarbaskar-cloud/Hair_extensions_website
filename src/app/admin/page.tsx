@@ -1,13 +1,6 @@
 import React from 'react';
 import { DollarSign, ShoppingCart, Users, TrendingUp, MoreHorizontal, ArrowUpRight, ArrowDownRight, AlertCircle } from 'lucide-react';
-import pool from '../../lib/db';
-
-const STATS = [
-  { id: 1, title: 'Total Revenue', value: '$45,231.89', change: '+20.1%', positive: true, icon: DollarSign },
-  { id: 2, title: 'Active Orders', value: '1,204', change: '+12.4%', positive: true, icon: ShoppingCart },
-  { id: 3, title: 'Total Customers', value: '8,420', change: '-4.3%', positive: false, icon: Users },
-  { id: 4, title: 'Monthly Growth', value: '+35%', change: '+8.1%', positive: true, icon: TrendingUp },
-];
+import pool from '@/lib/db';
 
 const FALLBACK_ORDERS = [
   { id: 1, order_number: '#ORD-001', customer_name: 'Emma Watson', product_name: '100% Brazilian Human Hair Bundles', created_at: '2 mins ago', status: 'Processing', amount: '345.00' },
@@ -19,19 +12,43 @@ const FALLBACK_ORDERS = [
 
 export default async function AdminDashboard() {
   let recentOrders = FALLBACK_ORDERS;
+  let lowStockProducts: any[] = [];
   let dbConnected = false;
   let dbError = "";
+  let stats = [
+    { id: 1, title: 'Total Revenue', value: '$0.00', change: '+0%', positive: true, icon: DollarSign },
+    { id: 2, title: 'Active Orders', value: '0', change: '+0%', positive: true, icon: ShoppingCart },
+    { id: 3, title: 'Total Customers', value: '0', change: '+0%', positive: true, icon: Users },
+    { id: 4, title: 'Monthly Growth', value: '+0%', change: '+0%', positive: true, icon: TrendingUp },
+  ];
 
   try {
-    // Attempt to fetch from MySQL database
-    const [rows] = await pool.query('SELECT * FROM orders ORDER BY created_at DESC LIMIT 5');
-    if (Array.isArray(rows) && rows.length > 0) {
-      recentOrders = rows as any[];
+    // 1. Fetch KPI Stats
+    const [revResult]: any = await pool.query('SELECT SUM(amount) as total FROM orders WHERE status = "Completed"');
+    const [ordersResult]: any = await pool.query('SELECT COUNT(*) as count FROM orders WHERE status IN ("Pending", "Processing")');
+    const [custResult]: any = await pool.query('SELECT COUNT(DISTINCT customer_name) as count FROM orders');
+    
+    stats[0].value = `$${(revResult[0]?.total || 0).toLocaleString()}`;
+    stats[1].value = (ordersResult[0]?.count || 0).toString();
+    stats[2].value = (custResult[0]?.count || 0).toString();
+    stats[3].value = '+12%'; // Mock growth
+
+    // 2. Fetch Recent Orders
+    const [orderRows] = await pool.query('SELECT * FROM orders ORDER BY created_at DESC LIMIT 5');
+    if (Array.isArray(orderRows) && orderRows.length > 0) {
+      recentOrders = orderRows as any[];
     }
+
+    // 3. Fetch Low Stock Products
+    const [stockRows] = await pool.query('SELECT * FROM products WHERE stock <= 5 ORDER BY stock ASC LIMIT 5');
+    if (Array.isArray(stockRows)) {
+      lowStockProducts = stockRows as any[];
+    }
+
     dbConnected = true;
   } catch (error: any) {
     dbError = error.message;
-    console.log("Database not connected yet, using fallback data. Error:", error.message);
+    console.log("Database fetch failed, using fallback data. Error:", error.message);
   }
 
   // Format the date helper
@@ -74,7 +91,7 @@ export default async function AdminDashboard() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {STATS.map((stat) => (
+        {stats.map((stat) => (
           <div key={stat.id} className="bg-[#16181d] border border-white/5 p-6 rounded-2xl shadow-lg relative overflow-hidden group hover:border-amber-500/30 transition-colors duration-300">
             {/* Subtle glow on hover */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/20 transition-colors"></div>
@@ -148,7 +165,7 @@ export default async function AdminDashboard() {
         <div className="lg:col-span-1 bg-[#16181d] border border-white/5 rounded-2xl shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-semibold text-white">Recent Orders</h2>
-            <button className="text-xs text-amber-500 hover:text-amber-400 font-medium transition-colors">View All</button>
+            <Link href="/admin/orders" className="text-xs text-amber-500 hover:text-amber-400 font-medium transition-colors">View All</Link>
           </div>
           
           <div className="space-y-4">
@@ -156,7 +173,7 @@ export default async function AdminDashboard() {
               <div key={order.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors group cursor-pointer">
                 <div>
                   <p className="text-sm font-medium text-white group-hover:text-amber-400 transition-colors">{order.customer_name}</p>
-                  <p className="text-[11px] text-gray-500 truncate max-w-[150px]">{order.product_name}</p>
+                  <p className="text-[11px] text-gray-500 truncate max-w-[120px]">{order.product_name}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-white">${Number(order.amount).toFixed(2)}</p>
@@ -173,7 +190,41 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
+        {/* Low Stock Alerts */}
+        <div className="lg:col-span-1 bg-[#16181d] border border-white/5 rounded-2xl shadow-lg p-6">
+           <div className="flex items-center gap-2 mb-6">
+             <AlertCircle className="w-5 h-5 text-red-500" />
+             <h2 className="text-lg font-semibold text-white">Low Stock Alerts</h2>
+           </div>
+           
+           <div className="space-y-4">
+             {lowStockProducts.length === 0 ? (
+               <div className="text-center py-8 text-gray-500 text-sm italic">
+                 <p>All inventory levels are healthy.</p>
+               </div>
+             ) : (
+               lowStockProducts.map((product) => (
+                 <div key={product.id} className="flex items-center justify-between p-3 rounded-xl bg-red-500/5 border border-red-500/10 hover:bg-red-500/10 transition-colors group">
+                    <div className="flex items-center gap-3">
+                      <img src={product.img} alt="" className="w-8 h-8 rounded object-cover" />
+                      <div>
+                        <p className="text-xs font-medium text-white group-hover:text-red-400 transition-colors truncate max-w-[100px]">{product.name}</p>
+                        <p className="text-[10px] text-gray-500">{product.category}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-red-400">{product.stock} left</p>
+                      <Link href={`/admin/products/${product.id}`} className="text-[10px] text-amber-500 hover:underline">Restock</Link>
+                    </div>
+                 </div>
+               ))
+             )}
+           </div>
+        </div>
+
       </div>
+
+      {/* Analytics Graph & Recent Orders row... */}
 
       {/* Detailed Orders Table */}
       <div className="bg-[#16181d] border border-white/5 rounded-2xl shadow-lg p-6 overflow-hidden">
