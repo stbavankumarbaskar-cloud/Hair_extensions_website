@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS products (
     old_price DECIMAL(10, 2),
     img VARCHAR(255) NOT NULL,
     category VARCHAR(100) DEFAULT 'Bundles',
+    stock INT DEFAULT 0,
     reviews_count INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -69,12 +70,12 @@ CREATE TABLE IF NOT EXISTS customers (
 -- -----------------------------------------------------------------------------
 
 -- Insert Dummy Products
-INSERT INTO products (name, price, old_price, img, category, reviews_count) VALUES
-('Love Hair 3 Bundles 9A Grade Brazilian Human Hair Water Wave', 86.00, 120.00, 'https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Bundle', 124),
-('Queen Hair 10A Brazilian Hair Straight 3 Bundles Virgin Human Hair', 75.00, 95.00, 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Bundle', 89),
-('Love Hair Body Wave 3 Bundles With Closure Brazilian Human Hair', 98.50, 140.00, 'https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Bundle', 312),
-('Loose Deep Wave wig 13x4 Lace Front Human Hair Wigs', 120.00, 180.00, 'https://images.unsplash.com/photo-1562086254-20b16260bd7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Wig', 215),
-('Bone Straight 13x6 HD Lace Front Wig Free Part', 155.00, 230.00, 'https://images.unsplash.com/photo-1583001809873-c12ebba3152f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Wig', 93);
+INSERT INTO products (name, price, old_price, img, category, reviews_count, stock) VALUES
+('Love Hair 3 Bundles 9A Grade Brazilian Human Hair Water Wave', 86.00, 120.00, 'https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Bundle', 124, 15),
+('Queen Hair 10A Brazilian Hair Straight 3 Bundles Virgin Human Hair', 75.00, 95.00, 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Bundle', 89, 4),
+('Love Hair Body Wave 3 Bundles With Closure Brazilian Human Hair', 98.50, 140.00, 'https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Bundle', 312, 22),
+('Loose Deep Wave wig 13x4 Lace Front Human Hair Wigs', 120.00, 180.00, 'https://images.unsplash.com/photo-1562086254-20b16260bd7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Wig', 215, 3),
+('Bone Straight 13x6 HD Lace Front Wig Free Part', 155.00, 230.00, 'https://images.unsplash.com/photo-1583001809873-c12ebba3152f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Wig', 93, 12);
 
 -- Insert Dummy Reviews
 INSERT INTO reviews (text, name, company, rating) VALUES

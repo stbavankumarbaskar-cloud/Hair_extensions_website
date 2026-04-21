@@ -58,6 +58,9 @@ export async function POST(req: Request) {
         user: process.env.EMAIL_USER,
         pass: cleanPass,
       },
+      tls: {
+        rejectUnauthorized: false
+      }
     });
 
     // 5. Send Email

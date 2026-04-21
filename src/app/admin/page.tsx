@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { DollarSign, ShoppingCart, Users, TrendingUp, MoreHorizontal, ArrowUpRight, ArrowDownRight, AlertCircle } from 'lucide-react';
 import pool from '@/lib/db';
 

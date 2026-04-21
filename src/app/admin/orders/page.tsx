@@ -96,6 +96,7 @@ export default async function AdminOrdersPage() {
                         {order.status}
                       </span>
                     </td>
+                    <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-3 items-center">
                         <Link 
                           href={`/admin/orders/${order.id}`}

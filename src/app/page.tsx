@@ -6,6 +6,7 @@ import { ShoppingCart, Search, Menu, Star, ChevronLeft, ChevronRight, User, Chev
 import CartDrawer from '../components/CartDrawer';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import ProductCard from '../components/ProductCard';
 
 const REVIEWS = [
   {
@@ -105,7 +106,10 @@ export default function Home() {
             <p className="text-base md:text-xl text-amber-200 mb-10 font-semibold italic drop-shadow-md">
               Buy 3 Get 1 Free | Up to 40% Off Bundles & Wigs | Best Value for Money
             </p>
-            <button suppressHydrationWarning className="bg-amber-600 hover:bg-amber-700 text-white transition-all transform hover:scale-105 duration-300 font-bold uppercase tracking-wider py-4 px-10 rounded shadow-[0_0_20px_rgba(217,119,6,0.4)]">
+            <button suppressHydrationWarning 
+              onClick={() => window.location.href='/products'}
+              className="bg-amber-600 hover:bg-amber-700 text-white transition-all transform hover:scale-105 duration-300 font-bold uppercase tracking-wider py-4 px-10 rounded shadow-[0_0_20px_rgba(217,119,6,0.4)]"
+            >
               Shop 100% Human Hair Bundles & Wigs
             </button>
           </div>
@@ -118,7 +122,7 @@ export default function Home() {
               <h2 className="text-[28px] font-serif font-bold text-[#1a202c] mb-2 tracking-tight">Premium Virgin Hair Extension</h2>
               <div className="w-16 h-[3px] bg-[#e65c00]"></div>
             </div>
-            <a href="#" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">View All →</a>
+            <Link href="/products" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">View All →</Link>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
@@ -136,7 +140,12 @@ export default function Home() {
             ))}
           </div>
            <div className="mt-8 text-center sm:hidden">
-             <button suppressHydrationWarning className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition">View All Products</button>
+             <button suppressHydrationWarning 
+               onClick={() => window.location.href='/products'}
+               className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition"
+             >
+               View All Products
+             </button>
           </div>
         </section>
 
@@ -147,7 +156,7 @@ export default function Home() {
               <h2 className="text-[28px] font-serif font-bold text-[#1a202c] mb-2 tracking-tight">Truth / Virgin Hair Wigs</h2>
               <div className="w-16 h-[3px] bg-[#e65c00]"></div>
             </div>
-             <a href="#" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">View All Wigs →</a>
+             <Link href="/products?category=wig" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">View All Wigs →</Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
             {(dbProducts.length > 0 ? dbProducts.filter(p => p.category === 'Wig') : [
@@ -165,7 +174,12 @@ export default function Home() {
             ))}
           </div>
            <div className="mt-8 text-center sm:hidden">
-             <button suppressHydrationWarning className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition">View All Wigs</button>
+             <button suppressHydrationWarning 
+               onClick={() => window.location.href='/products?category=wig'}
+               className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition"
+             >
+               View All Wigs
+             </button>
           </div>
         </section>
 
@@ -176,7 +190,7 @@ export default function Home() {
               <h2 className="text-[28px] font-serif font-bold text-[#1a202c] mb-2 tracking-tight">Trending Wigs</h2>
               <div className="w-16 h-[3px] bg-[#e65c00]"></div>
             </div>
-             <a href="#" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">Shop Trending →</a>
+             <Link href="/products?category=trending" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">Shop Trending →</Link>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3">
             {(dbProducts.length > 0 ? dbProducts.slice(0, 4) : [
@@ -320,68 +334,4 @@ export default function Home() {
   );
 }
 
-function ProductCard({ product }: { product: any }) {
-  const queryParams = new URLSearchParams({
-    name: product.name,
-    price: product.price,
-    img: product.img,
-  });
-  const oldPriceValue = product.oldPrice || product.old_price;
-  if (oldPriceValue) {
-    queryParams.append('oldPrice', String(oldPriceValue));
-  }
 
-  return (
-    <Link href={`/product?${queryParams.toString()}`} className="group cursor-pointer flex flex-col h-full bg-transparent">
-      <div className="relative aspect-[3/4.2] bg-white overflow-hidden mb-3">
-        <img 
-          src={product.img} 
-          alt={product.name} 
-          className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
-        />
-        {/* Sale Tag */}
-        {(product.oldPrice || product.old_price) && (
-          <div className="absolute bottom-3 left-3 bg-white text-gray-800 text-[10px] tracking-wide px-3 py-1 rounded-full shadow-sm font-medium">
-            Sale
-          </div>
-        )}
-        
-        {/* Quick Add icon */}
-        <div className="absolute bottom-3 right-3 bg-white text-gray-800 w-8 h-8 rounded-full shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-           <ShoppingCart className="w-[14px] h-[14px]" strokeWidth={2.5}/>
-        </div>
-        
-        {/* Arrows (hover) */}
-        <div className="absolute top-1/2 left-3 -translate-y-1/2 bg-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <ChevronLeft className="w-5 h-5 text-gray-800" strokeWidth={1.5} />
-        </div>
-        <div className="absolute top-1/2 right-3 -translate-y-1/2 bg-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <ChevronRight className="w-5 h-5 text-gray-800" strokeWidth={1.5} />
-        </div>
-      </div>
-      
-      <div className="flex flex-col flex-grow pt-1 px-1">
-        {/* Product Name */}
-        <h3 className="text-[14px] text-[#2c2c2c] mb-[6px] leading-relaxed font-sans transition group-hover:opacity-80">
-          {product.name} • Buy Now Pay Later
-        </h3>
-        
-        <div className="mt-auto">
-            {/* Price */}
-            <div className="flex items-center space-x-[6px]">
-                <span className="text-[12px] font-semibold text-[#3a3a3a]">
-                  {typeof product.price === 'number' ? `$${product.price.toFixed(2)}` : product.price}
-                </span>
-                {(product.oldPrice || product.old_price) && (
-                    <span className="text-[11px] text-[#9a9a9a] line-through">
-                      {typeof (product.oldPrice || product.old_price) === 'number' 
-                        ? `$${(product.oldPrice || product.old_price).toFixed(2)}` 
-                        : (product.oldPrice || product.old_price)}
-                    </span>
-                )}
-            </div>
-        </div>
-      </div>
-    </Link>
-  );
-}
