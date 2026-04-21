@@ -19,7 +19,7 @@ export default function AdminReportsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
          {[
            { label: 'Conversion Rate', value: '3.24%', trend: '+0.5%', pos: true, icon: TrendingUp },
-           { label: 'Avg Order Value', value: '$156.00', trend: '-2.1%', pos: false, icon: BarChart3 },
+           { label: 'Avg Order Value', value: '₹156.00', trend: '-2.1%', pos: false, icon: BarChart3 },
            { label: 'Repeat Customers', value: '24%', trend: '+4.2%', pos: true, icon: Users },
            { label: 'Abandoned Carts', value: '42', trend: '-8%', pos: true, icon: ShoppingBag },
          ].map((stat, i) => (
@@ -57,7 +57,7 @@ export default function AdminReportsPage() {
                       className="bg-amber-500/30 group-hover/bar:bg-amber-500/50 group-hover:bg-amber-500/40 transition-all rounded-t-sm relative"
                     >
                       <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-[10px] text-white px-2 py-1 rounded shadow-lg opacity-0 group-hover/bar:opacity-100 transition-opacity z-20 whitespace-nowrap">
-                        ${(h * 123).toLocaleString()}
+                        ₹{(h * 123).toLocaleString()}
                       </div>
                     </div>
                  </div>
@@ -73,11 +73,11 @@ export default function AdminReportsPage() {
             <h2 className="text-lg font-bold text-slate-900 mb-6">Top Selling Products</h2>
             <div className="space-y-4 flex-1">
                {[
-                 { name: 'Brazilian Water Wave 4 Bundles', sales: 124, revenue: '$15,500', trend: '+15%' },
-                 { name: 'Bone Straight 13x6 HD Lace Wig', sales: 93, revenue: '$14,415', trend: '+8%' },
-                 { name: 'Queen Hair 10A Brazilian Straight', sales: 89, revenue: '$6,675', trend: '+12%' },
-                 { name: 'Body Wave Lace Front Wigs', sales: 84, revenue: '$11,340', trend: '-2%' },
-                 { name: 'Indian Deep Wave 3 Bundles', sales: 76, revenue: '$9,348', trend: '+5%' },
+                 { name: 'Brazilian Water Wave 4 Bundles', sales: 124, revenue: '₹15,500', trend: '+15%' },
+                 { name: 'Bone Straight 13x6 HD Lace Wig', sales: 93, revenue: '₹14,415', trend: '+8%' },
+                 { name: 'Queen Hair 10A Brazilian Straight', sales: 89, revenue: '₹6,675', trend: '+12%' },
+                 { name: 'Body Wave Lace Front Wigs', sales: 84, revenue: '₹11,340', trend: '-2%' },
+                 { name: 'Indian Deep Wave 3 Bundles', sales: 76, revenue: '₹9,348', trend: '+5%' },
                ].map((p, i) => (
                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-slate-200 transition-colors group">
                     <div className="flex items-center gap-3">

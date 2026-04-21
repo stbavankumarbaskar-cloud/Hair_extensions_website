@@ -30,7 +30,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
   const removeItem = (id: number) => setItems((prev) => prev.filter((i) => i.id !== id));
 
   const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
-  const fmt = (n: number) => `R$ ${n.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
+  const fmt = (n: number) => `₹ ${n.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
   const totalQty = items.reduce((sum, i) => sum + i.qty, 0);
 
   // Stop scrolling when drawer is open

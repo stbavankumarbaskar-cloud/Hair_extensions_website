@@ -83,7 +83,7 @@ export default async function AdminProductsPage() {
                     <td className="px-4 py-4">
                       <span className="bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full text-[10px] uppercase font-bold tracking-wider border border-slate-200/50">{product.category}</span>
                     </td>
-                    <td className="px-4 py-4 text-slate-900 font-bold text-base">${Number(product.price).toFixed(2)}</td>
+                    <td className="px-4 py-4 text-slate-900 font-bold text-base">₹{Number(product.price).toFixed(2)}</td>
                     <td className="px-4 py-4 text-center">
                       <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${product.stock <= 5 ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
                         {product.stock || 0}

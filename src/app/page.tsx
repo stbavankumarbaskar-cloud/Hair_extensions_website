@@ -127,14 +127,14 @@ export default function Home() {
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
             {(dbProducts.length > 0 ? dbProducts.filter(p => p.category === 'Bundle') : [
-              { id: 1, name: "Love Hair 3 Bundles 9A Grade Brazilian Human Hair Water Wave", price: "$86.00", oldPrice: "$120.00", img: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&w=600&q=80", reviews: 124 },
-              { id: 2, name: "Queen Hair 10A Brazilian Hair Straight 3 Bundles Virgin Human Hair", price: "$75.00", oldPrice: "$95.00", img: "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?auto=format&fit=crop&w=600&q=80", reviews: 89 },
-              { id: 3, name: "Love Hair Body Wave 3 Bundles With Closure Brazilian Human Hair", price: "$98.50", oldPrice: "$140.00", img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?auto=format&fit=crop&w=600&q=80", reviews: 312 },
-              { id: 4, name: "Loose Deep Wave 3 Bundles With Frontal 100% Unprocessed Virgin Hair", price: "$112.00", oldPrice: "$160.00", img: "https://images.unsplash.com/photo-1517462964-21fdcec3f25b?auto=format&fit=crop&w=600&q=80", reviews: 67 },
-               { id: 5, name: "Peruvian Straight Hair 4 Bundles Deal Virgin Human Hair Weave", price: "$105.00", oldPrice: "$150.00", img: "https://images.unsplash.com/photo-1694438312015-h00QRko_Ekc?auto=format&fit=crop&w=600&q=80", reviews: 45 },
-               { id: 6, name: "Malaysian Curly Hair 3 Bundles Kinky Curly Virgin Human Hair", price: "$92.00", oldPrice: "$130.00", img: "https://images.unsplash.com/photo-1616428789366-a3d5e21fb2b9?auto=format&fit=crop&w=600&q=80", reviews: 290 },
-               { id: 7, name: "Indian Deep Wave 3 Bundles With 4x4 Lace Closure Human Hair", price: "$118.00", oldPrice: "$170.00", img: "https://images.unsplash.com/photo-1584297141812-019d82253c85?auto=format&fit=crop&w=600&q=80", reviews: 156 },
-               { id: 8, name: "Brazilian Water Wave 4 Bundles Wet and Wavy Human Hair", price: "$125.00", oldPrice: "$180.00", img: "https://images.unsplash.com/photo-1541216970279-affbfdd55aa8?auto=format&fit=crop&w=600&q=80", reviews: 88 }
+              { id: 1, name: "Love Hair 3 Bundles 9A Grade Brazilian Human Hair Water Wave", price: "₹8,600", oldPrice: "₹12,000", img: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&w=600&q=80", reviews: 124 },
+              { id: 2, name: "Queen Hair 10A Brazilian Hair Straight 3 Bundles Virgin Human Hair", price: "₹7,500", oldPrice: "₹9,500", img: "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?auto=format&fit=crop&w=600&q=80", reviews: 89 },
+              { id: 3, name: "Love Hair Body Wave 3 Bundles With Closure Brazilian Human Hair", price: "₹9,850", oldPrice: "₹14,000", img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?auto=format&fit=crop&w=600&q=80", reviews: 312 },
+              { id: 4, name: "Loose Deep Wave 3 Bundles With Frontal 100% Unprocessed Virgin Hair", price: "₹11,200", oldPrice: "₹16,000", img: "https://images.unsplash.com/photo-1517462964-21fdcec3f25b?auto=format&fit=crop&w=600&q=80", reviews: 67 },
+              { id: 5, name: "Peruvian Straight Hair 4 Bundles Deal Virgin Human Hair Weave", price: "₹10,500", oldPrice: "₹15,000", img: "https://images.unsplash.com/photo-1694438312015-h00QRko_Ekc?auto=format&fit=crop&w=600&q=80", reviews: 45 },
+              { id: 6, name: "Malaysian Curly Hair 3 Bundles Kinky Curly Virgin Human Hair", price: "₹9,200", oldPrice: "₹13,000", img: "https://images.unsplash.com/photo-1616428789366-a3d5e21fb2b9?auto=format&fit=crop&w=600&q=80", reviews: 290 },
+              { id: 7, name: "Indian Deep Wave 3 Bundles With 4x4 Lace Closure Human Hair", price: "₹11,800", oldPrice: "₹17,000", img: "https://images.unsplash.com/photo-1584297141812-019d82253c85?auto=format&fit=crop&w=600&q=80", reviews: 156 },
+              { id: 8, name: "Brazilian Water Wave 4 Bundles Wet and Wavy Human Hair", price: "₹12,500", oldPrice: "₹18,000", img: "https://images.unsplash.com/photo-1541216970279-affbfdd55aa8?auto=format&fit=crop&w=600&q=80", reviews: 88 }
             ]).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -160,15 +160,15 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
             {(dbProducts.length > 0 ? dbProducts.filter(p => p.category === 'Wig') : [
-              { id: 1, name: "Loose Deep Wave wig 13x4 Lace Front Human Hair Wigs", price: "$120.00", oldPrice: "$180.00", img: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&w=600&q=80", reviews: 215 },
-              { id: 2, name: "Body Wave Lace Front Wigs Human Hair 180% Density", price: "$135.00", oldPrice: "$195.00", img: "https://images.unsplash.com/photo-1694438312015-h00QRko_Ekc?auto=format&fit=crop&w=600&q=80", reviews: 84 },
-              { id: 3, name: "Water Wave Headband Wig Human Hair Glueless Wigs", price: "$85.00", oldPrice: "$115.00", img: "https://images.unsplash.com/photo-1541216970279-affbfdd55aa8?auto=format&fit=crop&w=600&q=80", reviews: 49 },
-              { id: 4, name: "Highlight Lace Front Wigs Human Hair Ombre Straight Wig", price: "$145.00", oldPrice: "$210.00", img: "https://images.unsplash.com/photo-1584297141812-019d82253c85?auto=format&fit=crop&w=600&q=80", reviews: 132 },
-               { id: 5, name: "Bone Straight 13x6 HD Lace Front Wig Free Part", price: "$155.00", oldPrice: "$230.00", img: "https://images.unsplash.com/photo-1517462964-21fdcec3f25b?auto=format&fit=crop&w=600&q=80", reviews: 93 },
-               { id: 6, name: "Kinky Straight Headband Wig for Black Women", price: "$75.00", oldPrice: "$99.00", img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?auto=format&fit=crop&w=600&q=80", reviews: 110 },
-               { id: 7, name: "Short Bob Wig Lace Front Human Hair Wigs", price: "$68.00", oldPrice: "$85.00", img: "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?auto=format&fit=crop&w=600&q=80", reviews: 420 },
-               { id: 8, name: "Blonde 613 Lace Front Wig Body Wave Transparent Lace", price: "$140.00", oldPrice: "$200.00", img: "https://images.unsplash.com/photo-1560963683-162e24d35eef?auto=format&fit=crop&w=600&q=80", reviews: 315 },
-               { id: 9, name: "Deep Wave Lace Closure Wig 4x4 Pre Plucked With Baby Hair", price: "$110.00", oldPrice: "$150.00", img: "https://images.unsplash.com/photo-1531685250784-523c9213197f?auto=format&fit=crop&w=600&q=80", reviews: 75 }
+              { id: 1, name: "Loose Deep Wave wig 13x4 Lace Front Human Hair Wigs", price: "₹12,000", oldPrice: "₹18,000", img: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&w=600&q=80", reviews: 215 },
+              { id: 2, name: "Body Wave Lace Front Wigs Human Hair 180% Density", price: "₹13,500", oldPrice: "₹19,500", img: "https://images.unsplash.com/photo-1694438312015-h00QRko_Ekc?auto=format&fit=crop&w=600&q=80", reviews: 84 },
+              { id: 3, name: "Water Wave Headband Wig Human Hair Glueless Wigs", price: "₹8,500", oldPrice: "₹11,500", img: "https://images.unsplash.com/photo-1541216970279-affbfdd55aa8?auto=format&fit=crop&w=600&q=80", reviews: 49 },
+              { id: 4, name: "Highlight Lace Front Wigs Human Hair Ombre Straight Wig", price: "₹14,500", oldPrice: "₹21,000", img: "https://images.unsplash.com/photo-1584297141812-019d82253c85?auto=format&fit=crop&w=600&q=80", reviews: 132 },
+              { id: 5, name: "Bone Straight 13x6 HD Lace Front Wig Free Part", price: "₹15,500", oldPrice: "₹23,000", img: "https://images.unsplash.com/photo-1517462964-21fdcec3f25b?auto=format&fit=crop&w=600&q=80", reviews: 93 },
+              { id: 6, name: "Kinky Straight Headband Wig for Black Women", price: "₹7,500", oldPrice: "₹9,900", img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?auto=format&fit=crop&w=600&q=80", reviews: 110 },
+              { id: 7, name: "Short Bob Wig Lace Front Human Hair Wigs", price: "₹6,800", oldPrice: "₹8,500", img: "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?auto=format&fit=crop&w=600&q=80", reviews: 420 },
+              { id: 8, name: "Blonde 613 Lace Front Wig Body Wave Transparent Lace", price: "₹14,000", oldPrice: "₹20,000", img: "https://images.unsplash.com/photo-1560963683-162e24d35eef?auto=format&fit=crop&w=600&q=80", reviews: 315 },
+              { id: 9, name: "Deep Wave Lace Closure Wig 4x4 Pre Plucked With Baby Hair", price: "₹11,000", oldPrice: "₹15,000", img: "https://images.unsplash.com/photo-1531685250784-523c9213197f?auto=format&fit=crop&w=600&q=80", reviews: 75 }
             ]).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -194,10 +194,10 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3">
             {(dbProducts.length > 0 ? dbProducts.slice(0, 4) : [
-              { id: 1, name: "Loose Deep Wave wig", price: "$120.00", img: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 400 },
-              { id: 2, name: "Love Hair Body Wave", price: "$135.00", img: "https://images.unsplash.com/photo-1616428789366-a3d5e21fb2b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 200 },
-              { id: 3, name: "Straight Lace Front wig", price: "$145.00", img: "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 150 },
-              { id: 4, name: "Curly Bob wig", price: "$85.00", img: "https://images.unsplash.com/photo-1512401777085-c49195e340fa?auto=format&fit=crop&q=80&w=400", reviews: 80 }
+              { id: 1, name: "Loose Deep Wave wig", price: "₹12,000", img: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 400 },
+              { id: 2, name: "Love Hair Body Wave", price: "₹13,500", img: "https://images.unsplash.com/photo-1616428789366-a3d5e21fb2b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 200 },
+              { id: 3, name: "Straight Lace Front wig", price: "₹14,500", img: "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 150 },
+              { id: 4, name: "Curly Bob wig", price: "₹8,500", img: "https://images.unsplash.com/photo-1512401777085-c49195e340fa?auto=format&fit=crop&q=80&w=400", reviews: 80 }
             ]).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

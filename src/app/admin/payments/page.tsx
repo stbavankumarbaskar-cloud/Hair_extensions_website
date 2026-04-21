@@ -1,5 +1,5 @@
 import React from 'react';
-import { CreditCard, DollarSign, ArrowUpRight, ArrowDownRight, CheckCircle2, XCircle } from 'lucide-react';
+import { CreditCard, IndianRupee, ArrowUpRight, ArrowDownRight, CheckCircle2, XCircle } from 'lucide-react';
 import pool from '@/lib/db';
 
 export default async function AdminPaymentsPage() {
@@ -33,23 +33,23 @@ export default async function AdminPaymentsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl shadow-sm">
           <div className="flex justify-between items-start mb-4">
-             <div className="p-3 bg-emerald-100 rounded-xl text-emerald-600"><DollarSign className="w-5 h-5" /></div>
+             <div className="p-3 bg-emerald-100 rounded-xl text-emerald-600"><IndianRupee className="w-5 h-5" /></div>
              <div className="flex items-center gap-1 text-xs text-emerald-600 font-bold bg-emerald-100 px-2 py-1 rounded-full">
                <ArrowUpRight className="w-3 h-3" /> +12%
              </div>
           </div>
           <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Total Revenue</p>
-          <p className="text-2xl font-bold text-slate-900">$12,450.00</p>
+          <p className="text-2xl font-bold text-slate-900">₹12,450.00</p>
         </div>
         <div className="bg-blue-50 border border-blue-100 p-6 rounded-2xl shadow-sm">
            <div className="p-3 bg-blue-100 rounded-xl text-blue-600 w-fit mb-4"><CreditCard className="w-5 h-5" /></div>
            <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Pending Transfers</p>
-           <p className="text-2xl font-bold text-slate-900">$1,230.45</p>
+           <p className="text-2xl font-bold text-slate-900">₹1,230.45</p>
         </div>
         <div className="bg-red-50 border border-red-100 p-6 rounded-2xl shadow-sm">
            <div className="p-3 bg-red-100 rounded-xl text-red-600 w-fit mb-4"><ArrowDownRight className="w-5 h-5" /></div>
            <p className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">Refunded</p>
-           <p className="text-2xl font-bold text-slate-900">$450.00</p>
+           <p className="text-2xl font-bold text-slate-900">₹450.00</p>
         </div>
       </div>
 
@@ -73,14 +73,14 @@ export default async function AdminPaymentsPage() {
                   <td className="px-4 py-4 font-mono text-xs text-amber-600">{p.transaction_id}</td>
                   <td className="px-4 py-4 text-slate-900 font-bold">{p.order_number}</td>
                   <td className="px-4 py-4 text-slate-500 font-medium">{p.method}</td>
-                  <td className="px-4 py-4 text-slate-900 font-bold">${Number(p.amount).toFixed(2)}</td>
+                  <td className="px-4 py-4 text-slate-900 font-bold">₹{Number(p.amount).toFixed(2)}</td>
                   <td className="px-4 py-4">
                     <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full w-fit text-[10px] font-bold uppercase border
                       ${p.status === 'Success' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 
                         p.status === 'Pending' ? 'bg-amber-50 border-amber-100 text-amber-600' : 
                         'bg-red-50 border-red-100 text-red-600'}`}>
                       {p.status === 'Success' ? <CheckCircle2 className="w-3 h-3" /> : 
-                       p.status === 'Pending' ? <DollarSign className="w-3 h-3" /> : 
+                       p.status === 'Pending' ? <IndianRupee className="w-3 h-3" /> : 
                        <XCircle className="w-3 h-3" />}
                       {p.status}
                     </div>

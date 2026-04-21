@@ -18,12 +18,12 @@ export default function ProductDetailPage() {
 function ProductDetails() {
   const searchParams = useSearchParams();
   const name = searchParams.get('name') || "Glam Kinky Curly Raw Indian Remy Hair Extensions • Buy Now Pay Later";
-  const priceStr = searchParams.get('price') || "CHF 155.00";
+  const priceStr = searchParams.get('price') || "₹ 15,500.00";
   const oldPriceStr = searchParams.get('oldPrice');
   const img = searchParams.get('img') || "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
 
-  const numericPrice = parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 155.00;
-  const currencySymbol = priceStr.replace(/[0-9.]/g, '').trim() || 'CHF';
+  const numericPrice = parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 15500.00;
+  const currencySymbol = priceStr.replace(/[0-9.]/g, '').trim() || '₹';
 
   const [selectedSize, setSelectedSize] = useState('40 CM');
   const [selectedColor, setSelectedColor] = useState('Black');
@@ -213,7 +213,7 @@ function ProductDetails() {
                         </span>
                     </summary>
                     <div className="text-gray-600 mt-3 leading-relaxed">
-                        Orders process within 1-3 business days. Free shipping on all orders over CHF 200. We offer a 14-day return policy for unused and unwashed extensions.
+                        Orders process within 1-3 business days. Free shipping on all orders over ₹ 2,000. We offer a 14-day return policy for unused and unwashed extensions.
                     </div>
                 </details>
             </div>

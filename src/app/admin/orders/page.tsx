@@ -90,7 +90,7 @@ export default async function AdminOrdersPage() {
                     </td>
                     <td className="px-6 py-4 text-slate-900 font-bold">{order.customer_name}</td>
                     <td className="px-6 py-4 max-w-[200px] truncate text-slate-600 font-medium">{order.product_name}</td>
-                    <td className="px-6 py-4 text-slate-900 font-bold">${Number(order.amount).toFixed(2)}</td>
+                    <td className="px-6 py-4 text-slate-900 font-bold">₹{Number(order.amount).toFixed(2)}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border shadow-sm ${getStatusClass(order.status)}`}>
                         {getStatusIcon(order.status)}

@@ -92,7 +92,7 @@ export default function Header({ onOpenCart }: HeaderProps) {
              {/* Right Area: Action Icons */}
             <div className="flex items-center flex-shrink-0 space-x-5 lg:space-x-[26px] text-[#2c3e50]">
               <div className="hidden sm:flex items-center whitespace-nowrap cursor-pointer text-[14px] font-normal hover:text-[#CAA45D] transition">
-                 CHF / EN <ChevronDown className="w-[14px] h-[14px] ml-[2px] opacity-70" strokeWidth={2}/>
+                 INR / EN <ChevronDown className="w-[14px] h-[14px] ml-[2px] opacity-70" strokeWidth={2}/>
               </div>
               <div className="hidden sm:flex items-center whitespace-nowrap cursor-pointer text-[14px] font-normal hover:text-[#CAA45D] transition">
                  Search

@@ -20,7 +20,7 @@ export default async function AdminDashboard() {
   let dbConnected = false;
   let dbError = "";
   let stats = [
-    { id: 1, title: 'Total Revenue',   value: '$0.00', change: '+0%', positive: true, icon: DollarSign },
+    { id: 1, title: 'Total Revenue',   value: '₹0.00', change: '+0%', positive: true, icon: DollarSign },
     { id: 2, title: 'Active Orders',   value: '0',     change: '+0%', positive: true, icon: ShoppingCart },
     { id: 3, title: 'Total Customers', value: '0',     change: '+0%', positive: true, icon: Users },
     { id: 4, title: 'Monthly Growth',  value: '+0%',   change: '+0%', positive: true, icon: TrendingUp },
@@ -32,7 +32,7 @@ export default async function AdminDashboard() {
     const [ordersResult]: any = await pool.query('SELECT COUNT(*) as count FROM orders WHERE status IN ("Pending", "Processing")');
     const [custResult]: any = await pool.query('SELECT COUNT(DISTINCT customer_name) as count FROM orders');
     
-    stats[0].value = `$${(revResult[0]?.total || 0).toLocaleString()}`;
+    stats[0].value = `₹${(revResult[0]?.total || 0).toLocaleString()}`;
     stats[1].value = (ordersResult[0]?.count || 0).toString();
     stats[2].value = (custResult[0]?.count || 0).toString();
     stats[3].value = '+12%'; // Mock growth
@@ -153,7 +153,7 @@ export default async function AdminDashboard() {
                     className="w-full max-w-[40px] bg-gradient-to-t from-amber-500 to-amber-400 rounded-t-md opacity-60 group-hover:opacity-100 transition-all duration-300 relative group-hover:-translate-y-1 shadow-[0_0_15px_rgba(251,191,36,0.1)]"
                   >
                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
-                        ${(height * 123.4).toFixed(0)}
+                        ₹{(height * 123.4).toFixed(0)}
                      </div>
                   </div>
                 </div>
@@ -180,7 +180,7 @@ export default async function AdminDashboard() {
                   <p className="text-[11px] text-slate-500 truncate max-w-[120px]">{order.product_name}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-slate-900">${Number(order.amount).toFixed(2)}</p>
+                  <p className="text-sm font-bold text-slate-900">₹{Number(order.amount).toFixed(2)}</p>
                   <p className={`text-[10px] px-1.5 py-0.5 rounded uppercase mt-1 inline-block font-bold border ${statusClass(order.status)}`}>
                     {order.status}
                   </p>
@@ -249,7 +249,7 @@ export default async function AdminDashboard() {
                       {order.status}
                     </span>
                   </td>
-                  <td className="px-4 py-4 text-right text-slate-900 font-bold">${Number(order.amount).toFixed(2)}</td>
+                  <td className="px-4 py-4 text-right text-slate-900 font-bold">₹{Number(order.amount).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>

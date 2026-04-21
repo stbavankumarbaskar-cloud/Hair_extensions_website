@@ -53,7 +53,7 @@ export default async function AdminShippingPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-bold text-slate-900">${Number(method.cost).toFixed(2)}</p>
+                  <p className="text-lg font-bold text-slate-900">₹{Number(method.cost).toFixed(2)}</p>
                   <div className="flex gap-2 mt-1">
                     <button className="p-1.5 text-slate-400 hover:text-amber-600 transition-colors"><Edit className="w-4 h-4" /></button>
                     <button className="p-1.5 text-slate-400 hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
@@ -74,7 +74,7 @@ export default async function AdminShippingPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between py-3 border-b border-slate-100">
                    <span className="text-sm text-slate-500 font-medium">Free Shipping Threshold</span>
-                   <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">$200.00</span>
+                   <span className="text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">₹2,000.00</span>
                 </div>
                 <div className="flex items-center justify-between py-3 border-b border-slate-100">
                    <span className="text-sm text-slate-500 font-medium">Global Processing Time</span>
@@ -82,7 +82,7 @@ export default async function AdminShippingPage() {
                 </div>
                 <div className="flex items-center justify-between py-3">
                    <span className="text-sm text-slate-500 font-medium">Default Currency</span>
-                   <span className="text-sm font-bold text-slate-900">USD ($)</span>
+                   <span className="text-sm font-bold text-slate-900">INR (₹)</span>
                 </div>
               </div>
            </div>
@@ -94,7 +94,7 @@ export default async function AdminShippingPage() {
                 Pro Tip
               </h3>
               <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                Offering free shipping on orders over $200 can increase your average order value by up to 15%.
+                Offering free shipping on orders over ₹2,000 can increase your average order value by up to 15%.
               </p>
            </div>
         </div>

@@ -8,7 +8,7 @@ const initialItems = [
     name: "Premium Wavy Clip-In Hair Extensions 160",
     variant: "Black / 55 CM / Wavy",
     details: "Grams 7 Sets • Buy Now Pay Later",
-    price: 685,
+    price: 68500,
     qty: 1,
     image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=120&h=120&fit=crop",
   }
@@ -46,7 +46,7 @@ export default function CheckoutPage() {
     }
   };
 
-  const fmt = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+  const fmt = (n: number) => n.toLocaleString("en-IN", { style: "currency", currency: "INR" });
 
   return (
     <div className="min-h-screen bg-white font-sans text-[#333]">
@@ -533,7 +533,7 @@ export default function CheckoutPage() {
             <div className="flex justify-between items-center pt-4 border-t border-gray-200 mt-2">
               <span className="text-[17px] font-medium">Total</span>
               <div className="flex items-center gap-2">
-                <span className="text-[12px] text-gray-500">USD</span>
+                <span className="text-[12px] text-gray-500">INR</span>
                 <span className="text-[22px] font-medium">{fmt(subtotal)}</span>
               </div>
             </div>

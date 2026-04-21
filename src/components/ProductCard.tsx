@@ -7,13 +7,13 @@ export default function ProductCard({ product }: { product: any }) {
   const queryParams = new URLSearchParams({
     id: String(product.id),
     name: product.name,
-    price: typeof product.price === 'number' ? `$${product.price.toFixed(2)}` : String(product.price),
+    price: typeof product.price === 'number' ? `₹${product.price.toFixed(2)}` : String(product.price),
     img: product.img,
   });
   
   const oldPriceValue = product.oldPrice || product.old_price;
   if (oldPriceValue) {
-    queryParams.append('oldPrice', typeof oldPriceValue === 'number' ? `$${oldPriceValue.toFixed(2)}` : String(oldPriceValue));
+    queryParams.append('oldPrice', typeof oldPriceValue === 'number' ? `₹${oldPriceValue.toFixed(2)}` : String(oldPriceValue));
   }
 
   return (
@@ -53,14 +53,14 @@ export default function ProductCard({ product }: { product: any }) {
         
         <div className="mt-auto">
             {/* Price */}
-            <div className="flex items-center space-x-[6px]">
+             <div className="flex items-center space-x-[6px]">
                 <span className="text-[12px] font-semibold text-[#3a3a3a]">
-                   {typeof product.price === 'number' ? `$${product.price.toFixed(2)}` : product.price}
+                   {typeof product.price === 'number' ? `₹${product.price.toFixed(2)}` : product.price}
                 </span>
                 {(product.oldPrice || product.old_price) && (
                     <span className="text-[11px] text-[#9a9a9a] line-through">
                       {typeof (product.oldPrice || product.old_price) === 'number' 
-                        ? `$${(product.oldPrice || product.old_price).toFixed(2)}` 
+                        ? `₹${(product.oldPrice || product.old_price).toFixed(2)}` 
                         : (product.oldPrice || product.old_price)}
                     </span>
                 )}
