@@ -3,6 +3,9 @@ import React, { useState, Suspense } from 'react';
 import Head from 'next/head';
 import { useSearchParams } from 'next/navigation';
 import { ShoppingCart, Search, Menu, ChevronDown, ChevronUp, Star, ChevronLeft, ChevronRight, User, Heart, Lock } from 'lucide-react';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import CartDrawer from '@/components/CartDrawer';
 
 export default function ProductDetailPage() {
   return (
@@ -25,73 +28,15 @@ function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState('40 CM');
   const [selectedColor, setSelectedColor] = useState('Black');
   const [quantity, setQuantity] = useState(1);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const sizes = ['40 CM', '45 CM', '50 CM', '55 CM', '60 CM', '65 CM', '70 CM'];
   const colors = ['Black', 'Brown'];
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
-      {/* Top Header Placeholder */}
-      <div className="bg-[#2a2a2a] text-white text-sm text-center py-2.5 font-bold tracking-wide">
-        Welcome to One Love Hair® GmbH Switzerland
-      </div>
-
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#fdfdfd] border-b border-gray-100">
-        <div className="w-full px-4 lg:px-8">
-          <div className="flex justify-between items-center h-[90px] lg:h-[110px]">
-             {/* Left Area: Logo + Nav */}
-             <div className="flex items-center">
-                 {/* Logo */}
-                 <div className="flex flex-col items-center flex-shrink-0 cursor-pointer mr-6 lg:mr-10">
-                   <div className="text-[#CAA45D] mb-[4px]">
-                      {/* Tree/Heart stylized logo */}
-                      <svg className="w-10 h-10 lg:w-[48px] lg:h-[48px]" viewBox="0 0 24 24" fill="currentColor">
-                         <path d="M12 4.5C8 1.5 3.5 4.5 3.5 9c0 4.5 8.5 9.5 8.5 9.5s8.5-5 8.5-9.5C20.5 4.5 16 1.5 12 4.5Z" opacity="0.9"/>
-                         <path d="M12 18.5C12 18.5 11 14 9 10" stroke="white" strokeWidth="1.2" fill="none" />
-                         <path d="M12 18.5C12 18.5 13 14 15 10" stroke="white" strokeWidth="1.2" fill="none" />
-                         <path d="M12 18.5L12 9" stroke="white" strokeWidth="1.2" fill="none" />
-                         <circle cx="8" cy="8" r="1.2" fill="white" />
-                         <circle cx="16" cy="8" r="1.2" fill="white" />
-                         <circle cx="12" cy="6" r="1.2" fill="white" />
-                         <circle cx="10" cy="11" r="1" fill="white" />
-                         <circle cx="14" cy="11" r="1" fill="white" />
-                      </svg>
-                   </div>
-                   <span className="font-serif font-medium text-[8px] lg:text-[10px] tracking-[0.2em] text-[#CAA45D]">ONE LOVE HAIR</span>
-                 </div>
-
-                 {/* Desktop Navigation */}
-                 <nav className="hidden xl:flex items-center space-x-6 lg:space-x-[24px]">
-                   <a href="/" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-medium text-sm lg:text-[14px] transition-colors">Home</a>
-                   <a href="#" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[14px] transition-colors">Premium Hair Extensions</a>
-                   <a href="#" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[14px] transition-colors">Premium Clip-In Hair Extensions</a>
-                   <a href="#" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[14px] transition-colors">Premium Keratin Bond Extensions</a>
-                   <a href="#" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[14px] transition-colors">More</a>
-                 </nav>
-             </div>
-
-             {/* Right Area: Action Icons */}
-            <div className="flex items-center flex-shrink-0 space-x-5 lg:space-x-[20px] text-[#2c3e50]">
-              <div className="hidden sm:flex items-center whitespace-nowrap cursor-pointer text-[13px] font-normal hover:text-[#CAA45D] transition">
-                 CHF / EN <ChevronDown className="w-[14px] h-[14px] ml-[2px] opacity-70" strokeWidth={2}/>
-              </div>
-              <div className="hidden sm:flex items-center whitespace-nowrap cursor-pointer text-[13px] font-normal hover:text-[#CAA45D] transition">
-                 Search
-              </div>
-              
-              <div className="hidden sm:flex items-center whitespace-nowrap cursor-pointer text-[13px] font-normal hover:text-[#CAA45D] transition">
-                 Account
-              </div>
-
-               <div className="flex items-center whitespace-nowrap cursor-pointer hover:text-[#CAA45D] transition">
-                 <span className="hidden sm:inline text-[13px] font-normal text-[#1a202c]">Cart</span>
-              </div>
-              <Menu className="w-6 h-6 xl:hidden cursor-pointer text-gray-800" />
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header onOpenCart={() => setIsCartOpen(true)} />
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
       {/* Main Content */}
       <main className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 md:py-12 relative">
@@ -277,46 +222,7 @@ function ProductDetails() {
         </div>
       </main>
 
-       {/* Footer */}
-       <footer className="bg-zinc-900 text-white pt-20 pb-10 mt-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-1 md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
-              <div className="flex items-center mb-6">
-                <div className="flex flex-col items-center justify-center border-2 border-[#CAA45D] rounded-full w-10 h-10 mr-2">
-                   <span className="text-[#CAA45D] font-serif font-bold text-sm">LH</span>
-                </div>
-                <span className="font-serif font-semibold text-xl tracking-wider text-white">LOVE HAIR</span>
-              </div>
-              <p className="text-zinc-400 text-sm mb-6 max-w-sm">
-                Premium 100% human hair extensions, wigs, and bundles. Guaranteed luxury & quality.
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="font-bold text-lg mb-6 uppercase tracking-wider">Quick Links</h4>
-              <ul className="space-y-3">
-                <li><a href="#" className="text-zinc-400 hover:text-[#CAA45D] transition">Shop All</a></li>
-                <li><a href="#" className="text-zinc-400 hover:text-[#CAA45D] transition">Human Hair Wigs</a></li>
-                <li><a href="#" className="text-zinc-400 hover:text-[#CAA45D] transition">Hair Bundles</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold text-lg mb-6 uppercase tracking-wider">Company</h4>
-              <ul className="space-y-3">
-                <li><a href="#" className="text-zinc-400 hover:text-[#CAA45D] transition">About Us</a></li>
-                <li><a href="#" className="text-zinc-400 hover:text-[#CAA45D] transition">Contact Us</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-zinc-800 pt-8 flex flex-col md:flex-row justify-between items-center text-zinc-500 text-sm">
-             <p>&copy; {new Date().getFullYear()} LOVE HAIR Extension Store. All Rights Reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
