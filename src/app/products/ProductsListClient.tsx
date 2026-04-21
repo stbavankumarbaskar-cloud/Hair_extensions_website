@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import ProductCard from '@/components/ProductCard';
 import { useSearchParams } from 'next/navigation';
-import { Filter, X, ChevronDown, ChevronRight, LayoutGrid, List } from 'lucide-react';
+import { Filter, X, ChevronDown, ChevronRight, LayoutGrid, List, ShoppingCart } from 'lucide-react';
 
 const FILTER_CATEGORIES = [
   {
