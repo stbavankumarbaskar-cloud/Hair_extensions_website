@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ShoppingCart, Clock, CheckCircle, XCircle, AlertCircle, Eye } from 'lucide-react';
 import pool from '@/lib/db';
 import { revalidatePath } from 'next/cache';
+import StatusSelector from './StatusSelector';
 
 export default async function AdminOrdersPage() {
   let orders: any[] = [];
@@ -40,11 +41,11 @@ export default async function AdminOrdersPage() {
 
   const getStatusClass = (status: string) => {
     switch (status) {
-      case 'Completed': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
-      case 'Processing': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-      case 'Pending': return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
-      case 'Cancelled': return 'bg-red-500/10 text-red-400 border-red-500/20';
-      default: return 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+      case 'Completed': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+      case 'Processing': return 'bg-blue-50 text-blue-600 border-blue-100';
+      case 'Pending': return 'bg-amber-50 text-amber-600 border-amber-100';
+      case 'Cancelled': return 'bg-red-50 text-red-600 border-red-100';
+      default: return 'bg-slate-50 text-slate-500 border-slate-100';
     }
   };
 
@@ -52,46 +53,46 @@ export default async function AdminOrdersPage() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
       
       <div>
-        <h1 className="text-3xl font-serif font-bold text-white tracking-tight">Orders Management</h1>
-        <p className="text-gray-400 mt-2 text-sm">Track and manage customer orders, updates, and fulfillment.</p>
+        <h1 className="text-3xl font-serif font-bold text-slate-900 tracking-tight">Orders Management</h1>
+        <p className="text-slate-500 mt-2 text-sm font-medium">Track and manage customer orders, updates, and fulfillment.</p>
       </div>
 
       {dbError && (
-        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl text-sm">
+        <div className="bg-red-50 border border-red-100 text-red-600 p-4 rounded-xl text-sm font-medium">
           Database Error: {dbError}
         </div>
       )}
 
-      <div className="bg-[#16181d] border border-white/5 rounded-2xl shadow-lg overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-400">
-            <thead className="text-xs uppercase bg-[#0f1115] text-gray-500">
+          <table className="w-full text-left text-sm text-slate-500">
+            <thead className="text-xs uppercase bg-slate-50 text-slate-400 font-bold border-b border-slate-100">
               <tr>
-                <th className="px-6 py-4 font-semibold">Order ID</th>
-                <th className="px-6 py-4 font-semibold">Customer</th>
-                <th className="px-6 py-4 font-semibold">Product</th>
-                <th className="px-6 py-4 font-semibold">Amount</th>
-                <th className="px-6 py-4 font-semibold">Status</th>
-                <th className="px-6 py-4 font-semibold text-right">Actions</th>
+                <th className="px-6 py-4">Order ID</th>
+                <th className="px-6 py-4">Customer</th>
+                <th className="px-6 py-4">Product</th>
+                <th className="px-6 py-4">Amount</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-slate-100">
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-10 text-center text-gray-500">No orders found.</td>
+                  <td colSpan={6} className="px-6 py-10 text-center text-slate-400 font-mediumitalic">No orders found.</td>
                 </tr>
               ) : (
                 orders.map((order) => (
-                  <tr key={order.id} className="hover:bg-white/5 transition-colors group">
+                  <tr key={order.id} className="hover:bg-slate-50 transition-colors group">
                     <td className="px-6 py-4">
-                      <span className="font-mono text-amber-500 font-bold">{order.order_number}</span>
-                      <p className="text-[10px] text-gray-600 mt-0.5">{new Date(order.created_at).toLocaleDateString()}</p>
+                      <span className="font-mono text-amber-600 font-bold">{order.order_number}</span>
+                      <p className="text-[10px] text-slate-400 mt-0.5 font-bold uppercase tracking-tighter">{new Date(order.created_at).toLocaleDateString()}</p>
                     </td>
-                    <td className="px-6 py-4 text-white font-medium">{order.customer_name}</td>
-                    <td className="px-6 py-4 max-w-[200px] truncate">{order.product_name}</td>
-                    <td className="px-6 py-4 text-white font-bold">${Number(order.amount).toFixed(2)}</td>
+                    <td className="px-6 py-4 text-slate-900 font-bold">{order.customer_name}</td>
+                    <td className="px-6 py-4 max-w-[200px] truncate text-slate-600 font-medium">{order.product_name}</td>
+                    <td className="px-6 py-4 text-slate-900 font-bold">${Number(order.amount).toFixed(2)}</td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getStatusClass(order.status)}`}>
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border shadow-sm ${getStatusClass(order.status)}`}>
                         {getStatusIcon(order.status)}
                         {order.status}
                       </span>
@@ -100,24 +101,14 @@ export default async function AdminOrdersPage() {
                       <div className="flex justify-end gap-3 items-center">
                         <Link 
                           href={`/admin/orders/${order.id}`}
-                          className="p-1.5 text-gray-400 hover:text-amber-400 bg-white/5 hover:bg-amber-400/10 rounded-md transition-colors"
+                          className="p-2 text-slate-400 hover:text-amber-600 bg-slate-100 hover:bg-amber-100/50 rounded-lg transition-all"
                           title="View Details"
                         >
                           <Eye className="w-4 h-4" />
                         </Link>
                         <form action={updateStatus} className="flex justify-end gap-2">
                           <input type="hidden" name="id" value={order.id} />
-                          <select 
-                            name="status" 
-                            defaultValue={order.status}
-                            className="bg-[#0f1115] border border-white/10 rounded-lg px-2 py-1 text-xs text-gray-400 focus:outline-none focus:border-amber-500/50 transition-all"
-                            onChange={(e) => e.target.form?.requestSubmit()}
-                          >
-                            <option value="Pending">Pending</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Cancelled">Cancelled</option>
-                          </select>
+                          <StatusSelector defaultValue={order.status} />
                         </form>
                       </div>
                     </td>
