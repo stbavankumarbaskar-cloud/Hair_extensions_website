@@ -25,7 +25,6 @@ export default function NewProductPage() {
       );
     } catch (err: any) {
       console.error("Failed to insert product:", err);
-      // In a real app we'd handle error state, here we'll let it fail silently back to admin for brevity
     }
 
     // Redirect back to products list
@@ -33,38 +32,52 @@ export default function NewProductPage() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700 max-w-3xl">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
       
       <div className="flex items-center gap-4">
-        <Link href="/admin/products" className="p-2 bg-[#16181d] border border-white/10 rounded-lg text-gray-400 hover:text-white transition-colors">
+        <Link href="/admin/products" className="p-2 bg-slate-100 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 transition-all">
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-3xl font-serif font-bold text-white tracking-tight">Add New Product</h1>
-          <p className="text-gray-400 mt-2 text-sm">Fill in the details below to add a new product to your store.</p>
+          <h1 className="text-3xl font-serif font-bold text-slate-900 tracking-tight">Add New Product</h1>
+          <p className="text-slate-500 mt-2 text-sm font-medium">Create a new hair extension or wig entry.</p>
         </div>
       </div>
 
-      <div className="bg-[#16181d] border border-white/5 rounded-2xl shadow-lg p-8">
-        <form action={addProduct} className="space-y-6" suppressHydrationWarning>
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8 max-w-4xl">
+        <form action={addProduct} className="space-y-8" suppressHydrationWarning>
           
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-1">Product Name *</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <label htmlFor="name" className="text-sm font-bold text-slate-700">Product Name *</label>
               <input 
                 suppressHydrationWarning
                 type="text" 
                 id="name" 
                 name="name" 
                 required 
-                className="w-full bg-[#0f1115] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all placeholder-gray-600"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5 transition-all font-medium"
                 placeholder="e.g. Pure Virgin Indian Bundles"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="price" className="block text-sm font-medium text-gray-400 mb-1">Current Price ($) *</label>
+            <div className="space-y-2">
+               <label htmlFor="category" className="text-sm font-bold text-slate-700">Category</label>
+                <select 
+                  suppressHydrationWarning
+                  id="category" 
+                  name="category" 
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5 transition-all font-medium bg-white"
+                >
+                  <option value="Bundle">Bundle</option>
+                  <option value="Wig">Wig</option>
+                  <option value="Trending">Trending</option>
+                  <option value="Closure">Closure</option>
+                </select>
+            </div>
+
+            <div className="space-y-2">
+                <label htmlFor="price" className="text-sm font-bold text-slate-700">Current Price (₹) *</label>
                 <input 
                   suppressHydrationWarning
                   type="number" 
@@ -72,75 +85,64 @@ export default function NewProductPage() {
                   id="price" 
                   name="price" 
                   required 
-                  className="w-full bg-[#0f1115] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all placeholder-gray-600"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5 transition-all font-medium"
                   placeholder="0.00"
                 />
-              </div>
-              <div>
-                <label htmlFor="oldPrice" className="block text-sm font-medium text-gray-400 mb-1">Old Price ($) (Optional)</label>
+            </div>
+
+            <div className="space-y-2">
+                <label htmlFor="oldPrice" className="text-sm font-bold text-slate-700">Old Price (₹) (Optional)</label>
                 <input 
                   suppressHydrationWarning
                   type="number" 
                   step="0.01" 
                   id="oldPrice" 
                   name="oldPrice" 
-                  className="w-full bg-[#0f1115] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all placeholder-gray-600"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5 transition-all font-medium"
                   placeholder="0.00"
                 />
-              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-400 mb-1">Category</label>
-                <select 
+            <div className="space-y-2">
+                <label htmlFor="stock" className="text-sm font-bold text-slate-700">Stock Level *</label>
+                <input 
                   suppressHydrationWarning
-                  id="category" 
-                  name="category" 
-                  className="w-full bg-[#0f1115] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all appearance-none"
-                >
-                  <option value="Bundle">Bundle</option>
-                  <option value="Wig">Wig</option>
-                  <option value="Trending">Trending</option>
-                  <option value="Closure">Closure</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="img" className="block text-sm font-medium text-gray-400 mb-1">Image URL</label>
+                  type="number" 
+                  id="stock" 
+                  name="stock" 
+                  required
+                  defaultValue="10"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5 transition-all font-medium"
+                  placeholder="Quantity in stock"
+                />
+            </div>
+
+             <div className="space-y-2">
+                <label htmlFor="img" className="text-sm font-bold text-slate-700">Image URL</label>
                 <input 
                   suppressHydrationWarning
                   type="url" 
                   id="img" 
                   name="img" 
-                  className="w-full bg-[#0f1115] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all placeholder-gray-600"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5 transition-all font-medium"
                   placeholder="https://example.com/image.jpg"
                 />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="stock" className="block text-sm font-medium text-gray-400 mb-1">Stock Level *</label>
-              <input 
-                suppressHydrationWarning
-                type="number" 
-                id="stock" 
-                name="stock" 
-                required
-                defaultValue="10"
-                className="w-full bg-[#0f1115] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 transition-all placeholder-gray-600"
-                placeholder="Quantity in stock"
-              />
-              <p className="text-[10px] text-gray-500 mt-1">Number of items available for sale.</p>
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end">
+          <div className="pt-6 flex justify-end gap-4">
+            <Link 
+              href="/admin/products"
+              className="px-8 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-all font-sans uppercase tracking-widest text-xs flex items-center"
+            >
+              Cancel
+            </Link>
             <button 
               suppressHydrationWarning
               type="submit" 
-              className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(251,191,36,0.3)] hover:shadow-[0_0_25px_rgba(251,191,36,0.5)]"
+              className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-10 py-3 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-amber-500/20 font-sans uppercase tracking-widest text-xs"
             >
-              <Save className="w-5 h-5" />
+              <Save className="w-4 h-4" />
               <span>Save Product</span>
             </button>
           </div>

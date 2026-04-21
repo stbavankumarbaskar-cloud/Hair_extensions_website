@@ -8,30 +8,6 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 
-const REVIEWS = [
-  {
-    id: 1,
-    text: "I love working with One love hair. The owners are kind and knowledgeable. The hair is beautiful and amazing quality. Thank you for being consistent in providing long lasting hair.",
-    name: "Nicole",
-    company: "One Love Hair GmbH",
-    rating: 5,
-  },
-  {
-    id: 2,
-    text: "The clip-in extensions are fantastic. They blend seamlessly with my natural hair and the quality is absolutely top-notch.",
-    name: "Sarah",
-    company: "Verified Customer",
-    rating: 5,
-  },
-  {
-    id: 3,
-    text: "Exceptional customer service and gorgeous products. I will definitely be repurchasing from them again. Highly recommended!",
-    name: "Jessica",
-    company: "Salon Owner",
-    rating: 5,
-  }
-];
-
 const FAQS = [
   { question: "Why Choose One Love Hair GmbH?", answer: "We provide top-quality raw Indian hair that is ethically sourced, thoroughly inspected, and completely unprocessed to ensure maximum durability and natural blend." },
   { question: "What is your Return Policy ?", answer: "We accept returns and exchanges within 14 days of delivery, provided the hair has not been altered, washed, or worn. Custom orders are final sale." },
@@ -66,8 +42,8 @@ export default function Home() {
       .catch(err => console.error("DB Fetch Error:", err));
   }, []);
 
-  const displayReviews = dbReviews.length > 0 ? dbReviews : REVIEWS;
-  const currentReview = displayReviews[currentReviewIdx] || displayReviews[0];
+  const displayReviews = dbReviews;
+  const currentReview = displayReviews[currentReviewIdx];
 
 
   const toggleFaq = (index: number) => {
@@ -126,18 +102,13 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
-            {(dbProducts.length > 0 ? dbProducts.filter(p => p.category === 'Bundle') : [
-              { id: 1, name: "Love Hair 3 Bundles 9A Grade Brazilian Human Hair Water Wave", price: "₹8,600", oldPrice: "₹12,000", img: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&w=600&q=80", reviews: 124 },
-              { id: 2, name: "Queen Hair 10A Brazilian Hair Straight 3 Bundles Virgin Human Hair", price: "₹7,500", oldPrice: "₹9,500", img: "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?auto=format&fit=crop&w=600&q=80", reviews: 89 },
-              { id: 3, name: "Love Hair Body Wave 3 Bundles With Closure Brazilian Human Hair", price: "₹9,850", oldPrice: "₹14,000", img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?auto=format&fit=crop&w=600&q=80", reviews: 312 },
-              { id: 4, name: "Loose Deep Wave 3 Bundles With Frontal 100% Unprocessed Virgin Hair", price: "₹11,200", oldPrice: "₹16,000", img: "https://images.unsplash.com/photo-1517462964-21fdcec3f25b?auto=format&fit=crop&w=600&q=80", reviews: 67 },
-              { id: 5, name: "Peruvian Straight Hair 4 Bundles Deal Virgin Human Hair Weave", price: "₹10,500", oldPrice: "₹15,000", img: "https://images.unsplash.com/photo-1694438312015-h00QRko_Ekc?auto=format&fit=crop&w=600&q=80", reviews: 45 },
-              { id: 6, name: "Malaysian Curly Hair 3 Bundles Kinky Curly Virgin Human Hair", price: "₹9,200", oldPrice: "₹13,000", img: "https://images.unsplash.com/photo-1616428789366-a3d5e21fb2b9?auto=format&fit=crop&w=600&q=80", reviews: 290 },
-              { id: 7, name: "Indian Deep Wave 3 Bundles With 4x4 Lace Closure Human Hair", price: "₹11,800", oldPrice: "₹17,000", img: "https://images.unsplash.com/photo-1584297141812-019d82253c85?auto=format&fit=crop&w=600&q=80", reviews: 156 },
-              { id: 8, name: "Brazilian Water Wave 4 Bundles Wet and Wavy Human Hair", price: "₹12,500", oldPrice: "₹18,000", img: "https://images.unsplash.com/photo-1541216970279-affbfdd55aa8?auto=format&fit=crop&w=600&q=80", reviews: 88 }
-            ]).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {dbProducts.filter(p => p.category === 'Bundle').length > 0 ? (
+              dbProducts.filter(p => p.category === 'Bundle').map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <div className="col-span-full py-10 text-center text-gray-400">No bundles currently available in shop.</div>
+            )}
           </div>
            <div className="mt-8 text-center sm:hidden">
              <button suppressHydrationWarning 
@@ -159,19 +130,13 @@ export default function Home() {
              <Link href="/products?category=wig" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">View All Wigs →</Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
-            {(dbProducts.length > 0 ? dbProducts.filter(p => p.category === 'Wig') : [
-              { id: 1, name: "Loose Deep Wave wig 13x4 Lace Front Human Hair Wigs", price: "₹12,000", oldPrice: "₹18,000", img: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&w=600&q=80", reviews: 215 },
-              { id: 2, name: "Body Wave Lace Front Wigs Human Hair 180% Density", price: "₹13,500", oldPrice: "₹19,500", img: "https://images.unsplash.com/photo-1694438312015-h00QRko_Ekc?auto=format&fit=crop&w=600&q=80", reviews: 84 },
-              { id: 3, name: "Water Wave Headband Wig Human Hair Glueless Wigs", price: "₹8,500", oldPrice: "₹11,500", img: "https://images.unsplash.com/photo-1541216970279-affbfdd55aa8?auto=format&fit=crop&w=600&q=80", reviews: 49 },
-              { id: 4, name: "Highlight Lace Front Wigs Human Hair Ombre Straight Wig", price: "₹14,500", oldPrice: "₹21,000", img: "https://images.unsplash.com/photo-1584297141812-019d82253c85?auto=format&fit=crop&w=600&q=80", reviews: 132 },
-              { id: 5, name: "Bone Straight 13x6 HD Lace Front Wig Free Part", price: "₹15,500", oldPrice: "₹23,000", img: "https://images.unsplash.com/photo-1517462964-21fdcec3f25b?auto=format&fit=crop&w=600&q=80", reviews: 93 },
-              { id: 6, name: "Kinky Straight Headband Wig for Black Women", price: "₹7,500", oldPrice: "₹9,900", img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?auto=format&fit=crop&w=600&q=80", reviews: 110 },
-              { id: 7, name: "Short Bob Wig Lace Front Human Hair Wigs", price: "₹6,800", oldPrice: "₹8,500", img: "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?auto=format&fit=crop&w=600&q=80", reviews: 420 },
-              { id: 8, name: "Blonde 613 Lace Front Wig Body Wave Transparent Lace", price: "₹14,000", oldPrice: "₹20,000", img: "https://images.unsplash.com/photo-1560963683-162e24d35eef?auto=format&fit=crop&w=600&q=80", reviews: 315 },
-              { id: 9, name: "Deep Wave Lace Closure Wig 4x4 Pre Plucked With Baby Hair", price: "₹11,000", oldPrice: "₹15,000", img: "https://images.unsplash.com/photo-1531685250784-523c9213197f?auto=format&fit=crop&w=600&q=80", reviews: 75 }
-            ]).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {dbProducts.filter(p => p.category === 'Wig').length > 0 ? (
+              dbProducts.filter(p => p.category === 'Wig').map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <div className="col-span-full py-10 text-center text-gray-400">No wigs currently available in shop.</div>
+            )}
           </div>
            <div className="mt-8 text-center sm:hidden">
              <button suppressHydrationWarning 
@@ -193,14 +158,13 @@ export default function Home() {
              <Link href="/products?category=trending" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">Shop Trending →</Link>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3">
-            {(dbProducts.length > 0 ? dbProducts.slice(0, 4) : [
-              { id: 1, name: "Loose Deep Wave wig", price: "₹12,000", img: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 400 },
-              { id: 2, name: "Love Hair Body Wave", price: "₹13,500", img: "https://images.unsplash.com/photo-1616428789366-a3d5e21fb2b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 200 },
-              { id: 3, name: "Straight Lace Front wig", price: "₹14,500", img: "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80", reviews: 150 },
-              { id: 4, name: "Curly Bob wig", price: "₹8,500", img: "https://images.unsplash.com/photo-1512401777085-c49195e340fa?auto=format&fit=crop&q=80&w=400", reviews: 80 }
-            ]).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {dbProducts.filter(p => p.category === 'Trending').length > 0 ? (
+               dbProducts.filter(p => p.category === 'Trending').map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+                <div className="col-span-full py-10 text-center text-gray-400 font-medium">Coming soon! Exciting trending products on the way.</div>
+            )}
           </div>
         </section>
 
@@ -240,32 +204,40 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="bg-[#f8f9fa] px-8 py-10 rounded-sm flex flex-col items-center max-w-4xl mx-auto min-h-[320px] justify-center transition-all duration-300">
-               <div className="text-teal-600 text-[60px] font-serif leading-[0.5] mb-8 font-bold">
-                ”
-              </div>
-              <p className="text-[19px] leading-relaxed text-center text-gray-900 mb-8 font-sans max-w-[800px] min-h-[85px]">
-                {currentReview.text}
-              </p>
-              
-              <div className="flex justify-center text-teal-600 mb-6 space-x-[2px]">
-                {[...Array(currentReview.rating)].map((_, i) => <Star key={i} className="w-[26px] h-[26px] fill-current" />)}
-              </div>
-              
-              <div className="text-center">
-                 <div className="font-bold text-gray-900 text-[15px] mb-1">{currentReview.name}</div>
-                 <a href="#" className="text-gray-900 underline text-[15px] hover:text-teal-700 transition">{currentReview.company}</a>
-              </div>
-            </div>
+            {displayReviews.length > 0 ? (
+               <div className="bg-[#f8f9fa] px-8 py-10 rounded-sm flex flex-col items-center max-w-4xl mx-auto min-h-[320px] justify-center transition-all duration-300">
+                  <div className="text-teal-600 text-[60px] font-serif leading-[0.5] mb-8 font-bold">
+                   ”
+                 </div>
+                 <p className="text-[19px] leading-relaxed text-center text-gray-900 mb-8 font-sans max-w-[800px] min-h-[85px]">
+                   {currentReview.text}
+                 </p>
+                 
+                 <div className="flex justify-center text-teal-600 mb-6 space-x-[2px]">
+                   {[...Array(currentReview.rating)].map((_, i) => <Star key={i} className="w-[26px] h-[26px] fill-current" />)}
+                 </div>
+                 
+                 <div className="text-center">
+                    <div className="font-bold text-gray-900 text-[15px] mb-1">{currentReview.name}</div>
+                    <a href="#" className="text-gray-900 underline text-[15px] hover:text-teal-700 transition">{currentReview.company}</a>
+                 </div>
+               </div>
+            ) : (
+                <div className="bg-[#f8f9fa] px-8 py-20 rounded-sm text-center text-gray-400 font-medium">
+                    Be the first to share your experience with our products! 
+                </div>
+            )}
             
-            <div className="flex justify-center mt-8 space-x-6">
-              <button suppressHydrationWarning aria-label="Previous Review" onClick={handlePrevReview} className="text-black hover:text-teal-600 transition p-2 cursor-pointer">
-                <ChevronLeft className="w-5 h-5 mx-2" strokeWidth={2} />
-              </button>
-              <button suppressHydrationWarning aria-label="Next Review" onClick={handleNextReview} className="text-black hover:text-teal-600 transition p-2 cursor-pointer">
-                <ChevronRight className="w-5 h-5 mx-2" strokeWidth={2} />
-              </button>
-            </div>
+            {displayReviews.length > 0 && (
+                <div className="flex justify-center mt-8 space-x-6">
+                <button suppressHydrationWarning aria-label="Previous Review" onClick={handlePrevReview} className="text-black hover:text-teal-600 transition p-2 cursor-pointer">
+                    <ChevronLeft className="w-5 h-5 mx-2" strokeWidth={2} />
+                </button>
+                <button suppressHydrationWarning aria-label="Next Review" onClick={handleNextReview} className="text-black hover:text-teal-600 transition p-2 cursor-pointer">
+                    <ChevronRight className="w-5 h-5 mx-2" strokeWidth={2} />
+                </button>
+                </div>
+            )}
 
             <div className="mt-14 text-center">
               <p className="text-[13px] font-semibold text-gray-800 mb-6 tracking-wide">Trusted Swiss Payment Partners</p>
