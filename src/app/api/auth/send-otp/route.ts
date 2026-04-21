@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       const connection = await mysql.createConnection({
         host: process.env.DB_HOST || '127.0.0.1',
         user: process.env.DB_USER || 'root',
-        password: process.env.DB_PASSWORD || '',
+        password: process.env.DB_PASSWORD || 'Bavankumar@123',
       });
 
       await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME || 'lovehair_db'}\``);
@@ -48,14 +48,24 @@ export async function POST(req: Request) {
     await pool.query('DELETE FROM otps WHERE email = ?', [email]);
     await pool.query('INSERT INTO otps (email, code) VALUES (?, ?)', [email, otp]);
 
-    // 4. Setup Nodemailer (Remove spaces from App Password)
+    // 4. Setup Nodemailer
+    const emailUser = process.env.EMAIL_USER;
     const rawPass = process.env.EMAIL_PASS || '';
-    const cleanPass = rawPass.replace(/\s+/g, ''); // Remove any spaces
+    const cleanPass = rawPass.replace(/\s+/g, '');
+
+    if (!emailUser || !cleanPass) {
+      return NextResponse.json({ 
+        success: false, 
+        error: "Server configuration error: Missing EMAIL_USER or EMAIL_PASS in .env file." 
+      });
+    }
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
-        user: process.env.EMAIL_USER,
+        user: emailUser,
         pass: cleanPass,
       },
       tls: {
