@@ -1,14 +1,17 @@
 import React from 'react';
 import Link from 'next/link';
-import { DollarSign, ShoppingCart, Users, TrendingUp, MoreHorizontal, ArrowUpRight, ArrowDownRight, AlertCircle } from 'lucide-react';
+import { 
+  DollarSign, ShoppingCart, Users, TrendingUp, MoreHorizontal, 
+  ArrowUpRight, ArrowDownRight, AlertCircle 
+} from 'lucide-react';
 import pool from '@/lib/db';
 
 const FALLBACK_ORDERS = [
-  { id: 1, order_number: '#ORD-001', customer_name: 'Emma Watson', product_name: '100% Brazilian Human Hair Bundles', created_at: '2 mins ago', status: 'Processing', amount: '345.00' },
-  { id: 2, order_number: '#ORD-002', customer_name: 'Sophia Turner', product_name: 'Loose Deep Wave wig 13x4 Lace', created_at: '45 mins ago', status: 'Completed', amount: '120.00' },
-  { id: 3, order_number: '#ORD-003', customer_name: 'Mia Johnson', product_name: 'Body Wave Lace Front Wigs', created_at: '2 hours ago', status: 'Pending', amount: '135.00' },
-  { id: 4, order_number: '#ORD-004', customer_name: 'Isabella Smith', product_name: 'Bone Straight 13x6 HD Lace Front Wig', created_at: '4 hours ago', status: 'Completed', amount: '155.00' },
-  { id: 5, order_number: '#ORD-005', customer_name: 'Olivia Williams', product_name: 'Indian Deep Wave 3 Bundles', created_at: 'Yesterday', status: 'Processing', amount: '118.00' },
+  { id: 1, order_number: '#ORD-001', customer_name: 'Emma Watson',    product_name: '100% Brazilian Human Hair Bundles',    created_at: '2 mins ago',   status: 'Processing', amount: '345.00' },
+  { id: 2, order_number: '#ORD-002', customer_name: 'Sophia Turner',  product_name: 'Loose Deep Wave wig 13x4 Lace',        created_at: '45 mins ago',  status: 'Completed',  amount: '120.00' },
+  { id: 3, order_number: '#ORD-003', customer_name: 'Mia Johnson',    product_name: 'Body Wave Lace Front Wigs',            created_at: '2 hours ago',  status: 'Pending',    amount: '135.00' },
+  { id: 4, order_number: '#ORD-004', customer_name: 'Isabella Smith', product_name: 'Bone Straight 13x6 HD Lace Front Wig', created_at: '4 hours ago',  status: 'Completed',  amount: '155.00' },
+  { id: 5, order_number: '#ORD-005', customer_name: 'Olivia Williams', product_name: 'Indian Deep Wave 3 Bundles',           created_at: 'Yesterday',    status: 'Processing', amount: '118.00' },
 ];
 
 export default async function AdminDashboard() {
@@ -17,10 +20,10 @@ export default async function AdminDashboard() {
   let dbConnected = false;
   let dbError = "";
   let stats = [
-    { id: 1, title: 'Total Revenue', value: '$0.00', change: '+0%', positive: true, icon: DollarSign },
-    { id: 2, title: 'Active Orders', value: '0', change: '+0%', positive: true, icon: ShoppingCart },
-    { id: 3, title: 'Total Customers', value: '0', change: '+0%', positive: true, icon: Users },
-    { id: 4, title: 'Monthly Growth', value: '+0%', change: '+0%', positive: true, icon: TrendingUp },
+    { id: 1, title: 'Total Revenue',   value: '$0.00', change: '+0%', positive: true, icon: DollarSign },
+    { id: 2, title: 'Active Orders',   value: '0',     change: '+0%', positive: true, icon: ShoppingCart },
+    { id: 3, title: 'Total Customers', value: '0',     change: '+0%', positive: true, icon: Users },
+    { id: 4, title: 'Monthly Growth',  value: '+0%',   change: '+0%', positive: true, icon: TrendingUp },
   ];
 
   try {
@@ -41,23 +44,33 @@ export default async function AdminDashboard() {
     }
 
     // 3. Fetch Low Stock Products
-    const [stockRows] = await pool.query('SELECT * FROM products WHERE stock <= 5 ORDER BY stock ASC LIMIT 5');
-    if (Array.isArray(stockRows)) {
-      lowStockProducts = stockRows as any[];
+    try {
+      const [stockRows] = await pool.query('SELECT * FROM products WHERE stock <= 5 ORDER BY stock ASC LIMIT 5');
+      if (Array.isArray(stockRows)) {
+        lowStockProducts = stockRows as any[];
+      }
+    } catch (stockErr: any) {
+      console.log("Could not fetch low stock products (possibly missing 'stock' column):", stockErr.message);
+      // We leave lowStockProducts as empty array
     }
 
     dbConnected = true;
   } catch (error: any) {
     dbError = error.message;
-    console.log("Database fetch failed, using fallback data. Error:", error.message);
+    console.log("Database fetch failed. Error:", error.message);
   }
 
-  // Format the date helper
   const formatDate = (dateInput: any) => {
     if (typeof dateInput === 'string' && (dateInput.includes('ago') || dateInput === 'Yesterday')) return dateInput;
     const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
     if (isNaN(date.getTime())) return String(dateInput);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+  };
+
+  const statusClass = (status: string) => {
+    if (status === 'Completed')  return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+    if (status === 'Processing') return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+    return 'bg-amber-500/10 text-amber-400 border border-amber-500/20';
   };
 
   return (
@@ -71,12 +84,10 @@ export default async function AdminDashboard() {
         </div>
         
         {/* Database Connection Status Pill */}
-        <div className={`flex items-center space-x-2 px-4 py-2 rounded-full border text-sm font-medium shadow-sm transition-all
+        <div className={`flex items-center space-x-2 px-4 py-2 rounded-full border text-xs font-medium shadow-sm transition-all
           ${dbConnected ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/30 text-red-400'}`}>
           <div className={`w-2 h-2 rounded-full ${dbConnected ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]' : 'bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]'}`}></div>
-          <span className="flex items-center">
-            {dbConnected ? 'Database Connected' : 'No Database Connection'}
-          </span>
+          <span>{dbConnected ? 'Database Connected' : 'No Database Connection'}</span>
         </div>
       </div>
 
@@ -84,8 +95,8 @@ export default async function AdminDashboard() {
          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3 text-red-400 text-sm">
             <AlertCircle className="w-5 h-5 flex-shrink-0" />
             <div>
-              <p className="font-semibold">MySQL Connection Failed</p>
-              <p className="opacity-80 text-xs mt-1">Please ensure you have created the `lovehair_db` in MySQL Workbench using the provided setup script. Showing dummy data in the meantime. Error: {dbError}</p>
+              <p className="font-semibold text-xs">MySQL Connection Failed</p>
+              <p className="opacity-70 text-[11px] mt-1">Showing dummy data. Error: {dbError}</p>
             </div>
          </div>
       )}
@@ -94,7 +105,6 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
           <div key={stat.id} className="bg-[#16181d] border border-white/5 p-6 rounded-2xl shadow-lg relative overflow-hidden group hover:border-amber-500/30 transition-colors duration-300">
-            {/* Subtle glow on hover */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/20 transition-colors"></div>
             
             <div className="flex justify-between items-start mb-4 relative z-10">
@@ -118,7 +128,7 @@ export default async function AdminDashboard() {
       {/* Analytics Graph & Recent Orders */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Mock Graphic Chart Area */}
+        {/* Revenue Chart Area */}
         <div className="lg:col-span-2 bg-[#16181d] border border-white/5 rounded-2xl shadow-lg p-6 flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <div>
@@ -130,18 +140,11 @@ export default async function AdminDashboard() {
             </button>
           </div>
           
-          {/* Faux graph UI */}
           <div className="flex-1 min-h-[250px] relative mt-4 flex items-end space-x-2 sm:space-x-4">
-            {/* Graph Grid Lines */}
             <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
-              <div className="w-full h-px bg-white/5"></div>
-              <div className="w-full h-px bg-white/5"></div>
-              <div className="w-full h-px bg-white/5"></div>
-              <div className="w-full h-px bg-white/5"></div>
-              <div className="w-full h-px bg-white/5"></div>
+              {[...Array(5)].map((_, i) => <div key={i} className="w-full h-px bg-white/5"></div>)}
             </div>
             
-            {/* Dynamic Bars */}
             {[45, 60, 30, 80, 50, 95, 65].map((height, i) => (
               <div key={i} className="flex-1 flex flex-col items-center group cursor-pointer z-10">
                 <div className="w-full relative flex items-end justify-center h-[200px]">
@@ -178,11 +181,7 @@ export default async function AdminDashboard() {
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-white">${Number(order.amount).toFixed(2)}</p>
-                  <p className={`text-[10px] px-1.5 py-0.5 rounded uppercase mt-1 inline-block font-semibold
-                    ${order.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400' : 
-                      order.status === 'Processing' ? 'bg-blue-500/10 text-blue-400' : 
-                      'bg-amber-500/10 text-amber-400'}`}
-                  >
+                  <p className={`text-[10px] px-1.5 py-0.5 rounded uppercase mt-1 inline-block font-bold ${statusClass(order.status)}`}>
                     {order.status}
                   </p>
                 </div>
@@ -225,8 +224,6 @@ export default async function AdminDashboard() {
 
       </div>
 
-      {/* Analytics Graph & Recent Orders row... */}
-
       {/* Detailed Orders Table */}
       <div className="bg-[#16181d] border border-white/5 rounded-2xl shadow-lg p-6 overflow-hidden">
         <h2 className="text-lg font-semibold text-white mb-6">Order Details</h2>
@@ -242,17 +239,13 @@ export default async function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {recentOrders.map((order, idx) => (
+              {recentOrders.map((order) => (
                 <tr key={order.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                   <td className="px-4 py-4 font-medium text-amber-500">{order.order_number}</td>
                   <td className="px-4 py-4 text-white">{order.customer_name}</td>
                   <td className="px-4 py-4 text-gray-500">{formatDate(order.created_at)}</td>
                   <td className="px-4 py-4">
-                    <span className={`px-2 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider
-                      ${order.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
-                        order.status === 'Processing' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' : 
-                        'bg-amber-500/10 text-amber-400 border border-amber-500/20'}`}
-                    >
+                    <span className={`px-2 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider ${statusClass(order.status)}`}>
                       {order.status}
                     </span>
                   </td>
@@ -267,3 +260,4 @@ export default async function AdminDashboard() {
     </div>
   );
 }
+

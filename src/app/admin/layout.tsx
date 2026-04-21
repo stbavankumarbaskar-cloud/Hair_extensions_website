@@ -1,10 +1,48 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { LayoutDashboard, ShoppingBag, Users, Star, Settings, LogOut, Search, Bell, Truck } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { 
+  LayoutDashboard, ShoppingBag, ShoppingCart, Users, Star, 
+  Settings, LogOut, Search, Bell, Truck, DollarSign, Tag, 
+  BarChart3, Loader2
+} from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+  const isLoginPage = pathname === '/admin/login';
+
+  useEffect(() => {
+    // Check for admin token in localStorage
+    const token = localStorage.getItem('admin_token');
+    
+    if (!token && !isLoginPage) {
+      setIsAuthorized(false);
+      router.push('/admin/login');
+    } else {
+      setIsAuthorized(true);
+    }
+  }, [isLoginPage, router]);
+
+  // Handle Login Page separately (no sidebar/auth check needed here)
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
+
+  // Show loading or nothing until auth check is complete for other admin pages
+  if (isAuthorized === null || isAuthorized === false) {
+    return (
+      <div className="min-h-screen bg-[#0f1115] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#0f1115] text-gray-100 flex font-sans selection:bg-teal-500/30">
+    <div className="min-h-screen bg-[#0f1115] text-gray-100 flex font-sans selection:bg-amber-500/30">
       
       {/* Sidebar - Glassmorphic Dark */}
       <aside className="w-64 flex-shrink-0 bg-[#16181d]/80 backdrop-blur-xl border-r border-white/5 flex flex-col transition-all duration-300">
@@ -18,50 +56,59 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-8 px-4 space-y-2">
+        <nav className="flex-1 py-8 px-4 space-y-1 overflow-y-auto">
           <p className="px-4 text-[10px] uppercase tracking-widest text-gray-500 mb-4 font-semibold">Main Menu</p>
           
-          <Link href="/admin" className="flex items-center space-x-3 px-4 py-3 rounded-xl bg-amber-500/10 text-amber-500 transition-all duration-300 group shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] border border-amber-500/20">
-            <LayoutDashboard className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-transform" strokeWidth={2}/>
+          <Link href="/admin" className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group ${pathname === '/admin' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+            <LayoutDashboard className={`w-5 h-5 group-hover:scale-110 transition-transform ${pathname === '/admin' ? 'text-amber-500' : ''}`} strokeWidth={2}/>
             <span className="font-medium text-[14px]">Dashboard</span>
           </Link>
           
-          <Link href="/admin/products" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
-            <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" strokeWidth={2}/>
-            <span className="font-medium text-[14px]">Products</span>
-          </Link>
+          {[
+            { href: '/admin/products',  Icon: ShoppingBag,  label: 'Products'   },
+            { href: '/admin/orders',    Icon: ShoppingCart, label: 'Orders'     },
+            { href: '/admin/customers', Icon: Users,        label: 'Customers'  },
+            { href: '/admin/reviews',   Icon: Star,         label: 'Reviews'    },
+          ].map(({ href, Icon, label }) => (
+            <Link key={href} href={href} className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group ${pathname.startsWith(href) ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+              <Icon className={`w-5 h-5 group-hover:scale-110 transition-transform ${pathname.startsWith(href) ? 'text-amber-500' : ''}`} strokeWidth={2} />
+              <span className="font-medium text-[14px]">{label}</span>
+            </Link>
+          ))}
 
-          <Link href="/admin/orders" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
-            <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" strokeWidth={2}/>
-            <span className="font-medium text-[14px]">Orders</span>
-          </Link>
+          <div className="pt-4 pb-2">
+            <p className="px-4 text-[10px] uppercase tracking-widest text-gray-500 font-semibold">Management</p>
+          </div>
 
-          <Link href="/admin/customers" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
-            <Users className="w-5 h-5 group-hover:scale-110 transition-transform" strokeWidth={2}/>
-            <span className="font-medium text-[14px]">Customers</span>
-          </Link>
-
-          <Link href="/admin/vendors" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
-            <Truck className="w-5 h-5 group-hover:scale-110 transition-transform" strokeWidth={2}/>
-            <span className="font-medium text-[14px]">Vendors</span>
-          </Link>
-
-          <Link href="/admin/reviews" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
-            <Star className="w-5 h-5 group-hover:scale-110 transition-transform" strokeWidth={2}/>
-            <span className="font-medium text-[14px]">Reviews</span>
-          </Link>
+          {[
+            { href: '/admin/payments',   Icon: DollarSign,  label: 'Payments'    },
+            { href: '/admin/shipping',   Icon: Truck,       label: 'Shipping'    },
+            { href: '/admin/categories', Icon: Tag,         label: 'Categories'  },
+            { href: '/admin/reports',    Icon: BarChart3,   label: 'Reports'     },
+          ].map(({ href, Icon, label }) => (
+            <Link key={href} href={href} className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group ${pathname.startsWith(href) ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+              <Icon className={`w-5 h-5 group-hover:scale-110 transition-transform ${pathname.startsWith(href) ? 'text-amber-500' : ''}`} strokeWidth={2} />
+              <span className="font-medium text-[14px]">{label}</span>
+            </Link>
+          ))}
         </nav>
 
         {/* Bottom Actions */}
         <div className="p-4 border-t border-white/5 space-y-1">
-          <Link href="/admin" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group">
-            <Settings className="w-5 h-5 group-hover:scale-110 transition-transform group-hover:rotate-45" strokeWidth={2}/>
+          <Link href="/admin/settings" className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group ${pathname.startsWith('/admin/settings') ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+            <Settings className={`w-5 h-5 group-hover:scale-110 transition-transform group-hover:rotate-45 ${pathname.startsWith('/admin/settings') ? 'text-amber-500' : ''}`} strokeWidth={2}/>
             <span className="font-medium text-[14px]">Settings</span>
           </Link>
-          <Link href="/" className="flex items-center space-x-3 px-4 py-3 rounded-xl text-red-400/80 hover:text-red-400 hover:bg-red-400/10 transition-all duration-300 group">
+          <button 
+            onClick={() => {
+              localStorage.removeItem('admin_token');
+              router.push('/admin/login');
+            }}
+            className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-red-400/80 hover:text-red-400 hover:bg-red-400/10 transition-all duration-300 group"
+          >
             <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" strokeWidth={2}/>
             <span className="font-medium text-[14px]">Logout</span>
-          </Link>
+          </button>
         </div>
       </aside>
 
@@ -108,3 +155,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     </div>
   );
 }
+
+
+
