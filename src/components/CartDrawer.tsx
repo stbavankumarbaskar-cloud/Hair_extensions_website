@@ -34,8 +34,8 @@ export default function CartDrawer() {
         onClick={onClose}
       />
 
-      {/* Drawer */}
-      <div className="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white z-[60] shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-0" style={{ fontFamily: "sans-serif" }}>
+      {/* Modal Container */}
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[95%] sm:w-[500px] max-h-[90vh] bg-white z-[60] shadow-2xl rounded-2xl flex flex-col overflow-hidden animate-in zoom-in duration-300" style={{ fontFamily: "sans-serif" }}>
 
         {/* Header */}
         <div className="p-4 flex items-center justify-between border-b border-gray-100">

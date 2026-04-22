@@ -2,20 +2,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
 
-const initialItems = [
-  {
-    id: 1,
-    name: "Premium Wavy Clip-In Hair Extensions 160",
-    variant: "Black / 55 CM / Wavy",
-    details: "Grams 7 Sets • Buy Now Pay Later",
-    price: 68500,
-    qty: 1,
-    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=120&h=120&fit=crop",
-  }
-];
+import { useCart } from "@/lib/CartContext";
 
 export default function CheckoutPage() {
-  const [items] = useState(initialItems);
+  const { cart: items, subtotal } = useCart();
   const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
   const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
@@ -33,7 +23,7 @@ export default function CheckoutPage() {
   const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false);
   const [isOrderComplete, setIsOrderComplete] = useState(false);
 
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0);
+  // Use subtotal from context and apply discount if needed
   const total = discountApplied ? subtotal * 0.9 : subtotal;
 
   const handleApplyDiscount = () => {
@@ -163,28 +153,44 @@ export default function CheckoutPage() {
                 <h2 className="text-xl font-medium mb-4">Delivery</h2>
                 <div className="flex flex-col gap-3">
                   <div className="relative">
-                    <label className="absolute text-[11px] text-gray-500 left-[14px] top-[6px] pointer-events-none">Country/Region</label>
-                    <select defaultValue="United States" className="w-full border border-gray-300 rounded-md pl-[14px] pr-10 pt-[22px] pb-[6px] text-[15px] appearance-none bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
-                      <option>Finland</option>
-                      <option>France</option>
-                      <option>Germany</option>
-                      <option>Ireland</option>
-                      <option>Italy</option>
-                      <option>Latvia</option>
-                      <option>Lithuania</option>
-                      <option>Luxembourg</option>
-                      <option>Monaco</option>
-                      <option>Netherlands</option>
-                      <option>Norway</option>
-                      <option>Poland</option>
-                      <option>Portugal</option>
-                      <option>Slovakia</option>
-                      <option>Slovenia</option>
-                      <option>Spain</option>
-                      <option>Sweden</option>
-                      <option>Switzerland</option>
-                      <option>United Kingdom</option>
-                      <option>United States</option>
+                    <label className="absolute text-[11px] text-gray-500 left-[14px] top-[6px] pointer-events-none">State / UT</label>
+                    <select defaultValue="Tamil Nadu" className="w-full border border-gray-300 rounded-md pl-[14px] pr-10 pt-[22px] pb-[6px] text-[15px] appearance-none bg-transparent outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
+                      <option>Andhra Pradesh</option>
+                      <option>Arunachal Pradesh</option>
+                      <option>Assam</option>
+                      <option>Bihar</option>
+                      <option>Chhattisgarh</option>
+                      <option>Goa</option>
+                      <option>Gujarat</option>
+                      <option>Haryana</option>
+                      <option>Himachal Pradesh</option>
+                      <option>Jharkhand</option>
+                      <option>Karnataka</option>
+                      <option>Kerala</option>
+                      <option>Madhya Pradesh</option>
+                      <option>Maharashtra</option>
+                      <option>Manipur</option>
+                      <option>Meghalaya</option>
+                      <option>Mizoram</option>
+                      <option>Nagaland</option>
+                      <option>Odisha</option>
+                      <option>Punjab</option>
+                      <option>Rajasthan</option>
+                      <option>Sikkim</option>
+                      <option>Tamil Nadu</option>
+                      <option>Telangana</option>
+                      <option>Tripura</option>
+                      <option>Uttar Pradesh</option>
+                      <option>Uttarakhand</option>
+                      <option>West Bengal</option>
+                      <option>Andaman and Nicobar Islands</option>
+                      <option>Chandigarh</option>
+                      <option>Dadra and Nagar Haveli and Daman and Diu</option>
+                      <option>Delhi</option>
+                      <option>Jammu and Kashmir</option>
+                      <option>Ladakh</option>
+                      <option>Lakshadweep</option>
+                      <option>Puducherry</option>
                     </select>
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500 text-xs">▼</div>
                   </div>
@@ -360,9 +366,43 @@ export default function CheckoutPage() {
                     {billingAddress === 'different' && (
                       <div className="p-4 pt-0 bg-[#f4f8fd] rounded-b-md">
                         <div className="border border-gray-300 rounded-md bg-white shadow-sm overflow-hidden">
-                          <select className="w-full p-[14px] text-[14px] bg-transparent outline-none border-b border-gray-200 text-gray-700">
-                            <option>United States</option>
-                            <option>Switzerland</option>
+                          <select defaultValue="Tamil Nadu" className="w-full p-[14px] text-[14px] bg-transparent outline-none border-b border-gray-200 text-gray-700">
+                            <option>Andhra Pradesh</option>
+                            <option>Arunachal Pradesh</option>
+                            <option>Assam</option>
+                            <option>Bihar</option>
+                            <option>Chhattisgarh</option>
+                            <option>Goa</option>
+                            <option>Gujarat</option>
+                            <option>Haryana</option>
+                            <option>Himachal Pradesh</option>
+                            <option>Jharkhand</option>
+                            <option>Karnataka</option>
+                            <option>Kerala</option>
+                            <option>Madhya Pradesh</option>
+                            <option>Maharashtra</option>
+                            <option>Manipur</option>
+                            <option>Meghalaya</option>
+                            <option>Mizoram</option>
+                            <option>Nagaland</option>
+                            <option>Odisha</option>
+                            <option>Punjab</option>
+                            <option>Rajasthan</option>
+                            <option>Sikkim</option>
+                            <option>Tamil Nadu</option>
+                            <option>Telangana</option>
+                            <option>Tripura</option>
+                            <option>Uttar Pradesh</option>
+                            <option>Uttarakhand</option>
+                            <option>West Bengal</option>
+                            <option>Andaman and Nicobar Islands</option>
+                            <option>Chandigarh</option>
+                            <option>Dadra and Nagar Haveli and Daman and Diu</option>
+                            <option>Delhi</option>
+                            <option>Jammu and Kashmir</option>
+                            <option>Ladakh</option>
+                            <option>Lakshadweep</option>
+                            <option>Puducherry</option>
                           </select>
                           <div className="flex border-b border-gray-200">
                             <input type="text" placeholder="First name" className="w-1/2 p-[14px] text-[14px] outline-none border-r border-gray-200" />
@@ -465,8 +505,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex flex-col justify-center max-w-[200px]">
                       <span className="text-[14px] font-medium leading-snug">{item.name}</span>
-                      <span className="text-[12px] text-gray-500 mt-[2px]">{item.details}</span>
-                      <span className="text-[12px] text-gray-500">{item.variant}</span>
+                      <span className="text-[12px] text-gray-500 mt-[2px]">{item.variant}</span>
                     </div>
                   </div>
                   <span className="text-[14px] font-medium">{fmt(item.price * item.qty)}</span>
@@ -534,7 +573,7 @@ export default function CheckoutPage() {
               <span className="text-[17px] font-medium">Total</span>
               <div className="flex items-center gap-2">
                 <span className="text-[12px] text-gray-500">INR</span>
-                <span className="text-[22px] font-medium">{fmt(subtotal)}</span>
+                <span className="text-[22px] font-medium">{fmt(total)}</span>
               </div>
             </div>
 
