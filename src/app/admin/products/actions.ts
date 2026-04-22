@@ -13,23 +13,40 @@ export async function updateProduct(formData: FormData) {
   const category = formData.get('category') as string || 'Bundle';
   const stock = parseInt(formData.get('stock') as string) || 0;
   
-  let img = formData.get('img_url') as string; // Existing URL if no new file
-  const imageFile = formData.get('image_file') as File;
-
-  if (imageFile && imageFile.size > 0) {
-    // Handle File Upload
-    const buffer = Buffer.from(await imageFile.arrayBuffer());
-    const fileName = `${Date.now()}-${imageFile.name.replace(/\s+/g, '-')}`;
-    const filePath = path.join(process.cwd(), 'public', 'uploads', fileName);
-    
-    await fs.writeFile(filePath, buffer);
-    img = `/uploads/${fileName}`;
+  let currentImagesStr = formData.get('img_url') as string || '[]';
+  let images: string[] = [];
+  
+  try {
+    images = JSON.parse(currentImagesStr);
+    if (!Array.isArray(images)) images = [currentImagesStr];
+  } catch (e) {
+    images = currentImagesStr ? [currentImagesStr] : [];
   }
+
+  const imageFiles = formData.getAll('image_file') as File[];
+
+  if (imageFiles.length > 0 && imageFiles[0].size > 0) {
+    const newImages: string[] = [];
+    for (const file of imageFiles) {
+      if (file.size === 0) continue;
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+      await fs.mkdir(uploadDir, { recursive: true });
+      const filePath = path.join(uploadDir, fileName);
+      await fs.writeFile(filePath, buffer);
+      newImages.push(`/uploads/${fileName}`);
+    }
+    // Append new images to the existing ones (which have been filtered by the UI already)
+    images = [...images, ...newImages];
+  }
+  
+  const imgValue = JSON.stringify(images);
   
   try {
     await pool.query(
       'UPDATE products SET name = ?, price = ?, old_price = ?, img = ?, category = ?, stock = ? WHERE id = ?',
-      [name, price, oldPrice, img, category, stock, id]
+      [name, price, oldPrice, imgValue, category, stock, id]
     );
     revalidatePath('/admin/products');
     return { success: true };
@@ -46,21 +63,26 @@ export async function createProduct(formData: FormData) {
   const category = formData.get('category') as string || 'Bundle';
   const stock = parseInt(formData.get('stock') as string) || 0;
   
-  let img = '/placeholder-product.png'; 
-  const imageFile = formData.get('image_file') as File;
+  const imageFiles = formData.getAll('image_file') as File[];
+  const images: string[] = [];
 
-  if (imageFile && imageFile.size > 0) {
-    const buffer = Buffer.from(await imageFile.arrayBuffer());
-    const fileName = `${Date.now()}-${imageFile.name.replace(/\s+/g, '-')}`;
-    const filePath = path.join(process.cwd(), 'public', 'uploads', fileName);
+  for (const file of imageFiles) {
+    if (file.size === 0) continue;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+    await fs.mkdir(uploadDir, { recursive: true });
+    const filePath = path.join(uploadDir, fileName);
     await fs.writeFile(filePath, buffer);
-    img = `/uploads/${fileName}`;
+    images.push(`/uploads/${fileName}`);
   }
+
+  const imgValue = images.length > 0 ? JSON.stringify(images) : JSON.stringify(['/placeholder-product.png']);
   
   try {
     await pool.query(
       'INSERT INTO products (name, price, old_price, img, category, stock, reviews_count) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [name, price, oldPrice, img, category, stock, 0]
+      [name, price, oldPrice, imgValue, category, stock, 0]
     );
     revalidatePath('/admin/products');
     return { success: true };

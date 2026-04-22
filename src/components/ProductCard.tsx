@@ -4,11 +4,21 @@ import Link from 'next/link';
 import { ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function ProductCard({ product }: { product: any }) {
+  let displayImg = product.img;
+  try {
+    const images = JSON.parse(product.img);
+    if (Array.isArray(images) && images.length > 0) {
+      displayImg = images[0];
+    }
+  } catch (e) {
+    // Not JSON, use as is
+  }
+
   const queryParams = new URLSearchParams({
     id: String(product.id),
     name: product.name,
     price: typeof product.price === 'number' ? `₹${product.price.toFixed(2)}` : String(product.price),
-    img: product.img,
+    img: product.img, // Send the full string (JSON or URL)
   });
   
   const oldPriceValue = product.oldPrice || product.old_price;
@@ -20,7 +30,7 @@ export default function ProductCard({ product }: { product: any }) {
     <Link href={`/product?${queryParams.toString()}`} className="group cursor-pointer flex flex-col h-full bg-transparent">
       <div className="relative aspect-[3/4.2] bg-white overflow-hidden mb-3">
         <img 
-          src={product.img} 
+          src={displayImg} 
           alt={product.name} 
           className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
         />

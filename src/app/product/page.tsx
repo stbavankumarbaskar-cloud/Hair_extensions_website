@@ -20,17 +20,28 @@ function ProductDetails() {
   const { addToCart, setIsCartOpen } = useCart();
   const searchParams = useSearchParams();
   const name = searchParams.get('name') || "Glam Kinky Curly Raw Indian Remy Hair Extensions • Buy Now Pay Later";
-  const id = searchParams.get('id') || "glam-kinky-curly"; // Added ID
+  const id = searchParams.get('id') || "glam-kinky-curly"; 
   const priceStr = searchParams.get('price') || "₹ 15,500.00";
   const oldPriceStr = searchParams.get('oldPrice');
-  const img = searchParams.get('img') || "https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
+  const imgParam = searchParams.get('img');
+  
+  let productImages: string[] = [];
+  try {
+    if (imgParam) {
+      const parsed = JSON.parse(imgParam);
+      productImages = Array.isArray(parsed) ? parsed : [parsed];
+    }
+  } catch (e) {
+    productImages = imgParam ? [imgParam] : ["https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"];
+  }
 
-  const numericPrice = parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 15500.00;
-  const currencySymbol = priceStr.replace(/[0-9.]/g, '').trim() || '₹';
-
+  const [activeImage, setActiveImage] = useState(productImages[0]);
   const [selectedSize, setSelectedSize] = useState('40 CM');
   const [selectedColor, setSelectedColor] = useState('Black');
   const [quantity, setQuantity] = useState(1);
+
+  const numericPrice = parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 15500.00;
+  const currencySymbol = priceStr.replace(/[0-9.]/g, '').trim() || '₹';
 
   const handleAddToCart = () => {
     addToCart({
@@ -40,7 +51,7 @@ function ProductDetails() {
       price: numericPrice,
       originalPrice: oldPriceStr ? parseFloat(oldPriceStr.replace(/[^0-9.]/g, '')) : undefined,
       qty: quantity,
-      image: img,
+      image: activeImage,
     });
   };
 
@@ -68,41 +79,37 @@ function ProductDetails() {
             
             {/* Gallery Thumbnails (hidden on mobile, visible on medium+ screens) */}
             <div className="hidden md:flex flex-col gap-4 w-[100px] flex-shrink-0">
-               <div className="border-2 border-black rounded p-1 cursor-pointer">
-                  <img src="https://images.unsplash.com/photo-1595424564881-81f19c9918bd?auto=format&fit=crop&w=200&q=80" alt="Thumbnail 1" className="w-full aspect-square object-cover" />
-               </div>
-               <div className="border border-gray-200 rounded p-1 cursor-pointer hover:border-gray-400 transition-colors">
-                  <img src="https://images.unsplash.com/photo-1616428789366-a3d5e21fb2b9?auto=format&fit=crop&w=200&q=80" alt="Thumbnail 2" className="w-full aspect-square object-cover" />
-               </div>
-               <div className="border border-gray-200 rounded p-1 cursor-pointer hover:border-gray-400 transition-colors">
-                  <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=200&q=80" alt="Thumbnail 3" className="w-full aspect-square object-cover" />
-               </div>
-               <div className="border border-gray-200 rounded p-1 cursor-pointer hover:border-gray-400 transition-colors opacity-50 relative">
-                  <img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=200&q=80" alt="Thumbnail 4" className="w-full aspect-square object-cover" />
-                  <div className="absolute inset-0 flex items-center justify-center font-bold text-lg bg-white/60">+3</div>
-               </div>
+               {productImages.map((img, idx) => (
+                 <div 
+                   key={idx} 
+                   onClick={() => setActiveImage(img)}
+                   className={`border-2 rounded p-1 cursor-pointer transition-all ${activeImage === img ? 'border-black' : 'border-gray-200 hover:border-gray-400'}`}
+                 >
+                    <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full aspect-square object-cover" />
+                 </div>
+               ))}
             </div>
 
             {/* Main Image */}
             <div className="w-full relative aspect-[4/5] md:aspect-auto bg-[#f8f9fa] rounded-none md:rounded-lg overflow-hidden flex-grow">
                <img 
-                 src={img} 
+                 src={activeImage} 
                  alt={name} 
-                 className="w-full h-full object-cover"
+                 className="w-full h-full object-cover transition-all duration-500"
                />
             </div>
             
             {/* Mobile Thumbnails */}
             <div className="flex md:hidden gap-3 overflow-x-auto pb-2 custom-scrollbar">
-               <div className="w-[80px] flex-shrink-0 border-2 border-black rounded p-1">
-                  <img src="https://images.unsplash.com/photo-1595424564881-81f19c9918bd?auto=format&fit=crop&w=200&q=80" alt="Thumbnail 1" className="w-full aspect-square object-cover" />
-               </div>
-               <div className="w-[80px] flex-shrink-0 border border-gray-200 rounded p-1">
-                  <img src="https://images.unsplash.com/photo-1616428789366-a3d5e21fb2b9?auto=format&fit=crop&w=200&q=80" alt="Thumbnail 2" className="w-full aspect-square object-cover" />
-               </div>
-               <div className="w-[80px] flex-shrink-0 border border-gray-200 rounded p-1">
-                  <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=200&q=80" alt="Thumbnail 3" className="w-full aspect-square object-cover" />
-               </div>
+               {productImages.map((img, idx) => (
+                 <div 
+                   key={idx} 
+                   onClick={() => setActiveImage(img)}
+                   className={`w-[80px] flex-shrink-0 border-2 rounded p-1 ${activeImage === img ? 'border-black' : 'border-gray-200'}`}
+                 >
+                    <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full aspect-square object-cover" />
+                 </div>
+               ))}
             </div>
           </div>
 

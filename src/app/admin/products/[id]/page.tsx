@@ -1,50 +1,93 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Save } from 'lucide-react';
-import pool from '@/lib/db';
-import { redirect, notFound } from 'next/navigation';
+import { ArrowLeft, Save, X } from 'lucide-react';
+import { updateProduct } from '../actions';
+import { useParams, useRouter } from 'next/navigation';
 
-export const dynamic = 'force-dynamic';
-
-export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default function EditProductPage() {
+  const params = useParams();
+  const id = params.id as string;
+  const router = useRouter();
   
-  let product: any = null;
-  try {
-    const [rows] = await pool.query('SELECT * FROM products WHERE id = ?', [id]);
-    if (Array.isArray(rows) && rows.length > 0) {
-      product = rows[0];
+  const [product, setProduct] = useState<any>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const response = await fetch(`/api/products/${id}`);
+      const data = await response.json();
+      if (data.success) {
+        setProduct(data.product);
+        let currentImages: string[] = [];
+        try {
+          if (data.product.img) {
+            const parsed = JSON.parse(data.product.img);
+            currentImages = Array.isArray(parsed) ? parsed : [parsed];
+          }
+        } catch (e) {
+          currentImages = data.product.img ? [data.product.img] : [];
+        }
+        setImagePreviews(currentImages);
+        setSelectedCategories(data.product.category ? data.product.category.split(', ') : []);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      setUploadedFiles(prev => [...prev, ...newFiles]);
+      
+      newFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreviews(prev => [...prev, reader.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
     }
-  } catch (err) {
-    console.error("DB Fetch Error:", err);
-  }
+  };
 
-  if (!product) {
-    notFound();
-  }
-
-  // Next.js Server Action
-  async function updateProduct(formData: FormData) {
-    'use server';
-    
-    const name = formData.get('name') as string;
-    const price = parseFloat(formData.get('price') as string);
-    const oldPrice = formData.get('oldPrice') ? parseFloat(formData.get('oldPrice') as string) : null;
-    const img = formData.get('img') as string;
-    const category = formData.get('category') as string || 'Bundle';
-    const stock = parseInt(formData.get('stock') as string) || 0;
-    
-    try {
-      await pool.query(
-        'UPDATE products SET name = ?, price = ?, old_price = ?, img = ?, category = ?, stock = ? WHERE id = ?',
-        [name, price, oldPrice, img, category, stock, id]
-      );
-    } catch (err: any) {
-      console.error("Failed to update product:", err);
+  const removeImage = (index: number) => {
+    const previewToRemove = imagePreviews[index];
+    if (previewToRemove.startsWith('data:')) {
+      const base64Index = imagePreviews.slice(0, index).filter(p => p.startsWith('data:')).length;
+      setUploadedFiles(prev => prev.filter((_, i) => i !== base64Index));
     }
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
 
-    redirect('/admin/products');
-  }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const formData = new FormData(e.currentTarget);
+    formData.set('category', selectedCategories.join(', '));
+    
+    const keptImages = imagePreviews.filter(p => !p.startsWith('data:'));
+    formData.set('img_url', JSON.stringify(keptImages));
+    
+    formData.delete('image_file');
+    uploadedFiles.forEach(file => {
+      formData.append('image_file', file);
+    });
+
+    const result = await updateProduct(formData);
+    if (result.success) {
+      router.push('/admin/products');
+    } else {
+      alert("Failed to update product: " + result.error);
+      setIsLoading(false);
+    }
+  };
+
+  if (!product) return <div className="p-8 text-slate-500">Loading product...</div>;
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
@@ -60,7 +103,8 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
       </div>
 
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8 max-w-4xl">
-        <form action={updateProduct} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <input type="hidden" name="id" value={id} />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-2">
@@ -71,23 +115,20 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
                 name="name" 
                 defaultValue={product.name}
                 required 
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5 transition-all font-medium"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500 transition-all font-medium"
               />
             </div>
 
             <div className="space-y-2">
                 <label htmlFor="category" className="text-sm font-bold text-slate-700">Category</label>
-                <select 
-                  id="category" 
-                  name="category" 
-                  defaultValue={product.category}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5 transition-all font-medium bg-white"
-                >
-                  <option value="Bundle">Bundle</option>
-                  <option value="Wig">Wig</option>
-                  <option value="Trending">Trending</option>
-                  <option value="Closure">Closure</option>
-                </select>
+                <input 
+                  type="text"
+                  id="category"
+                  name="category_display"
+                  value={selectedCategories.join(', ')}
+                  readOnly
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 font-medium cursor-not-allowed"
+                />
             </div>
 
             <div className="space-y-2">
@@ -99,19 +140,19 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
                   name="price" 
                   defaultValue={product.price}
                   required 
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5 transition-all font-medium"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500 transition-all font-medium"
                 />
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="oldPrice" className="text-sm font-bold text-slate-700">Old Price (₹) (Optional)</label>
+                <label htmlFor="oldPrice" className="text-sm font-bold text-slate-700">Old Price (₹)</label>
                 <input 
                   type="number" 
                   step="0.01" 
                   id="oldPrice" 
                   name="oldPrice" 
                   defaultValue={product.old_price || ''}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5 transition-all font-medium"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500 transition-all font-medium"
                 />
             </div>
 
@@ -123,19 +164,39 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
                 name="stock" 
                 defaultValue={product.stock || 0}
                 required
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5 transition-all font-medium"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500 transition-all font-medium"
               />
             </div>
 
-            <div className="space-y-2">
-                <label htmlFor="img" className="text-sm font-bold text-slate-700">Image URL</label>
-                <input 
-                  type="url" 
-                  id="img" 
-                  name="img" 
-                  defaultValue={product.img}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-amber-500/50 focus:ring-4 focus:ring-amber-500/5 transition-all font-medium"
-                />
+            <div className="md:col-span-2 space-y-4">
+               <label className="text-sm font-bold text-slate-700">Product Images</label>
+               <div className="flex flex-col gap-6 p-6 bg-slate-50 rounded-2xl border-2 border-slate-200 border-dashed">
+                  <div className="flex flex-wrap gap-4">
+                     {imagePreviews.map((preview, idx) => (
+                       <div key={idx} className="w-32 h-32 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm relative group">
+                         <img src={preview} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+                         <button 
+                            type="button" 
+                            onClick={() => removeImage(idx)}
+                            className="absolute top-2 right-2 p-1.5 bg-white/90 hover:bg-red-500 hover:text-white text-slate-500 rounded-full shadow-lg transition-all opacity-0 group-hover:opacity-100 backdrop-blur-sm"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                       </div>
+                     ))}
+                  </div>
+                  <div className="flex flex-col gap-3">
+                     <p className="text-sm text-slate-600 font-medium">Upload new photos (added to the list).</p>
+                     <input 
+                       type="file" 
+                       name="image_file"
+                       accept="image/*"
+                       multiple
+                       onChange={handleImageChange}
+                       className="text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-slate-900 file:text-white hover:file:bg-amber-600 transition-all cursor-pointer"
+                     />
+                  </div>
+               </div>
             </div>
           </div>
 
@@ -148,10 +209,11 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
             </Link>
             <button 
               type="submit" 
-              className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-10 py-3 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-amber-500/20 font-sans uppercase tracking-widest text-xs"
+              disabled={isLoading}
+              className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-10 py-3 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-amber-500/20 font-sans uppercase tracking-widest text-xs disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
-              <span>Update Product</span>
+              <span>{isLoading ? 'Updating...' : 'Update Product'}</span>
             </button>
           </div>
 

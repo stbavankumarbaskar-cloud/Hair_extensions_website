@@ -6,7 +6,8 @@ import { Save, X } from 'lucide-react';
 import { createProduct } from '../actions';
 
 export default function NewProductForm({ categories }: { categories: any[] }) {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
@@ -29,14 +30,24 @@ export default function NewProductForm({ categories }: { categories: any[] }) {
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      setUploadedFiles(prev => [...prev, ...newFiles]);
+      
+      newFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreviews(prev => [...prev, reader.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
     }
+  };
+
+  const removeImage = (index: number) => {
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,6 +59,12 @@ export default function NewProductForm({ categories }: { categories: any[] }) {
     setIsLoading(true);
     const formData = new FormData(e.currentTarget);
     formData.set('category', selectedCategories.join(', '));
+    
+    // Clear any automatic image_file if any and append our state files
+    formData.delete('image_file');
+    uploadedFiles.forEach(file => {
+      formData.append('image_file', file);
+    });
     
     const result = await createProduct(formData);
     if (result.success) {
@@ -124,24 +141,36 @@ export default function NewProductForm({ categories }: { categories: any[] }) {
           </div>
 
            <div className="md:col-span-2 space-y-4">
-              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Product Image</label>
-              <div className="flex items-center gap-8 p-6 bg-slate-50 rounded-2xl border-2 border-slate-200 border-dashed hover:border-amber-500/50 transition-colors group">
-                 <div className="w-32 h-32 rounded-2xl overflow-hidden border border-slate-200 bg-white flex-shrink-0 shadow-sm relative group-hover:scale-105 transition-transform duration-300">
-                    {imagePreview ? (
-                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Product Images</label>
+              <div className="flex flex-col gap-6 p-6 bg-slate-50 rounded-2xl border-2 border-slate-200 border-dashed hover:border-amber-500/50 transition-colors group">
+                  <div className="flex flex-wrap gap-4">
+                    {imagePreviews.length > 0 ? (
+                      imagePreviews.map((preview, idx) => (
+                        <div key={idx} className="w-32 h-32 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm relative group hover:scale-105 transition-transform duration-300">
+                          <img src={preview} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+                          <button 
+                            type="button" 
+                            onClick={() => removeImage(idx)}
+                            className="absolute top-2 right-2 p-1.5 bg-white/90 hover:bg-red-500 hover:text-white text-slate-500 rounded-full shadow-lg transition-all opacity-0 group-hover:opacity-100 backdrop-blur-sm"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-200">
+                      <div className="w-32 h-32 rounded-2xl overflow-hidden border border-slate-200 bg-white flex items-center justify-center text-slate-200 shadow-sm">
                         <Save className="w-10 h-10" />
                       </div>
                     )}
                  </div>
                  <div className="flex flex-col gap-3">
-                    <p className="text-sm text-slate-600 font-medium">Choose a photo from your computer to upload.</p>
+                    <p className="text-sm text-slate-600 font-medium">Choose one or more photos from your computer to upload.</p>
                     <input 
                       type="file" 
                       name="image_file"
                       accept="image/*"
-                      required
+                      multiple
+                      required={imagePreviews.length === 0}
                       onChange={handleImageChange}
                       className="text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-slate-900 file:text-white hover:file:bg-amber-600 transition-all cursor-pointer"
                     />

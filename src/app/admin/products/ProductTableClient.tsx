@@ -36,7 +36,8 @@ export default function ProductTableClient({ initialProducts, categories }: { in
     p.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const toggleCategory = (catName: string) => {
     setSelectedCategories(prev => 
@@ -48,27 +49,71 @@ export default function ProductTableClient({ initialProducts, categories }: { in
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
-    setImagePreview(product.img || null);
+    setUploadedFiles([]); // Reset uploaded files for new edit session
+    
+    let currentImages: string[] = [];
+    try {
+      if (product.img) {
+        const parsed = JSON.parse(product.img);
+        currentImages = Array.isArray(parsed) ? parsed : [parsed];
+      }
+    } catch (e) {
+      currentImages = product.img ? [product.img] : [];
+    }
+    setImagePreviews(currentImages);
+    
     // Parse categories from comma separated string
     const cats = product.category ? product.category.split(', ').filter(Boolean) : [];
     setSelectedCategories(cats);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    const files = e.target.files;
+    if (files) {
+      const newFiles = Array.from(files);
+      setUploadedFiles(prev => [...prev, ...newFiles]);
+      
+      newFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreviews(prev => [...prev, reader.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
     }
+  };
+
+  const removeImage = (index: number) => {
+    const previewToRemove = imagePreviews[index];
+    
+    // If it's a base64 string, it's one of the newly uploaded files
+    if (previewToRemove.startsWith('data:')) {
+      // Find which file it corresponds to. This is tricky since multiple files can be uploaded.
+      // But we can assume the relative order of base64s matches the order of uploadedFiles.
+      // However, it's better to just track them properly.
+      // For simplicity, let's find the index in uploadedFiles by checking how many base64s preceded it.
+      const base64Index = imagePreviews.slice(0, index).filter(p => p.startsWith('data:')).length;
+      setUploadedFiles(prev => prev.filter((_, i) => i !== base64Index));
+    }
+    
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     formData.set('category', selectedCategories.join(', '));
+    
+    // Current images that are still kept (existing URLs)
+    const keptImages = imagePreviews.filter(p => !p.startsWith('data:'));
+    formData.set('img_url', JSON.stringify(keptImages));
+    
+    // Append new files
+    formData.delete('image_file');
+    uploadedFiles.forEach(file => {
+      formData.append('image_file', file);
+    });
+
     const result = await updateProduct(formData);
     
     if (result.success) {
@@ -120,51 +165,63 @@ export default function ProductTableClient({ initialProducts, categories }: { in
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-slate-50 transition-colors group text-slate-600">
-                  <td className="px-4 py-4 flex justify-center">
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-slate-200 shadow-sm group-hover:border-amber-500/30 transition-all flex-shrink-0">
-                      <img src={product.img || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover" />
-                    </div>
-                  </td>
-                  <td className="px-4 py-4">
-                     <p className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors max-w-xs truncate">{product.name}</p>
-                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter mt-0.5">SKU: PROD-{product.id}</p>
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex flex-wrap gap-1 max-w-[250px]">
-                      {product.category?.split(', ').map((c, i) => (
-                        <span key={i} className="bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full text-[9px] uppercase font-bold tracking-wider border border-slate-200/50 line-clamp-1 truncate max-w-[100px]">{c}</span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-slate-900 font-bold text-sm">₹{Number(product.price).toLocaleString()}</td>
-                  <td className="px-4 py-4 text-center">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${product.stock <= 5 ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
-                      {product.stock || 0}
-                    </span>
-                  </td>
-                  <td className="px-4 py-4 text-right">
-                     <div className="flex justify-end gap-2 text-[#2c3e50]">
-                       <button 
-                         onClick={() => handleEdit(product)}
-                         className="p-2 text-slate-400 hover:text-amber-600 bg-slate-50 hover:bg-amber-50 rounded-lg transition-all"
-                         title="Edit Product"
-                       >
-                         <Edit className="w-4 h-4" />
-                       </button>
-                       <button 
-                         onClick={() => handleDelete(product.id)}
-                         disabled={isDeleting === product.id}
-                         className="p-2 text-slate-400 hover:text-red-500 bg-slate-50 hover:bg-red-50 rounded-lg transition-all disabled:opacity-30"
-                         title="Delete Product"
-                       >
-                         <Trash2 className="w-4 h-4" />
-                       </button>
-                     </div>
-                  </td>
-                </tr>
-              ))}
+              {filteredProducts.map((product) => {
+                let firstImg = '/placeholder-product.png';
+                try {
+                  if (product.img) {
+                    const parsed = JSON.parse(product.img);
+                    firstImg = Array.isArray(parsed) ? parsed[0] : parsed;
+                  }
+                } catch (e) {
+                  firstImg = product.img || firstImg;
+                }
+
+                return (
+                  <tr key={product.id} className="hover:bg-slate-50 transition-colors group text-slate-600">
+                    <td className="px-4 py-4 flex justify-center">
+                      <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-slate-200 shadow-sm group-hover:border-amber-500/30 transition-all flex-shrink-0">
+                        <img src={firstImg} alt={product.name} className="w-full h-full object-cover" />
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                       <p className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors max-w-xs truncate">{product.name}</p>
+                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter mt-0.5">SKU: PROD-{product.id}</p>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex flex-wrap gap-1 max-w-[250px]">
+                        {product.category?.split(', ').map((c, i) => (
+                          <span key={i} className="bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full text-[9px] uppercase font-bold tracking-wider border border-slate-200/50 line-clamp-1 truncate max-w-[100px]">{c}</span>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-slate-900 font-bold text-sm">₹{Number(product.price).toLocaleString()}</td>
+                    <td className="px-4 py-4 text-center">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${product.stock <= 5 ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
+                        {product.stock || 0}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4 text-right">
+                       <div className="flex justify-end gap-2 text-[#2c3e50]">
+                         <button 
+                           onClick={() => handleEdit(product)}
+                           className="p-2 text-slate-400 hover:text-amber-600 bg-slate-50 hover:bg-amber-50 rounded-lg transition-all"
+                           title="Edit Product"
+                         >
+                           <Edit className="w-4 h-4" />
+                         </button>
+                         <button 
+                           onClick={() => handleDelete(product.id)}
+                           disabled={isDeleting === product.id}
+                           className="p-2 text-slate-400 hover:text-red-500 bg-slate-50 hover:bg-red-50 rounded-lg transition-all disabled:opacity-30"
+                           title="Delete Product"
+                         >
+                           <Trash2 className="w-4 h-4" />
+                         </button>
+                       </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -243,13 +300,23 @@ export default function ProductTableClient({ initialProducts, categories }: { in
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Product Image</label>
-                  <div className="flex items-center gap-6 p-4 bg-slate-50 rounded-2xl border border-slate-200 border-dashed">
-                    <div className="w-20 h-20 rounded-xl overflow-hidden border border-slate-200 bg-white flex-shrink-0 shadow-sm">
-                      {imagePreview ? (
-                        <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-200">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Product Images</label>
+                  <div className="flex flex-col gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200 border-dashed">
+                    <div className="flex flex-wrap gap-3">
+                      {imagePreviews.map((preview, idx) => (
+                        <div key={idx} className="w-20 h-20 rounded-xl overflow-hidden border border-slate-200 bg-white flex-shrink-0 shadow-sm relative group">
+                          <img src={preview} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+                          <button 
+                            type="button" 
+                            onClick={() => removeImage(idx)}
+                            className="absolute top-1 right-1 p-1 bg-white/90 hover:bg-red-500 hover:text-white text-slate-500 rounded-full shadow-md transition-all opacity-0 group-hover:opacity-100 backdrop-blur-sm"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                      {imagePreviews.length === 0 && (
+                        <div className="w-20 h-20 rounded-xl overflow-hidden border border-slate-200 bg-white flex items-center justify-center text-slate-200 shadow-sm">
                           <X className="w-6 h-6" />
                         </div>
                       )}
@@ -259,10 +326,10 @@ export default function ProductTableClient({ initialProducts, categories }: { in
                         type="file" 
                         name="image_file"
                         accept="image/*"
+                        multiple
                         onChange={handleImageChange}
                         className="text-[10px] text-slate-600 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-slate-900 file:text-white hover:file:bg-amber-600 cursor-pointer transition-all"
                       />
-                      <input type="hidden" name="img_url" value={editingProduct.img || ''} />
                     </div>
                   </div>
                 </div>
