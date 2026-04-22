@@ -3,12 +3,13 @@ CREATE DATABASE IF NOT EXISTS lovehair_db;
 USE lovehair_db;
 
 -- 1. Create Products Table
+-- img column is TEXT to support JSON array of multiple image URLs
 CREATE TABLE IF NOT EXISTS products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     old_price DECIMAL(10, 2),
-    img VARCHAR(255) NOT NULL,
+    img TEXT,
     category VARCHAR(100) DEFAULT 'Bundles',
     stock INT DEFAULT 0,
     reviews_count INT DEFAULT 0,
@@ -65,17 +66,82 @@ CREATE TABLE IF NOT EXISTS customers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 7. Create Categories Table
+CREATE TABLE IF NOT EXISTS categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    group_name VARCHAR(100) DEFAULT 'General',
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 8. Create Site Settings Table
+CREATE TABLE IF NOT EXISTS site_settings (
+    setting_key VARCHAR(100) PRIMARY KEY,
+    setting_value TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 9. Create Banners Table
+CREATE TABLE IF NOT EXISTS banners (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    subtitle VARCHAR(255),
+    image_url TEXT,
+    link_url VARCHAR(255),
+    status VARCHAR(50) DEFAULT 'active',
+    order_index INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 10. Create FAQs Table
+CREATE TABLE IF NOT EXISTS faqs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question TEXT NOT NULL,
+    answer TEXT NOT NULL,
+    order_index INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 11. Create Payments Table
+CREATE TABLE IF NOT EXISTS payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    method VARCHAR(50) NOT NULL,
+    status VARCHAR(50) DEFAULT 'Pending',
+    transaction_id VARCHAR(100) UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
+
+-- 12. Create Shipping Table
+CREATE TABLE IF NOT EXISTS shipping (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    cost DECIMAL(10, 2) NOT NULL,
+    estimated_days VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- -----------------------------------------------------------------------------
--- INSERT DUMMY DATA FOR FRONT PAGE & ADMIN DASHBOARD
+-- INSERT INITIAL DATA
 -- -----------------------------------------------------------------------------
 
--- Insert Dummy Products
+-- Insert Dummy Categories
+INSERT INTO categories (name, group_name, description) VALUES
+('Bundles', 'Hair Type', 'High-quality human hair bundles'),
+('Wigs', 'Hair Type', 'Full lace and front lace wigs'),
+('Frontals', 'Lace', 'Ear-to-ear lace frontals'),
+('Closures', 'Lace', 'Top closures for perfect blending');
+
+-- Insert Dummy Products (Note: img is now a JSON string array)
 INSERT INTO products (name, price, old_price, img, category, reviews_count, stock) VALUES
-('Love Hair 3 Bundles 9A Grade Brazilian Human Hair Water Wave', 86.00, 120.00, 'https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Bundle', 124, 15),
-('Queen Hair 10A Brazilian Hair Straight 3 Bundles Virgin Human Hair', 75.00, 95.00, 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Bundle', 89, 4),
-('Love Hair Body Wave 3 Bundles With Closure Brazilian Human Hair', 98.50, 140.00, 'https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Bundle', 312, 22),
-('Loose Deep Wave wig 13x4 Lace Front Human Hair Wigs', 120.00, 180.00, 'https://images.unsplash.com/photo-1562086254-20b16260bd7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Wig', 215, 3),
-('Bone Straight 13x6 HD Lace Front Wig Free Part', 155.00, 230.00, 'https://images.unsplash.com/photo-1583001809873-c12ebba3152f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80', 'Wig', 93, 12);
+('Love Hair 3 Bundles 9A Grade Brazilian Human Hair Water Wave', 86.00, 120.00, '["https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Bundle', 124, 15),
+('Queen Hair 10A Brazilian Hair Straight 3 Bundles Virgin Human Hair', 75.00, 95.00, '["https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Bundle', 89, 4),
+('Love Hair Body Wave 3 Bundles With Closure Brazilian Human Hair', 98.50, 140.00, '["https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Bundle', 312, 22),
+('Loose Deep Wave wig 13x4 Lace Front Human Hair Wigs', 120.00, 180.00, '["https://images.unsplash.com/photo-1562086254-20b16260bd7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Wig', 215, 3),
+('Bone Straight 13x6 HD Lace Front Wig Free Part', 155.00, 230.00, '["https://images.unsplash.com/photo-1583001809873-c12ebba3152f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Wig', 93, 12);
 
 -- Insert Dummy Reviews
 INSERT INTO reviews (text, name, company, rating) VALUES
@@ -83,22 +149,29 @@ INSERT INTO reviews (text, name, company, rating) VALUES
 ('The clip-in extensions are fantastic. They blend seamlessly with my natural hair and the quality is absolutely top-notch.', 'Sarah', 'Verified Customer', 5),
 ('Exceptional customer service and gorgeous products. I will definitely be repurchasing from them again. Highly recommended!', 'Jessica', 'Salon Owner', 5);
 
--- Insert Dummy Orders
-INSERT INTO orders (order_number, customer_name, product_name, amount, status) VALUES
-('#ORD-1001', 'Emma Watson', '100% Brazilian Human Hair Bundles', 345.00, 'Processing'),
-('#ORD-1002', 'Sophia Turner', 'Loose Deep Wave wig 13x4 Lace', 120.00, 'Completed'),
-('#ORD-1003', 'Mia Johnson', 'Body Wave Lace Front Wigs', 135.00, 'Pending'),
-('#ORD-1004', 'Isabella Smith', 'Bone Straight 13x6 HD Lace Front Wig', 155.00, 'Completed'),
-('#ORD-1005', 'Olivia Williams', 'Indian Deep Wave 3 Bundles', 118.00, 'Processing');
+-- Insert Site Settings
+INSERT INTO site_settings (setting_key, setting_value) VALUES
+('site_name', 'One Love Hair'),
+('contact_number', '+1 (555) 000-0000'),
+('promo_text', 'Free shipping on orders over $200! Use code LOVEHAIR20'),
+('about_text', 'One Love Hair provides the highest quality 100% human hair extensions and wigs. Sourced directly from selective temples, our hair is natural, durable, and beautiful.'),
+('address', '123 Hair Street, Beauty City, NY 10001'),
+('facebook_link', 'https://facebook.com/onelovehair'),
+('instagram_link', 'https://instagram.com/onelovehair');
 
--- Insert Dummy Vendors
-INSERT INTO vendors (name, email, phone, category, status) VALUES
-('Premium Hair Co.', 'sales@premiumhair.com', '+1-555-0199', 'Wigs & Bundles', 'Active'),
-('Global Lace Supplies', 'support@globallace.com', '+1-555-0188', 'Lace Materials', 'Active'),
-('Brazilian Virgin Hair Ltd.', 'info@brazilianvirgin.com', '+1-555-0177', 'Virgin Hair', 'Inactive');
+-- Insert Dummy Banners
+INSERT INTO banners (title, subtitle, image_url, link_url, order_index) VALUES
+('Premium Brazilian Bundles', 'Get up to 30% off on all water wave bundles this week!', 'https://images.unsplash.com/photo-1595424564881-81f19c9918bd?auto=format&fit=crop&w=1200&q=80', '/admin/products', 1),
+('New HD Lace Collection', 'Invisible lace for the most natural look possible.', 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=1200&q=80', '/admin/products', 2);
 
--- Insert Dummy Customers
-INSERT INTO customers (name, email, total_orders, total_spent) VALUES
-('Emma Watson', 'emma@gmail.com', 4, 850.00),
-('Sophia Turner', 'sophia@gmail.com', 2, 240.00),
-('Mia Johnson', 'mia@gmail.com', 1, 135.00);
+-- Insert Dummy FAQs
+INSERT INTO faqs (question, answer, order_index) VALUES
+('How long does shipping take?', 'Standard shipping usually takes 3-5 business days within the US. International shipping can take 7-14 days.', 1),
+('Can I dye the hair?', 'Yes, our hair is 100% human hair and can be dyed, bleached, and styled just like your own hair.', 2),
+('What is your return policy?', 'We accept returns on unopened and unused products within 30 days of delivery. Due to hygiene reasons, hair extensions cannot be returned once the seal is broken.', 3);
+
+-- Insert Dummy Shipping Methods
+INSERT INTO shipping (name, cost, estimated_days) VALUES
+('Standard Shipping', 10.00, '3-5 Business Days'),
+('Express Shipping', 25.00, '1-2 Business Days'),
+('International Shipping', 50.00, '7-14 Business Days');
