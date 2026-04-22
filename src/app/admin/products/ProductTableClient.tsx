@@ -14,11 +14,22 @@ interface Product {
   img?: string;
 }
 
-export default function ProductTableClient({ initialProducts }: { initialProducts: Product[] }) {
+export default function ProductTableClient({ initialProducts, categories }: { initialProducts: Product[], categories: any[] }) {
   const [products, setProducts] = useState(initialProducts);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+
+  // Group categories for the select dropdown
+  const groupedCategories = categories?.reduce((acc: any, cat: any) => {
+    if (!acc[cat.group_name]) acc[cat.group_name] = [];
+    acc[cat.group_name].push(cat.name);
+    return acc;
+  }, {}) || {};
+
+  const groups = ['Type', 'Hair Type', 'Texture', 'Length', 'Color', 'Volume / Weight', 'General'];
 
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -27,9 +38,20 @@ export default function ProductTableClient({ initialProducts }: { initialProduct
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
+  const toggleCategory = (catName: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(catName) 
+        ? prev.filter(c => c !== catName) 
+        : [...prev, catName]
+    );
+  };
+
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
     setImagePreview(product.img || null);
+    // Parse categories from comma separated string
+    const cats = product.category ? product.category.split(', ').filter(Boolean) : [];
+    setSelectedCategories(cats);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,10 +68,10 @@ export default function ProductTableClient({ initialProducts }: { initialProduct
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    formData.set('category', selectedCategories.join(', '));
     const result = await updateProduct(formData);
     
     if (result.success) {
-      // Refresh the page or update local state
       window.location.reload(); 
     } else {
       alert("Failed to update product: " + result.error);
@@ -92,16 +114,16 @@ export default function ProductTableClient({ initialProducts }: { initialProduct
                 <th className="px-4 py-3 w-16 text-center">Image</th>
                 <th className="px-4 py-3">Product Name</th>
                 <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3">Price</th>
-                <th className="px-4 py-3">Stock</th>
+                <th className="px-4 py-3 w-28">Price</th>
+                <th className="px-4 py-3 w-20 text-center">Stock</th>
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-slate-50 transition-colors group">
+                <tr key={product.id} className="hover:bg-slate-50 transition-colors group text-slate-600">
                   <td className="px-4 py-4 flex justify-center">
-                    <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-slate-200 shadow-sm group-hover:border-amber-500/30 transition-all">
+                    <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-slate-200 shadow-sm group-hover:border-amber-500/30 transition-all flex-shrink-0">
                       <img src={product.img || 'https://via.placeholder.com/150'} alt={product.name} className="w-full h-full object-cover" />
                     </div>
                   </td>
@@ -110,11 +132,15 @@ export default function ProductTableClient({ initialProducts }: { initialProduct
                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter mt-0.5">SKU: PROD-{product.id}</p>
                   </td>
                   <td className="px-4 py-4">
-                    <span className="bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full text-[10px] uppercase font-bold tracking-wider border border-slate-200/50">{product.category}</span>
+                    <div className="flex flex-wrap gap-1 max-w-[250px]">
+                      {product.category?.split(', ').map((c, i) => (
+                        <span key={i} className="bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full text-[9px] uppercase font-bold tracking-wider border border-slate-200/50 line-clamp-1 truncate max-w-[100px]">{c}</span>
+                      ))}
+                    </div>
                   </td>
-                  <td className="px-4 py-4 text-slate-900 font-bold text-base">₹{Number(product.price).toFixed(2)}</td>
+                  <td className="px-4 py-4 text-slate-900 font-bold text-sm">₹{Number(product.price).toLocaleString()}</td>
                   <td className="px-4 py-4 text-center">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${product.stock <= 5 ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${product.stock <= 5 ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-slate-50 text-slate-500 border border-slate-100'}`}>
                       {product.stock || 0}
                     </span>
                   </td>
@@ -148,11 +174,11 @@ export default function ProductTableClient({ initialProducts }: { initialProduct
       {editingProduct && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setEditingProduct(null)} />
-          <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8 animate-in zoom-in duration-300">
+          <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl p-8 animate-in zoom-in duration-300">
             <div className="flex items-center justify-between border-b border-gray-100 pb-6 mb-8">
               <div>
                 <h2 className="text-2xl font-serif font-bold text-slate-900">Edit Product</h2>
-                <p className="text-sm text-slate-500 font-medium">Update details for SKU: PROD-{editingProduct.id}</p>
+                <p className="text-xs text-slate-500 font-black uppercase tracking-widest mt-1">Ref: {editingProduct.id}</p>
               </div>
               <button onClick={() => setEditingProduct(null)} className="p-2 hover:bg-gray-100 rounded-full transition">
                 <X className="w-6 h-6" />
@@ -164,72 +190,77 @@ export default function ProductTableClient({ initialProducts }: { initialProduct
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Product Name</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Product Name</label>
                   <input 
                     name="name"
                     defaultValue={editingProduct.name}
                     required
-                    className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-amber-500 transition-all font-medium"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-amber-500 transition-all font-medium text-sm"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Category</label>
-                  <select 
-                    name="category"
-                    defaultValue={editingProduct.category}
-                    className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-amber-500 transition-all font-medium"
-                  >
-                    <option value="Bundle">Bundle</option>
-                    <option value="Wig">Wig</option>
-                    <option value="Trending">Trending</option>
-                    <option value="Closure">Closure</option>
-                  </select>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Categories</label>
+                  <div className="flex flex-wrap gap-1.5 p-2 bg-slate-50 border border-slate-200 rounded-xl min-h-[42px] content-start">
+                     {selectedCategories.map(cat => (
+                        <span key={cat} className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[9px] font-bold border border-amber-200 flex items-center gap-1">
+                           {cat}
+                           <button type="button" onClick={() => toggleCategory(cat)}><X className="w-2.5 h-2.5" /></button>
+                        </span>
+                     ))}
+                     <button 
+                       type="button" 
+                       onClick={() => setIsCategoryModalOpen(true)}
+                       className="text-amber-600 text-[10px] font-black hover:underline px-1"
+                     >
+                       + Manage
+                     </button>
+                  </div>
+                  <input type="hidden" name="category" value={selectedCategories.join(', ')} />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Price (₹)</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Price (₹)</label>
                   <input 
                     type="number"
                     step="0.01"
                     name="price"
                     defaultValue={editingProduct.price}
                     required
-                    className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-amber-500 transition-all font-medium"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-amber-500 transition-all font-medium text-sm"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Stock Level</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Stock Level</label>
                   <input 
                     type="number"
                     name="stock"
                     defaultValue={editingProduct.stock}
                     required
-                    className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-amber-500 transition-all font-medium"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-amber-500 transition-all font-medium text-sm"
                   />
                 </div>
 
                 <div className="md:col-span-2 space-y-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Product Image</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Product Image</label>
                   <div className="flex items-center gap-6 p-4 bg-slate-50 rounded-2xl border border-slate-200 border-dashed">
-                    <div className="w-24 h-24 rounded-xl overflow-hidden border border-slate-200 bg-white flex-shrink-0 shadow-inner">
+                    <div className="w-20 h-20 rounded-xl overflow-hidden border border-slate-200 bg-white flex-shrink-0 shadow-sm">
                       {imagePreview ? (
                         <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-300">
-                          <X className="w-8 h-8" />
+                        <div className="w-full h-full flex items-center justify-center text-slate-200">
+                          <X className="w-6 h-6" />
                         </div>
                       )}
                     </div>
                     <div className="flex flex-col gap-2">
-                      <p className="text-[11px] text-slate-500 font-medium">Upload a high-quality photo from your device.</p>
-                      <input 
+                       <input 
                         type="file" 
                         name="image_file"
                         accept="image/*"
                         onChange={handleImageChange}
-                        className="text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-white hover:file:bg-amber-600 cursor-pointer transition-all"
+                        className="text-[10px] text-slate-600 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-slate-900 file:text-white hover:file:bg-amber-600 cursor-pointer transition-all"
                       />
                       <input type="hidden" name="img_url" value={editingProduct.img || ''} />
                     </div>
@@ -237,23 +268,77 @@ export default function ProductTableClient({ initialProducts }: { initialProduct
                 </div>
               </div>
 
-              <div className="pt-4 flex justify-end gap-3">
+              <div className="pt-4 flex justify-end gap-3 border-t border-slate-50 pt-6">
                 <button 
                   type="button"
                   onClick={() => setEditingProduct(null)}
-                  className="px-6 py-2 border border-slate-200 rounded-xl text-slate-500 font-bold hover:bg-slate-50 transition-all text-xs uppercase tracking-widest"
+                  className="px-8 py-2.5 border border-slate-200 rounded-xl text-slate-500 font-bold hover:bg-slate-50 transition-all text-xs uppercase tracking-widest"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-8 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-amber-500/20 text-xs uppercase tracking-widest"
+                  className="px-10 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl flex items-center gap-2 transition-all shadow-xl shadow-amber-500/20 text-xs uppercase tracking-widest"
                 >
                   <Save className="w-4 h-4" />
                   <span>Update</span>
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Categories Pop Modal (Shared for Edit) */}
+      {isCategoryModalOpen && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsCategoryModalOpen(false)} />
+          <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in duration-300">
+            <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+               <div>
+                 <h3 className="text-2xl font-serif font-bold text-slate-900">Select Categories</h3>
+                 <p className="text-sm text-slate-500 font-medium">Categorize your product for better search and filtering.</p>
+               </div>
+               <button onClick={() => setIsCategoryModalOpen(false)} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
+                 <X className="w-6 h-6 text-slate-400" />
+               </button>
+            </div>
+            
+            <div className="p-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+               <div className="space-y-10">
+                 {groups.map(group => groupedCategories[group] && (
+                   <div key={group} className="space-y-4">
+                     <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-3">
+                       {group}
+                       <div className="flex-1 h-px bg-slate-100"></div>
+                     </h4>
+                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                       {groupedCategories[group].map((cat: string) => (
+                         <label key={cat} className={`flex items-center gap-3 p-3 rounded-2xl border-2 transition-all cursor-pointer group ${selectedCategories.includes(cat) ? 'bg-amber-50 border-amber-500 text-amber-900 shadow-sm' : 'bg-white border-slate-100 hover:border-slate-300 text-slate-600'}`}>
+                           <input 
+                             type="checkbox"
+                             checked={selectedCategories.includes(cat)}
+                             onChange={() => toggleCategory(cat)}
+                             className="w-4 h-4 rounded border-slate-300 text-amber-500 focus:ring-amber-500 transition-all cursor-pointer"
+                           />
+                           <span className="text-xs font-bold leading-tight">{cat}</span>
+                         </label>
+                       ))}
+                     </div>
+                   </div>
+                 ))}
+               </div>
+            </div>
+
+            <div className="p-8 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center">
+               <span className="text-sm font-bold text-slate-500">{selectedCategories.length} selected</span>
+               <button 
+                 onClick={() => setIsCategoryModalOpen(false)}
+                 className="px-10 py-3 bg-slate-900 text-white font-black rounded-xl text-xs uppercase tracking-widest hover:bg-slate-800 transition-all"
+               >
+                 Done
+               </button>
+            </div>
           </div>
         </div>
       )}

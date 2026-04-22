@@ -7,11 +7,15 @@ export const dynamic = 'force-dynamic';
 
 export default async function AdminProductsPage() {
   let products: any[] = [];
+  let categories: any[] = [];
   let dbError = "";
 
   try {
     const [rows] = await pool.query('SELECT * FROM products ORDER BY id DESC');
     products = rows as any[];
+    
+    const [catRows] = await pool.query('SELECT * FROM categories ORDER BY group_name, name');
+    categories = catRows as any[];
   } catch (err: any) {
     dbError = err.message;
   }
@@ -35,11 +39,11 @@ export default async function AdminProductsPage() {
 
       {dbError && (
         <div className="bg-red-50 border border-red-100 text-red-600 p-4 rounded-xl text-sm font-medium mb-6">
-          Failed to load products from database: {dbError}
+          Failed to load products: {dbError}
         </div>
       )}
 
-      <ProductTableClient initialProducts={products} />
+      <ProductTableClient initialProducts={products} categories={categories} />
     
     </div>
   );
