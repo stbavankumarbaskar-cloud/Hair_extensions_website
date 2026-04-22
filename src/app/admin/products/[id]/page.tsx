@@ -4,8 +4,10 @@ import { ArrowLeft, Save } from 'lucide-react';
 import pool from '@/lib/db';
 import { redirect, notFound } from 'next/navigation';
 
-export default async function EditProductPage({ params }: { params: { id: string } }) {
-  const id = params.id;
+export const dynamic = 'force-dynamic';
+
+export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   
   let product: any = null;
   try {
