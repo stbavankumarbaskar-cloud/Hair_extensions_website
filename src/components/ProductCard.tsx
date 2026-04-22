@@ -3,7 +3,11 @@ import React from 'react';
 import Link from 'next/link';
 import { ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 
+import { useCart } from '@/lib/CartContext';
+
 export default function ProductCard({ product }: { product: any }) {
+  const { addToCart } = useCart();
+  
   let displayImg = product.img;
   try {
     const images = JSON.parse(product.img);
@@ -26,6 +30,20 @@ export default function ProductCard({ product }: { product: any }) {
     queryParams.append('oldPrice', typeof oldPriceValue === 'number' ? `₹${oldPriceValue.toFixed(2)}` : String(oldPriceValue));
   }
 
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart({
+      id: product.id,
+      name: product.name,
+      variant: "Standard",
+      price: product.price,
+      originalPrice: product.old_price,
+      qty: 1,
+      image: displayImg
+    });
+  };
+
   return (
     <Link href={`/product?${queryParams.toString()}`} className="group cursor-pointer flex flex-col h-full bg-transparent">
       <div className="relative aspect-[3/4.2] bg-white overflow-hidden mb-3">
@@ -42,9 +60,12 @@ export default function ProductCard({ product }: { product: any }) {
         )}
         
         {/* Quick Add icon */}
-        <div className="absolute bottom-3 right-3 bg-white text-gray-800 w-8 h-8 rounded-full shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button 
+          onClick={handleAddToCart}
+          className="absolute bottom-3 right-3 bg-white text-gray-800 w-8 h-8 rounded-full shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-amber-500 hover:text-white"
+        >
            <ShoppingCart className="w-[14px] h-[14px]" strokeWidth={2.5}/>
-        </div>
+        </button>
         
         {/* Arrows (hover) */}
         <div className="absolute top-1/2 left-3 -translate-y-1/2 bg-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">

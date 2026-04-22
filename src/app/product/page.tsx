@@ -75,39 +75,27 @@ function ProductDetails() {
         <div className="flex flex-col lg:flex-row gap-10 xl:gap-20">
           
           {/* Left: Product Media */}
-          <div className="w-full lg:w-[55%] flex flex-col md:flex-row gap-4">
+          <div className="w-full lg:w-[55%] flex flex-col gap-6">
             
-            {/* Gallery Thumbnails (hidden on mobile, visible on medium+ screens) */}
-            <div className="hidden md:flex flex-col gap-4 w-[100px] flex-shrink-0">
-               {productImages.map((img, idx) => (
-                 <div 
-                   key={idx} 
-                   onClick={() => setActiveImage(img)}
-                   className={`border-2 rounded p-1 cursor-pointer transition-all ${activeImage === img ? 'border-black' : 'border-gray-200 hover:border-gray-400'}`}
-                 >
-                    <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full aspect-square object-cover" />
-                 </div>
-               ))}
-            </div>
-
             {/* Main Image */}
-            <div className="w-full relative aspect-[4/5] md:aspect-auto bg-[#f8f9fa] rounded-none md:rounded-lg overflow-hidden flex-grow">
+            <div className="w-full relative bg-white rounded-none md:rounded-lg overflow-hidden border border-gray-100 flex items-center justify-center min-h-[400px] md:min-h-[600px]">
                <img 
                  src={activeImage} 
                  alt={name} 
-                 className="w-full h-full object-cover transition-all duration-500"
+                 className="w-full h-full object-contain transition-all duration-500"
+                 style={{ maxHeight: '800px' }}
                />
             </div>
             
-            {/* Mobile Thumbnails */}
-            <div className="flex md:hidden gap-3 overflow-x-auto pb-2 custom-scrollbar">
+            {/* Gallery Thumbnails */}
+            <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar snap-x">
                {productImages.map((img, idx) => (
                  <div 
                    key={idx} 
                    onClick={() => setActiveImage(img)}
-                   className={`w-[80px] flex-shrink-0 border-2 rounded p-1 ${activeImage === img ? 'border-black' : 'border-gray-200'}`}
+                   className={`w-[100px] md:w-[120px] aspect-square flex-shrink-0 border-2 rounded-md p-1 cursor-pointer transition-all snap-start ${activeImage === img ? 'border-black' : 'border-gray-200 hover:border-gray-400'}`}
                  >
-                    <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full aspect-square object-cover" />
+                    <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover rounded-sm" />
                  </div>
                ))}
             </div>
@@ -123,9 +111,11 @@ function ProductDetails() {
 
             {/* Price */}
             <div className="flex items-baseline space-x-3 mb-8">
-              <span className="text-xl md:text-[22px] font-semibold text-gray-900">{priceStr}</span>
+              <span className="text-xl md:text-[22px] font-semibold text-gray-900">₹ {numericPrice.toFixed(2)}</span>
               {oldPriceStr && (
-                  <span className="text-lg md:text-[18px] text-gray-400 line-through">{oldPriceStr}</span>
+                  <span className="text-lg md:text-[18px] text-gray-400 line-through">
+                    ₹ {parseFloat(oldPriceStr.replace(/[^0-9.]/g, '') || "0").toFixed(2)}
+                  </span>
               )}
             </div>
             

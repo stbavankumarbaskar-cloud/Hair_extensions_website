@@ -31,6 +31,7 @@ export default function Home() {
   const [banners, setBanners] = useState<any[]>([]);
   const [faqs, setFaqs] = useState<any[]>([]);
   const [currentBannerIdx, setCurrentBannerIdx] = useState(0);
+  const [randomTrending, setRandomTrending] = useState<any[]>([]);
 
   useEffect(() => {
     fetch('/api/frontpage')
@@ -45,6 +46,14 @@ export default function Home() {
       })
       .catch(err => console.error("DB Fetch Error:", err));
   }, []);
+
+  // Set random trending products when dbProducts changes
+  useEffect(() => {
+    if (dbProducts.length > 0) {
+      const shuffled = [...dbProducts].sort(() => 0.5 - Math.random());
+      setRandomTrending(shuffled.slice(0, 4));
+    }
+  }, [dbProducts]);
 
   // Interval for banner slider
   useEffect(() => {
@@ -132,75 +141,40 @@ export default function Home() {
         <section className="py-20 px-2 sm:px-4 lg:px-6">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <h2 className="text-[28px] font-serif font-bold text-[#1a202c] mb-2 tracking-tight">Premium Virgin Hair Extension</h2>
-              <div className="w-16 h-[3px] bg-[#e65c00]"></div>
+              <h2 className="text-[28px] font-serif font-bold text-[#1a202c] mb-2 tracking-tight">New Arrivals</h2>
+              <p className="text-gray-500 text-sm italic">Discover our latest premium additions</p>
+              <div className="w-16 h-[3px] bg-[#e65c00] mt-2"></div>
             </div>
-            <Link href="/products" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">View All →</Link>
+            <Link href="/products" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">Shop Newest →</Link>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
-            {dbProducts.filter(p => p.category === 'Bundle').length > 0 ? (
-              dbProducts.filter(p => p.category === 'Bundle').map((product) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+            {dbProducts.slice(0, 8).length > 0 ? (
+              dbProducts.slice(0, 8).map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))
             ) : (
-              <div className="col-span-full py-10 text-center text-gray-400">No bundles currently available in shop.</div>
+              <div className="col-span-full py-10 text-center text-gray-400">Loading our latest collection...</div>
             )}
-          </div>
-           <div className="mt-8 text-center sm:hidden">
-             <button suppressHydrationWarning 
-               onClick={() => window.location.href='/products'}
-               className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition"
-             >
-               View All Products
-             </button>
           </div>
         </section>
 
-        {/* Truth / Virgin Hair Wigs */}
-        <section className="py-20 px-2 sm:px-4 lg:px-6 bg-gray-50 border-t border-b border-gray-100">
-           <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-[28px] font-serif font-bold text-[#1a202c] mb-2 tracking-tight">Truth / Virgin Hair Wigs</h2>
-              <div className="w-16 h-[3px] bg-[#e65c00]"></div>
-            </div>
-             <Link href="/products?category=wig" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">View All Wigs →</Link>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 lg:gap-3">
-            {dbProducts.filter(p => p.category === 'Wig').length > 0 ? (
-              dbProducts.filter(p => p.category === 'Wig').map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))
-            ) : (
-              <div className="col-span-full py-10 text-center text-gray-400">No wigs currently available in shop.</div>
-            )}
-          </div>
-           <div className="mt-8 text-center sm:hidden">
-             <button suppressHydrationWarning 
-               onClick={() => window.location.href='/products?category=wig'}
-               className="border-2 border-amber-600 text-amber-700 px-6 py-2 uppercase font-semibold text-sm hover:bg-amber-600 hover:text-white transition"
-             >
-               View All Wigs
-             </button>
-          </div>
-        </section>
-
-        {/* Trending Wigs */}
+        {/* Trending Collections */}
          <section className="py-20 px-2 sm:px-4 lg:px-6">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <h2 className="text-[28px] font-serif font-bold text-[#1a202c] mb-2 tracking-tight">Trending Wigs</h2>
+              <h2 className="text-[28px] font-serif font-bold text-[#1a202c] mb-2 tracking-tight">Trending Collections</h2>
               <div className="w-16 h-[3px] bg-[#e65c00]"></div>
             </div>
-             <Link href="/products?category=trending" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">Shop Trending →</Link>
+             <Link href="/products" className="hidden sm:inline-block text-[#e65c00] font-semibold hover:underline border-b-2 border-transparent transition">Shop All →</Link>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3">
-            {dbProducts.filter(p => p.category === 'Trending').length > 0 ? (
-               dbProducts.filter(p => p.category === 'Trending').map((product) => (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            {randomTrending.length > 0 ? (
+               randomTrending.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))
             ) : (
-                <div className="col-span-full py-10 text-center text-gray-400 font-medium">Coming soon! Exciting trending products on the way.</div>
+                <div className="col-span-full py-10 text-center text-gray-400 font-medium">Picking the best for you...</div>
             )}
           </div>
         </section>
@@ -300,9 +274,10 @@ export default function Home() {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-20 px-2 sm:px-4 lg:px-6 bg-white w-full">
-          <h2 className="text-[26px] font-sans font-bold text-gray-900 mb-8 border-b-2 border-transparent">Frequently asked questions</h2>
-          <div className="space-y-0 text-[15px] font-sans">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white w-full">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-[28px] font-serif font-bold text-gray-900 mb-10 text-center">Frequently asked questions</h2>
+            <div className="space-y-0 text-[15px] font-sans">
             {(faqs.length > 0 ? faqs : FAQS).map((faq, idx) => (
               <div key={idx} className="border-b border-gray-100">
                 <button suppressHydrationWarning
@@ -327,7 +302,8 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
         {/* Black Info Bar */}
         <div className="bg-[#2D2D2D] text-white py-3 text-center flex flex-col md:flex-row justify-between items-center px-4 md:px-32 text-xs font-bold tracking-wide mt-4">

@@ -14,6 +14,8 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isRegionOpen, setIsRegionOpen] = useState(false);
   const [settings, setSettings] = useState<any>({});
+  const [products, setProducts] = useState<any[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
 
   React.useEffect(() => {
     fetch("/api/settings")
@@ -41,6 +43,31 @@ export default function Header() {
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
+
+  // Fetch products for search
+  React.useEffect(() => {
+    if (isSearchOpen && products.length === 0) {
+      fetch('/api/frontpage')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) setProducts(data.products);
+        })
+        .catch(err => console.error("Search fetch error:", err));
+    }
+  }, [isSearchOpen, products.length]);
+
+  // Filter products as user types
+  React.useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setFilteredProducts([]);
+    } else {
+      const results = products.filter(p => 
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredProducts(results.slice(0, 6)); // Limit to 6 results
+    }
+  }, [searchQuery, products]);
 
   const handleLoginSuccess = (email: string) => {
     setIsLoggedIn(true);
@@ -86,19 +113,68 @@ export default function Header() {
                 <X className="w-6 h-6" />
               </button>
             </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4 font-sans">Popular Searches</p>
-              <div className="flex flex-wrap gap-2">
-                {["Premium Wavy", "Clip-In Hair", "Indian Remy", "Bundles", "Wigs"].map((tag) => (
-                  <button
-                    key={tag}
-                    onClick={() => setSearchQuery(tag)}
-                    className="px-4 py-2 bg-gray-50 hover:bg-black hover:text-white rounded-lg text-sm font-medium transition cursor-pointer"
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
+            <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+              {searchQuery.trim() !== "" ? (
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4 font-sans">Search Results ({filteredProducts.length})</p>
+                  {filteredProducts.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {filteredProducts.map((product) => {
+                         let displayImg = product.img;
+                         try {
+                           const imgs = JSON.parse(product.img);
+                           if (Array.isArray(imgs)) displayImg = imgs[0];
+                         } catch(e) {}
+                         
+                         const queryParams = new URLSearchParams({
+                           id: String(product.id),
+                           name: product.name,
+                           price: typeof product.price === 'number' ? `₹${product.price.toFixed(2)}` : String(product.price),
+                           img: product.img,
+                         });
+
+                        return (
+                          <Link 
+                            key={product.id} 
+                            href={`/product?${queryParams.toString()}`}
+                            onClick={() => setIsSearchOpen(false)}
+                            className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-xl transition group"
+                          >
+                            <div className="w-16 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                              <img src={displayImg} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-sm font-bold text-gray-900 truncate mb-1">{product.name}</h4>
+                              <p className="text-xs text-gray-500 mb-1">{product.category}</p>
+                              <p className="text-sm font-bold text-teal-600">₹{Number(product.price).toFixed(2)}</p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="py-12 text-center">
+                       <p className="text-gray-400 font-medium">No products found for "{searchQuery}"</p>
+                       <p className="text-sm text-gray-300 mt-1">Try a different keyword</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4 font-sans">Popular Searches</p>
+                  <div className="flex flex-wrap gap-2">
+                    {["Premium Wavy", "Clip-In Hair", "Indian Remy", "Bundles", "Wigs"].map((tag) => (
+                      <button
+                        key={tag}
+                        onClick={() => setSearchQuery(tag)}
+                        className="px-4 py-2 bg-gray-50 hover:bg-black hover:text-white rounded-lg text-sm font-medium transition cursor-pointer"
+                      >
+                        {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

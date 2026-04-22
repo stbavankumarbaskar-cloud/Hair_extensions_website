@@ -141,7 +141,22 @@ INSERT INTO products (name, price, old_price, img, category, reviews_count, stoc
 ('Queen Hair 10A Brazilian Hair Straight 3 Bundles Virgin Human Hair', 75.00, 95.00, '["https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Bundle', 89, 4),
 ('Love Hair Body Wave 3 Bundles With Closure Brazilian Human Hair', 98.50, 140.00, '["https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Bundle', 312, 22),
 ('Loose Deep Wave wig 13x4 Lace Front Human Hair Wigs', 120.00, 180.00, '["https://images.unsplash.com/photo-1562086254-20b16260bd7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Wig', 215, 3),
-('Bone Straight 13x6 HD Lace Front Wig Free Part', 155.00, 230.00, '["https://images.unsplash.com/photo-1583001809873-c12ebba3152f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Wig', 93, 12);
+('Bone Straight 13x6 HD Lace Front Wig Free Part', 155.00, 230.00, '["https://images.unsplash.com/photo-1583001809873-c12ebba3152f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Wig', 93, 12),
+('Indian Raw Deep Wave 3 Bundles with Frontal', 135.00, 190.00, '["https://images.unsplash.com/photo-1620331311520-246422ff83f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Bundle', 56, 10),
+('Glueless Kinky Curly HD Lace Wig', 145.00, 210.00, '["https://images.unsplash.com/photo-1595476108010-b4d1f8bc2b1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Wig', 42, 8),
+('613 Blonde Straight 3 Bundles with Closure', 125.00, 175.00, '["https://images.unsplash.com/photo-1580618672591-eb180b1a973f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Bundle', 88, 5),
+('Short Bob Wig with Bangs Human Hair', 85.00, 110.00, '["https://images.unsplash.com/photo-1534447677768-be436bb09401?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Wig', 67, 15),
+('Silky Straight Ponytail Extension', 45.00, 60.00, '["https://images.unsplash.com/photo-1512496015851-a90fb38ba796?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Trending', 120, 30),
+('Ombre Body Wave 13x4 Lace Frontal', 65.00, 90.00, '["https://images.unsplash.com/photo-1605497788044-5a32c7078486?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Trending', 34, 20),
+('Jerry Curly 4x4 Lace Closure Wig', 110.00, 150.00, '["https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Wig', 75, 7),
+('Burmese Curly 3 Bundles High Quality', 105.00, 145.00, '["https://images.unsplash.com/photo-1595424564881-81f19c9918bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Bundle', 92, 12),
+('HD Lace Frontal 13x6 Straight Hair', 70.00, 100.00, '["https://images.unsplash.com/photo-1519699047748-de8e457a634e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Trending', 15, 25),
+('Mongolian Afro Kinky Curly Bundles', 115.00, 160.00, '["https://images.unsplash.com/photo-1562086254-20b16260bd7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Bundle', 110, 6),
+('Burgundy Red Body Wave Wig', 130.00, 190.00, '["https://images.unsplash.com/photo-1583001809873-c12ebba3152f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Wig', 28, 4),
+('Chocolate Brown Straight 3 Bundles', 95.00, 135.00, '["https://images.unsplash.com/photo-1620331311520-246422ff83f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Bundle', 45, 9),
+('Natural Wave Clip-in Extensions 7pcs', 55.00, 80.00, '["https://images.unsplash.com/photo-1595476108010-b4d1f8bc2b1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Trending', 63, 18),
+('Super Double Drawn Bone Straight Wig', 220.00, 310.00, '["https://images.unsplash.com/photo-1580618672591-eb180b1a973f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Wig', 156, 3),
+('Deep Wave Frontal Closure 13x4', 75.00, 110.00, '["https://images.unsplash.com/photo-1534447677768-be436bb09401?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"]', 'Trending', 22, 14);
 
 -- Insert Dummy Reviews
 INSERT INTO reviews (text, name, company, rating) VALUES
