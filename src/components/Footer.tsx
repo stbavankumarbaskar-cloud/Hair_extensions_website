@@ -1,6 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function Footer() {
+  const [settings, setSettings] = useState<any>({});
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setSettings(data.settings);
+      })
+      .catch(err => console.error("Footer Settings Error:", err));
+  }, []);
   return (
       <footer className="bg-zinc-900 text-white pt-20 pb-10 mt-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,17 +52,16 @@ export default function Footer() {
                 <div className="flex flex-col items-center justify-center border-2 border-amber-600 rounded-full w-10 h-10 mr-2">
                    <span className="text-amber-600 font-serif font-bold text-sm">LH</span>
                 </div>
-                <span className="font-serif font-semibold text-xl tracking-wider text-white">LOVE HAIR</span>
+                <span className="font-serif font-semibold text-xl tracking-wider text-white">{settings.site_name || 'LOVE HAIR'}</span>
               </div>
               <p className="text-zinc-400 text-sm mb-6 max-w-sm">
-                Premium 100% human hair extensions, wigs, and bundles. Guaranteed luxury & quality.
+                {settings.about_text || 'Premium 100% human hair extensions, wigs, and bundles. Guaranteed luxury & quality.'}
               </p>
-               <div className="flex space-x-4">
-                 {/* Social Icons Placeholders */}
-                 <a href="#" className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-600 transition"><span className="sr-only">Facebook</span>f</a>
-                 <a href="#" className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-600 transition"><span className="sr-only">Instagram</span>ig</a>
-                 <a href="#" className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-600 transition"><span className="sr-only">Pinterest</span>P</a>
-               </div>
+                <div className="flex space-x-4">
+                  <a href={settings.facebook_link || '#'} target="_blank" className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-600 transition"><span className="sr-only">Facebook</span>f</a>
+                  <a href={settings.instagram_link || '#'} target="_blank" className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-600 transition"><span className="sr-only">Instagram</span>ig</a>
+                  <a href={settings.twitter_link || '#'} target="_blank" className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center hover:bg-amber-600 transition"><span className="sr-only">Twitter</span>t</a>
+                </div>
             </div>
             
             <div>

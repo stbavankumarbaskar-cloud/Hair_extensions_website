@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { 
   LayoutDashboard, ShoppingBag, ShoppingCart, Users, Star, 
   Settings, LogOut, Search, Bell, Truck, DollarSign, Tag, 
-  BarChart3, Loader2
+  BarChart3, Loader2, Layout
 } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -84,6 +84,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             { href: '/admin/payments',   Icon: DollarSign,  label: 'Payments'    },
             { href: '/admin/shipping',   Icon: Truck,       label: 'Shipping'    },
             { href: '/admin/categories', Icon: Tag,         label: 'Categories'  },
+            { href: '/admin/content',    Icon: Layout,      label: 'Content CMS' },
             { href: '/admin/reports',    Icon: BarChart3,   label: 'Reports'     },
           ].map(({ href, Icon, label }) => (
             <Link key={href} href={href} className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group ${pathname.startsWith(href) ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20 shadow-sm' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'}`}>

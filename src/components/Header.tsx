@@ -13,6 +13,14 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isRegionOpen, setIsRegionOpen] = useState(false);
+  const [settings, setSettings] = useState<any>({});
+
+  React.useEffect(() => {
+    fetch("/api/settings")
+      .then(res => res.json())
+      .then(data => { if (data.success) setSettings(data.settings); })
+      .catch(err => console.error("Settings Error:", err));
+  }, []);
 
   // Check login status on load
   React.useEffect(() => {
@@ -98,7 +106,7 @@ export default function Header() {
 
       {/* Top Header Placeholder */}
       <div className="bg-black text-white text-xs text-center py-2 tracking-widest uppercase">
-        Spring Sale! Extra 15% Off Site-Wide | Code: SPRING15
+        {settings.promo_text || 'Spring Sale! Extra 15% Off Site-Wide'}
       </div>
 
       {/* Header */}
@@ -110,7 +118,7 @@ export default function Header() {
               <Link href="/" className="flex flex-col items-center flex-shrink-0 cursor-pointer mr-4 lg:mr-6 -ml-2">
                 <img
                   src="/logo1.png"
-                  alt="One Love Hair Logo"
+                  alt={settings.site_name || "One Love Hair Logo"}
                   className="h-28 w-[110px] object-cover object-center mix-blend-multiply"
                 />
               </Link>

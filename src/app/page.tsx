@@ -28,18 +28,32 @@ export default function Home() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [dbProducts, setDbProducts] = useState<any[]>([]);
   const [dbReviews, setDbReviews] = useState<any[]>([]);
+  const [banners, setBanners] = useState<any[]>([]);
+  const [faqs, setFaqs] = useState<any[]>([]);
+  const [currentBannerIdx, setCurrentBannerIdx] = useState(0);
 
   useEffect(() => {
     fetch('/api/frontpage')
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          if (data.products && data.products.length > 0) setDbProducts(data.products);
-          if (data.reviews && data.reviews.length > 0) setDbReviews(data.reviews);
+          if (data.products) setDbProducts(data.products);
+          if (data.reviews) setDbReviews(data.reviews);
+          if (data.banners) setBanners(data.banners);
+          if (data.faqs) setFaqs(data.faqs);
         }
       })
       .catch(err => console.error("DB Fetch Error:", err));
   }, []);
+
+  // Interval for banner slider
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentBannerIdx(prev => (prev + 1) % banners.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [banners.length]);
 
   const displayReviews = dbReviews;
   const currentReview = displayReviews[currentReviewIdx];
@@ -62,32 +76,56 @@ export default function Home() {
       <Header />
 
       <main>
-        {/* Hero Section */}
-        <div className="relative h-[600px] w-full flex items-center justify-center overflow-hidden bg-zinc-900">
-           <img 
-            src="https://images.unsplash.com/photo-1562322140-8baeececf3ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" 
-            alt="Luxury Hair Salon" 
-            className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay animate-[scale_20s_ease-in-out_infinite_alternate]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex flex-col items-center transform transition-all duration-700 translate-y-0 opacity-100">
-             <div className="w-24 h-1 bg-amber-500 mb-8 mx-auto"></div>
-            <h1 className="text-4xl md:text-6xl font-serif text-white font-bold mb-6 drop-shadow-lg leading-tight uppercase tracking-tight">
-              Love Your Hair with <span className="text-amber-400 font-style-italic inline-block drop-shadow-[0_0_15px_rgba(251,191,36,0.3)]">Love Hair</span>
-            </h1>
-            <p className="text-lg md:text-2xl text-gray-200 mb-4 font-light drop-shadow">
-              100% Brazilian human hair bundles & wigs
-            </p>
-            <p className="text-base md:text-xl text-amber-200 mb-10 font-semibold italic drop-shadow-md">
-              Buy 3 Get 1 Free | Up to 40% Off Bundles & Wigs | Best Value for Money
-            </p>
-            <button suppressHydrationWarning 
-              onClick={() => window.location.href='/products'}
-              className="bg-amber-600 hover:bg-amber-700 text-white transition-all transform hover:scale-105 duration-300 font-bold uppercase tracking-wider py-4 px-10 rounded shadow-[0_0_20px_rgba(217,119,6,0.4)]"
-            >
-              Shop 100% Human Hair Bundles & Wigs
-            </button>
-          </div>
+        {/* Hero Section - Dynamic Banners */}
+        <div className="relative h-[450px] md:h-[650px] w-full flex items-center justify-center overflow-hidden bg-zinc-900">
+           {banners.length > 0 ? (
+             banners.map((banner, idx) => (
+               <div 
+                 key={banner.id} 
+                 className={`absolute inset-0 transition-all duration-1000 ease-in-out ${idx === currentBannerIdx ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}
+               >
+                 <img 
+                   src={banner.image_url} 
+                   alt={banner.title} 
+                   className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay"
+                 />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                 <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 max-w-4xl mx-auto">
+                    <div className="w-16 h-1 bg-amber-500 mb-6 mx-auto animate-pulse"></div>
+                    <h2 className="text-4xl md:text-7xl font-serif text-white font-bold mb-4 uppercase tracking-tight drop-shadow-2xl">
+                      {banner.title}
+                    </h2>
+                    <p className="text-lg md:text-2xl text-amber-100 mb-10 font-bold italic drop-shadow-md">
+                      {banner.subtitle}
+                    </p>
+                    <Link 
+                      href={banner.link_url || '/products'}
+                      className="bg-amber-600 hover:bg-amber-700 text-white font-black uppercase tracking-widest py-4 px-12 rounded-xl transition-all transform hover:scale-105 shadow-2xl shadow-amber-900/40 text-xs"
+                    >
+                      Explore Collection
+                    </Link>
+                 </div>
+               </div>
+             ))
+           ) : (
+             <div className="relative z-10 text-center px-4">
+                <h1 className="text-4xl md:text-6xl font-serif text-white font-black">LOVE HAIR</h1>
+                <p className="text-amber-400 mt-4 font-bold">Premium Extensions & Wigs</p>
+             </div>
+           )}
+           
+           {/* Dots Navigation */}
+           {banners.length > 1 && (
+             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+               {banners.map((_, idx) => (
+                 <button 
+                   key={idx} 
+                   onClick={() => setCurrentBannerIdx(idx)}
+                   className={`w-12 h-1.5 rounded-full transition-all ${idx === currentBannerIdx ? 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]' : 'bg-white/30 hover:bg-white/50'}`}
+                 />
+               ))}
+             </div>
+           )}
         </div>
 
         {/* Premium Virgin Hair Extension */}
@@ -265,7 +303,7 @@ export default function Home() {
         <section className="py-20 px-2 sm:px-4 lg:px-6 bg-white w-full">
           <h2 className="text-[26px] font-sans font-bold text-gray-900 mb-8 border-b-2 border-transparent">Frequently asked questions</h2>
           <div className="space-y-0 text-[15px] font-sans">
-            {FAQS.map((faq, idx) => (
+            {(faqs.length > 0 ? faqs : FAQS).map((faq, idx) => (
               <div key={idx} className="border-b border-gray-100">
                 <button suppressHydrationWarning
                   type="button"
