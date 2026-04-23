@@ -21,6 +21,8 @@ export default function ProductTableClient({ initialProducts, categories }: { in
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Group categories for the select dropdown
   const groupedCategories = categories?.reduce((acc: any, cat: any) => {
@@ -35,6 +37,24 @@ export default function ProductTableClient({ initialProducts, categories }: { in
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     p.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Reset to first page when search query changes
+  const updateSearch = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -147,7 +167,7 @@ export default function ProductTableClient({ initialProducts, categories }: { in
           placeholder="Filter products..."
           className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all text-sm"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => updateSearch(e.target.value)}
         />
       </div>
 
@@ -165,7 +185,7 @@ export default function ProductTableClient({ initialProducts, categories }: { in
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredProducts.map((product) => {
+              {paginatedProducts.map((product) => {
                 let firstImg = '/placeholder-product.png';
                 try {
                   if (product.img) {
@@ -226,6 +246,56 @@ export default function ProductTableClient({ initialProducts, categories }: { in
           </table>
         </div>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+          <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+            Showing <span className="text-amber-600">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="text-amber-600">{Math.min(currentPage * itemsPerPage, filteredProducts.length)}</span> of {filteredProducts.length} Products
+          </p>
+          
+          <div className="flex items-center gap-1">
+            <button 
+              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 disabled:opacity-30 transition-all uppercase tracking-tighter"
+            >
+              Previous
+            </button>
+            
+            <div className="flex items-center gap-1 mx-2">
+              {[...Array(totalPages)].map((_, i) => {
+                const pageNum = i + 1;
+                // Show limited page numbers for better UX if total pages are many
+                if (totalPages > 7) {
+                  if (pageNum !== 1 && pageNum !== totalPages && Math.abs(pageNum - currentPage) > 1) {
+                    if (pageNum === 2 || pageNum === totalPages - 1) return <span key={pageNum} className="text-slate-300 px-1">...</span>;
+                    return null;
+                  }
+                }
+                
+                return (
+                  <button 
+                    key={pageNum}
+                    onClick={() => handlePageChange(pageNum)}
+                    className={`w-8 h-8 rounded-xl text-xs font-bold transition-all ${currentPage === pageNum ? 'bg-amber-500 text-white shadow-lg shadow-amber-500/20' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button 
+              onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 disabled:opacity-30 transition-all uppercase tracking-tighter"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Edit Modal */}
       {editingProduct && (

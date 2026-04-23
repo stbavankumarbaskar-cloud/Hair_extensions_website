@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import Link from "next/link";
 
 import { useCart } from "@/lib/CartContext";
+import { createOrder } from "./actions";
 
 export default function CheckoutPage() {
-  const { cart: items, subtotal } = useCart();
+  const { cart: items, subtotal, clearCart } = useCart();
   const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
   const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
@@ -22,6 +23,10 @@ export default function CheckoutPage() {
   const [isGPayModalOpen, setIsGPayModalOpen] = useState(false);
   const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false);
   const [isOrderComplete, setIsOrderComplete] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [generatedOrderNumber, setGeneratedOrderNumber] = useState("#10243");
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
   // Use subtotal from context and apply discount if needed
   const total = discountApplied ? subtotal * 0.9 : subtotal;
@@ -34,6 +39,34 @@ export default function CheckoutPage() {
       setDiscountApplied(false);
       setDiscountError("Enter a valid discount code or gift card");
     }
+  };
+
+  const handlePlaceOrder = async () => {
+    if (items.length === 0) return;
+    
+    setIsPlacingOrder(true);
+    
+    // Use first name if provided, else "Guest Customer"
+    const customerName = firstName || lastName ? `${firstName} ${lastName}`.trim() : "Guest Customer";
+    
+    // Join product names
+    const productName = items.map(item => `${item.name} (${item.qty})`).join(', ');
+
+    const result = await createOrder({
+      customer_name: customerName,
+      product_name: productName.substring(0, 255),
+      amount: total
+    });
+
+    if (result.success) {
+      setGeneratedOrderNumber(result.orderNumber || "#10243");
+      setIsOrderComplete(true);
+      clearCart();
+    } else {
+      alert("Failed to place order. Please try again.");
+    }
+    
+    setIsPlacingOrder(false);
   };
 
   const fmt = (n: number) => n.toLocaleString("en-IN", { style: "currency", currency: "INR" });
@@ -70,7 +103,7 @@ export default function CheckoutPage() {
 
               <div className="border border-gray-200 rounded-lg p-8 w-full max-w-[550px] text-left mb-10 shadow-[0_2px_10px_rgba(0,0,0,0.02)] bg-white relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-[#005bd3]"></div>
-                <h3 className="font-bold text-gray-900 mb-5 pb-5 border-b border-gray-100 text-lg">Order #10243</h3>
+                <h3 className="font-bold text-gray-900 mb-5 pb-5 border-b border-gray-100 text-lg">Order {generatedOrderNumber}</h3>
                 <p className="text-gray-600 text-[14px] mb-6 leading-relaxed">We've accepted your order, and we're getting it ready. Come back to this page for updates on your shipment status.</p>
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8 text-[14px] text-gray-600">
@@ -196,8 +229,20 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="flex gap-3">
-                    <input type="text" placeholder="First name" className="flex-1 border border-gray-300 rounded-md p-[14px] text-[15px] outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                    <input type="text" placeholder="Last name" className="flex-1 border border-gray-300 rounded-md p-[14px] text-[15px] outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    <input 
+                      type="text" 
+                      placeholder="First name" 
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="flex-1 border border-gray-300 rounded-md p-[14px] text-[15px] outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                    />
+                    <input 
+                      type="text" 
+                      placeholder="Last name" 
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="flex-1 border border-gray-300 rounded-md p-[14px] text-[15px] outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                    />
                   </div>
 
                   <div className="relative">
@@ -424,8 +469,19 @@ export default function CheckoutPage() {
               </div>
 
               {/* Pay now */}
-              <button onClick={() => setIsOrderComplete(true)} className="w-full bg-[#005bd3] hover:bg-[#004bb0] transition text-white py-[18px] rounded-md font-bold text-[17px] mb-8 shadow-sm">
-                Pay now
+              <button 
+                onClick={handlePlaceOrder} 
+                disabled={isPlacingOrder || items.length === 0}
+                className="w-full bg-[#005bd3] hover:bg-[#004bb0] disabled:bg-gray-400 transition text-white py-[18px] rounded-md font-bold text-[17px] mb-8 shadow-sm flex items-center justify-center gap-2"
+              >
+                {isPlacingOrder ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+                    Processing...
+                  </>
+                ) : (
+                  "Pay now"
+                )}
               </button>
 
               {/* Footer links */}
