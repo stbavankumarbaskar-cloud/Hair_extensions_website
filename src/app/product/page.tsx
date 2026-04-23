@@ -78,13 +78,16 @@ function ProductDetails() {
           <div className="w-full lg:w-[55%] flex flex-col gap-6">
             
             {/* Main Image */}
-            <div className="w-full relative bg-white rounded-none md:rounded-lg overflow-hidden border border-gray-100 flex items-center justify-center min-h-[400px] md:min-h-[600px]">
+            <div className="w-full relative bg-white rounded-none md:rounded-xl overflow-hidden border border-gray-100 flex items-center justify-center min-h-[400px] md:min-h-[700px] group/main">
                <img 
                  src={activeImage} 
                  alt={name} 
-                 className="w-full h-full object-contain transition-all duration-500"
-                 style={{ maxHeight: '800px' }}
+                 className="w-full h-full object-contain transition-all duration-700 group-hover/main:scale-[1.02]"
+                 style={{ 
+                   imageRendering: 'auto'
+                 }}
                />
+               <div className="absolute inset-0 bg-black/0 group-hover/main:bg-black/[0.01] transition-colors pointer-events-none"></div>
             </div>
             
             {/* Gallery Thumbnails */}

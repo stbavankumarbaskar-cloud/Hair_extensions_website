@@ -50,7 +50,8 @@ export default function ProductCard({ product }: { product: any }) {
         <img 
           src={displayImg} 
           alt={product.name} 
-          className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
+          className="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-110"
+          style={{ imageRendering: 'auto' }}
         />
         {/* Sale Tag */}
         {(product.oldPrice || product.old_price) && (

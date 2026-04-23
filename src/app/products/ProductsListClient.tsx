@@ -183,14 +183,15 @@ export default function ProductsListClient({ initialProducts }: { initialProduct
                     <Filter className="w-4 h-4" /> Filter
                   </button>
                   <div className="hidden sm:flex items-center space-x-2">
-                    <button className="p-2 text-gray-900 border border-gray-200 rounded-sm hover:bg-gray-50 transition"><LayoutGrid className="w-4 h-4"/></button>
-                    <button className="p-2 text-gray-400 border border-gray-200 rounded-sm hover:bg-gray-50 transition"><List className="w-4 h-4"/></button>
+                    <button type="button" suppressHydrationWarning className="p-2 text-gray-900 border border-gray-200 rounded-sm hover:bg-gray-50 transition"><LayoutGrid className="w-4 h-4"/></button>
+                    <button type="button" suppressHydrationWarning className="p-2 text-gray-400 border border-gray-200 rounded-sm hover:bg-gray-50 transition"><List className="w-4 h-4"/></button>
                   </div>
                </div>
 
                <div className="flex items-center space-x-2">
                  <span className="text-[13px] text-gray-500 font-medium">Sort by :</span>
                  <select 
+                   suppressHydrationWarning
                    value={sortBy}
                    onChange={(e) => setSortBy(e.target.value)}
                    className="text-[13px] font-bold text-gray-900 bg-transparent focus:outline-none cursor-pointer"
@@ -244,6 +245,8 @@ export default function ProductsListClient({ initialProducts }: { initialProduct
               <div className="mt-20 flex justify-center items-center space-x-2">
                 {currentPage > 1 && (
                   <button 
+                    type="button"
+                    suppressHydrationWarning
                     onClick={() => {
                       setCurrentPage(prev => prev - 1);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -257,6 +260,8 @@ export default function ProductsListClient({ initialProducts }: { initialProduct
                 {[...Array(totalPages)].map((_, i) => (
                   <button 
                     key={i} 
+                    type="button"
+                    suppressHydrationWarning
                     onClick={() => {
                       setCurrentPage(i + 1);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -273,6 +278,8 @@ export default function ProductsListClient({ initialProducts }: { initialProduct
                 
                 {currentPage < totalPages && (
                   <button 
+                    type="button"
+                    suppressHydrationWarning
                     onClick={() => {
                       setCurrentPage(prev => prev + 1);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
