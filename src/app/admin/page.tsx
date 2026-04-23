@@ -30,12 +30,46 @@ export default async function AdminDashboard() {
     // 1. Fetch KPI Stats
     const [revResult]: any = await pool.query('SELECT SUM(amount) as total FROM orders WHERE status = "Completed"');
     const [ordersResult]: any = await pool.query('SELECT COUNT(*) as count FROM orders WHERE status IN ("Pending", "Processing")');
-    const [custResult]: any = await pool.query('SELECT COUNT(DISTINCT customer_name) as count FROM orders');
+    const [custResult]: any = await pool.query('SELECT COUNT(*) as count FROM customers');
     
-    stats[0].value = `₹${(revResult[0]?.total || 0).toLocaleString()}`;
+    // Calculate Monthly Growth & Changes
+    const [growthResult]: any = await pool.query(`
+      SELECT 
+        (SELECT SUM(amount) FROM orders WHERE status = 'Completed' AND MONTH(created_at) = MONTH(CURRENT_DATE) AND YEAR(created_at) = YEAR(CURRENT_DATE)) as rev_curr,
+        (SELECT SUM(amount) FROM orders WHERE status = 'Completed' AND MONTH(created_at) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(created_at) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)) as rev_last,
+        (SELECT COUNT(*) FROM orders WHERE MONTH(created_at) = MONTH(CURRENT_DATE) AND YEAR(created_at) = YEAR(CURRENT_DATE)) as orders_curr,
+        (SELECT COUNT(*) FROM orders WHERE MONTH(created_at) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(created_at) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)) as orders_last,
+        (SELECT COUNT(*) FROM customers WHERE MONTH(created_at) = MONTH(CURRENT_DATE) AND YEAR(created_at) = YEAR(CURRENT_DATE)) as cust_curr,
+        (SELECT COUNT(*) FROM customers WHERE MONTH(created_at) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(created_at) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)) as cust_last
+    `);
+
+    const g = growthResult[0];
+    const calcGrowth = (curr: number, last: number) => {
+      curr = parseFloat(curr as any) || 0;
+      last = parseFloat(last as any) || 0;
+      if (last === 0) return curr > 0 ? 100 : 0;
+      return ((curr - last) / last) * 100;
+    };
+
+    const revGrowth = calcGrowth(g.rev_curr, g.rev_last);
+    const orderGrowth = calcGrowth(g.orders_curr, g.orders_last);
+    const custGrowth = calcGrowth(g.cust_curr, g.cust_last);
+
+    stats[0].value = `₹${(Number(revResult[0]?.total) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    stats[0].change = `${revGrowth >= 0 ? '+' : ''}${revGrowth.toFixed(0)}%`;
+    stats[0].positive = revGrowth >= 0;
+
     stats[1].value = (ordersResult[0]?.count || 0).toString();
+    stats[1].change = `${orderGrowth >= 0 ? '+' : ''}${orderGrowth.toFixed(0)}%`;
+    stats[1].positive = orderGrowth >= 0;
+
     stats[2].value = (custResult[0]?.count || 0).toString();
-    stats[3].value = '+12%'; // Mock growth
+    stats[2].change = `${custGrowth >= 0 ? '+' : ''}${custGrowth.toFixed(0)}%`;
+    stats[2].positive = custGrowth >= 0;
+
+    stats[3].value = `${revGrowth >= 0 ? '+' : ''}${revGrowth.toFixed(0)}%`;
+    stats[3].change = `${revGrowth >= 0 ? '+' : ''}${revGrowth.toFixed(0)}%`;
+    stats[3].positive = revGrowth >= 0;
 
     // 2. Fetch Recent Orders
     const [orderRows] = await pool.query('SELECT * FROM orders ORDER BY created_at DESC LIMIT 5');

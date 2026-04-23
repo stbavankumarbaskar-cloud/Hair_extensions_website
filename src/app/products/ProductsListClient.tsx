@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import CartDrawer from '@/components/CartDrawer';
 import ProductCard from '@/components/ProductCard';
 import { useSearchParams } from 'next/navigation';
-import { Filter, X, ChevronDown, ChevronRight, LayoutGrid, List, ShoppingCart } from 'lucide-react';
+import { Filter, X, ChevronDown, ChevronRight, ChevronLeft, LayoutGrid, List, ShoppingCart } from 'lucide-react';
 
 const FILTER_CATEGORIES = [
   {
@@ -56,6 +56,13 @@ export default function ProductsListClient({ initialProducts }: { initialProduct
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12; // 3 rows of 4 products each
+
+  useEffect(() => {
+    // Reset to page 1 when filters change
+    setCurrentPage(1);
+  }, [selectedFilters, sortBy]);
 
   useEffect(() => {
     const category = searchParams.get('category');
@@ -84,6 +91,10 @@ export default function ProductsListClient({ initialProducts }: { initialProduct
       );
     });
   }, [initialProducts, selectedFilters]);
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage);
 
   const toggleFilter = (option: string) => {
     setSelectedFilters(prev => 
@@ -221,20 +232,56 @@ export default function ProductsListClient({ initialProducts }: { initialProduct
                   </button>
                </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-2 md:gap-x-6 gap-y-12">
-                {filteredProducts.map((product) => (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-2 md:gap-x-6 gap-y-12">
+                {paginatedProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
             )}
 
-            {/* Pagination Placeholder */}
-            {filteredProducts.length > 0 && (
+            {/* Pagination */}
+            {filteredProducts.length > itemsPerPage && (
               <div className="mt-20 flex justify-center items-center space-x-2">
-                <button className="w-10 h-10 border border-amber-600 bg-amber-600 text-white font-bold rounded-sm">1</button>
-                <button className="w-10 h-10 border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition rounded-sm">2</button>
-                <button className="w-10 h-10 border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition rounded-sm">3</button>
-                <button className="px-4 h-10 border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition rounded-sm flex items-center gap-2">Next <ChevronRight className="w-4 h-4"/></button>
+                {currentPage > 1 && (
+                  <button 
+                    onClick={() => {
+                      setCurrentPage(prev => prev - 1);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="px-4 h-10 border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition rounded-sm flex items-center gap-2"
+                  >
+                    <ChevronLeft className="w-4 h-4"/> Previous
+                  </button>
+                )}
+
+                {[...Array(totalPages)].map((_, i) => (
+                  <button 
+                    key={i} 
+                    onClick={() => {
+                      setCurrentPage(i + 1);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className={`w-10 h-10 border font-bold rounded-sm transition-all ${
+                      currentPage === i + 1 
+                        ? 'border-amber-600 bg-amber-600 text-white shadow-md' 
+                        : 'border-gray-200 text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                
+                {currentPage < totalPages && (
+                  <button 
+                    onClick={() => {
+                      setCurrentPage(prev => prev + 1);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="px-4 h-10 border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition rounded-sm flex items-center gap-2"
+                  >
+                    Next <ChevronRight className="w-4 h-4"/>
+                  </button>
+                )}
               </div>
             )}
 

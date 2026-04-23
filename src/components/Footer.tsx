@@ -97,7 +97,7 @@ export default function Footer() {
           </div>
           
           <div className="border-t border-zinc-800 pt-8 flex flex-col md:flex-row justify-between items-center text-zinc-500 text-sm">
-             <p>&copy; {new Date().getFullYear()} LOVE HAIR Extension Store. All Rights Reserved.</p>
+             <p suppressHydrationWarning>&copy; {new Date().getFullYear()} LOVE HAIR Extension Store. All Rights Reserved.</p>
              <div className="mt-4 md:mt-0 flex items-center space-x-2">
                 <span className="bg-white text-blue-900 border font-bold px-2 py-1 rounded text-xs">VISA</span>
                 <span className="bg-white text-red-600 border font-bold px-2 py-1 rounded text-xs">MasterCard</span>

@@ -21,13 +21,13 @@ export default function ProductCard({ product }: { product: any }) {
   const queryParams = new URLSearchParams({
     id: String(product.id),
     name: product.name,
-    price: typeof product.price === 'number' ? `₹${product.price.toFixed(2)}` : String(product.price),
+    price: `₹${parseFloat(product.price || 0).toFixed(2)}`,
     img: product.img, // Send the full string (JSON or URL)
   });
   
   const oldPriceValue = product.oldPrice || product.old_price;
   if (oldPriceValue) {
-    queryParams.append('oldPrice', typeof oldPriceValue === 'number' ? `₹${oldPriceValue.toFixed(2)}` : String(oldPriceValue));
+    queryParams.append('oldPrice', `₹${parseFloat(oldPriceValue || 0).toFixed(2)}`);
   }
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -86,13 +86,11 @@ export default function ProductCard({ product }: { product: any }) {
             {/* Price */}
              <div className="flex items-center space-x-[6px]">
                 <span className="text-[12px] font-semibold text-[#3a3a3a]">
-                   {typeof product.price === 'number' ? `₹${product.price.toFixed(2)}` : product.price}
+                   ₹{parseFloat(product.price || 0).toFixed(2)}
                 </span>
                 {(product.oldPrice || product.old_price) && (
                     <span className="text-[11px] text-[#9a9a9a] line-through">
-                      {typeof (product.oldPrice || product.old_price) === 'number' 
-                        ? `₹${(product.oldPrice || product.old_price).toFixed(2)}` 
-                        : (product.oldPrice || product.old_price)}
+                      ₹{parseFloat(product.oldPrice || product.old_price || 0).toFixed(2)}
                     </span>
                 )}
             </div>
