@@ -1,4 +1,6 @@
+"use client";
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function Footer() {
   const [settings, setSettings] = useState<any>({});
@@ -67,22 +69,22 @@ export default function Footer() {
             <div>
               <h4 className="font-bold text-lg mb-6 uppercase tracking-wider">Quick Links</h4>
               <ul className="space-y-3">
-                <li><a href="#" className="text-zinc-400 hover:text-amber-500 transition">Shop All</a></li>
-                <li><a href="#" className="text-zinc-400 hover:text-amber-500 transition">Human Hair Wigs</a></li>
-                <li><a href="#" className="text-zinc-400 hover:text-amber-500 transition">Hair Bundles</a></li>
-                <li><a href="#" className="text-zinc-400 hover:text-amber-500 transition">HD Lace Wigs</a></li>
-                <li><a href="#" className="text-zinc-400 hover:text-amber-500 transition">Sale</a></li>
+                <li><Link href="/products" className="text-zinc-400 hover:text-amber-500 transition">Shop All</Link></li>
+                <li><Link href="/products?category=Human%20Hair%20Wigs" className="text-zinc-400 hover:text-amber-500 transition">Human Hair Wigs</Link></li>
+                <li><Link href="/products?category=Hair%20Bundles" className="text-zinc-400 hover:text-amber-500 transition">Hair Bundles</Link></li>
+                <li><Link href="/products?category=HD%20Lace%20Wigs" className="text-zinc-400 hover:text-amber-500 transition">HD Lace Wigs</Link></li>
+                <li><Link href="/products?sale=true" className="text-zinc-400 hover:text-amber-500 transition">Sale</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="font-bold text-lg mb-6 uppercase tracking-wider">Company</h4>
               <ul className="space-y-3">
-                <li><a href="#" className="text-zinc-400 hover:text-amber-500 transition">About Us</a></li>
-                <li><a href="#" className="text-zinc-400 hover:text-amber-500 transition">Blog</a></li>
-                <li><a href="#" className="text-zinc-400 hover:text-amber-500 transition">Rewards Program</a></li>
-                <li><a href="#" className="text-zinc-400 hover:text-amber-500 transition">Affiliate</a></li>
-                <li><a href="#" className="text-zinc-400 hover:text-amber-500 transition">Contact Us</a></li>
+                <li><Link href="/about" className="text-zinc-400 hover:text-amber-500 transition">About Us</Link></li>
+                <li><Link href="/blog" className="text-zinc-400 hover:text-amber-500 transition">Blog</Link></li>
+                <li><Link href="/rewards" className="text-zinc-400 hover:text-amber-500 transition">Rewards Program</Link></li>
+                <li><Link href="/affiliate" className="text-zinc-400 hover:text-amber-500 transition">Affiliate</Link></li>
+                <li><Link href="/contact" className="text-zinc-400 hover:text-amber-500 transition">Contact Us</Link></li>
               </ul>
             </div>
 
@@ -98,11 +100,8 @@ export default function Footer() {
           
           <div className="border-t border-zinc-800 pt-8 flex flex-col md:flex-row justify-between items-center text-zinc-500 text-sm">
              <p suppressHydrationWarning>&copy; {new Date().getFullYear()} LOVE HAIR Extension Store. All Rights Reserved.</p>
-             <div className="mt-4 md:mt-0 flex items-center space-x-2">
-                <span className="bg-white text-blue-900 border font-bold px-2 py-1 rounded text-xs">VISA</span>
-                <span className="bg-white text-red-600 border font-bold px-2 py-1 rounded text-xs">MasterCard</span>
-                <span className="bg-white text-blue-500 border font-bold px-2 py-1 rounded text-xs">PayPal</span>
-                <span className="bg-white text-black border font-bold px-2 py-1 rounded text-xs">Apple Pay</span>
+             <div className="mt-4 md:mt-0">
+                <span className="text-zinc-500 text-xs font-medium tracking-wide">Power By Bavankumar Team Member</span>
              </div>
           </div>
         </div>

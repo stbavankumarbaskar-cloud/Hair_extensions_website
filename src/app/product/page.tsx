@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, Suspense } from 'react';
 import Head from 'next/head';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { ShoppingCart, Search, Menu, ChevronDown, ChevronUp, Star, ChevronLeft, ChevronRight, User, Heart, Lock } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -57,6 +57,12 @@ function ProductDetails() {
 
   const sizes = ['40 CM', '45 CM', '50 CM', '55 CM', '60 CM', '65 CM', '70 CM'];
   const colors = ['Black', 'Brown'];
+
+  const router = useRouter();
+  const handleShopPay = () => {
+    handleAddToCart();
+    router.push('/checkout');
+  };
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
@@ -198,8 +204,11 @@ function ProductDetails() {
               </button>
             </div>
             
-            {/* Express Checkout options placeholder */}
-            <button className="w-full h-[54px] bg-[#5a31f4] hover:bg-[#4d2ad1] text-white flex items-center justify-center rounded-md font-bold text-lg mb-8 transition-colors shadow-md">
+            {/* Express Checkout options */}
+            <button 
+              onClick={handleShopPay}
+              className="w-full h-[54px] bg-[#5a31f4] hover:bg-[#4d2ad1] text-white flex items-center justify-center rounded-md font-bold text-lg mb-8 transition-colors shadow-md"
+            >
                Shop Pay
             </button>
 

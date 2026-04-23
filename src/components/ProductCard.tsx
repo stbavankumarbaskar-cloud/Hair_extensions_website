@@ -8,21 +8,35 @@ import { useCart } from '@/lib/CartContext';
 export default function ProductCard({ product }: { product: any }) {
   const { addToCart } = useCart();
   
-  let displayImg = product.img;
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+  
+  let images: string[] = [];
   try {
-    const images = JSON.parse(product.img);
-    if (Array.isArray(images) && images.length > 0) {
-      displayImg = images[0];
-    }
+    const parsed = JSON.parse(product.img);
+    images = Array.isArray(parsed) ? parsed : [parsed];
   } catch (e) {
-    // Not JSON, use as is
+    images = product.img ? [product.img] : [];
   }
+
+  const displayImg = images[currentImageIndex] || '/placeholder-product.png';
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
 
   const queryParams = new URLSearchParams({
     id: String(product.id),
     name: product.name,
     price: `₹${parseFloat(product.price || 0).toFixed(2)}`,
-    img: product.img, // Send the full string (JSON or URL)
+    img: product.img, 
   });
   
   const oldPriceValue = product.oldPrice || product.old_price;
@@ -69,12 +83,22 @@ export default function ProductCard({ product }: { product: any }) {
         </button>
         
         {/* Arrows (hover) */}
-        <div className="absolute top-1/2 left-3 -translate-y-1/2 bg-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <ChevronLeft className="w-5 h-5 text-gray-800" strokeWidth={1.5} />
-        </div>
-        <div className="absolute top-1/2 right-3 -translate-y-1/2 bg-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <ChevronRight className="w-5 h-5 text-gray-800" strokeWidth={1.5} />
-        </div>
+        {images.length > 1 && (
+          <>
+            <button 
+              onClick={handlePrev}
+              className="absolute top-1/2 left-3 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-sm z-10"
+            >
+              <ChevronLeft className="w-4 h-4" strokeWidth={2} />
+            </button>
+            <button 
+              onClick={handleNext}
+              className="absolute top-1/2 right-3 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-sm z-10"
+            >
+              <ChevronRight className="w-4 h-4" strokeWidth={2} />
+            </button>
+          </>
+        )}
       </div>
       
       <div className="flex flex-col flex-grow pt-1 px-1">
