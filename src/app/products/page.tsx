@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import pool from '@/lib/db';
 import ProductsListClient from '@/app/products/ProductsListClient';
 
@@ -15,7 +15,9 @@ export default async function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <ProductsListClient initialProducts={products} />
+      <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center">Loading products...</div>}>
+        <ProductsListClient initialProducts={products} />
+      </Suspense>
     </div>
   );
 }

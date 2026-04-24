@@ -6,7 +6,7 @@ async function check() {
     console.log('Reviews in DB:', rows);
     process.exit(0);
   } catch (err) {
-    console.error('Error:', err.message);
+    console.error('Error:', (err as any).message);
     process.exit(1);
   }
 }

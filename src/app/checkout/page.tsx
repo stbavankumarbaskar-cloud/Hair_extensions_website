@@ -81,13 +81,11 @@ export default function CheckoutPage() {
           {/* Logo */}
           <div className="flex flex-col items-center mb-6">
             <Link href="/" className="cursor-pointer flex flex-col items-center">
-              <svg className="w-16 h-16 text-[#CAA45D] mb-1" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 4.5C8 1.5 3.5 4.5 3.5 9c0 4.5 8.5 9.5 8.5 9.5s8.5-5 8.5-9.5C20.5 4.5 16 1.5 12 4.5Z" opacity="0.9" />
-                <path d="M12 18.5C12 18.5 11 14 9 10" stroke="white" strokeWidth="1.2" fill="none" />
-                <path d="M12 18.5C12 18.5 13 14 15 10" stroke="white" strokeWidth="1.2" fill="none" />
-                <path d="M12 18.5L12 9" stroke="white" strokeWidth="1.2" fill="none" />
-              </svg>
-              <span className="font-serif text-[11px] tracking-[0.2em] text-[#CAA45D]">ONE LOVE HAIR</span>
+              <img
+                src="/logo1.png"
+                alt="One Love Hair Logo"
+                className="h-24 w-auto object-contain"
+              />
             </Link>
           </div>
 

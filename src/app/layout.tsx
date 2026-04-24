@@ -18,7 +18,12 @@ export const metadata: Metadata = {
   title: "Love Hair Extensions",
   description: "Love Hair Extensions",
   icons: {
-    icon: "/logo1.png",
+    icon: [
+      { url: "/logo1.png" },
+      { url: "/logo1.png", sizes: "32x32", type: "image/png" },
+    ],
+    shortcut: "/logo1.png",
+    apple: "/logo1.png",
   },
 };
 

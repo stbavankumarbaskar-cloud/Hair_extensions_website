@@ -50,12 +50,13 @@ export default function Footer() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div className="col-span-1 md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
-              <div className="flex items-center mb-6">
-                <div className="flex flex-col items-center justify-center border-2 border-amber-600 rounded-full w-10 h-10 mr-2">
-                   <span className="text-amber-600 font-serif font-bold text-sm">LH</span>
-                </div>
-                <span className="font-serif font-semibold text-xl tracking-wider text-white">{settings.site_name || 'LOVE HAIR'}</span>
-              </div>
+              <Link href="/" className="flex items-center mb-6">
+                <img
+                  src="/logo1.png"
+                  alt={settings.site_name || "One Love Hair Logo"}
+                  className="h-20 w-auto object-contain mix-blend-screen brightness-125"
+                />
+              </Link>
               <p className="text-zinc-400 text-sm mb-6 max-w-sm">
                 {settings.about_text || 'Premium 100% human hair extensions, wigs, and bundles. Guaranteed luxury & quality.'}
               </p>
