@@ -16,6 +16,22 @@ export default function Header() {
   const [settings, setSettings] = useState<any>({});
   const [products, setProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+
+  const NAV_CATEGORIES = [
+    'Clip-In Hair Extensions', 
+    'Tape-In Hair Extensions', 
+    'Sew-In / Weft Extensions',
+    'Fusion / Keratin Bond Extensions', 
+    'Micro Link / I-Tip Extensions',
+    'Halo Hair Extensions', 
+    'Ponytail Extensions', 
+    'Bangs / Fringe Extensions',
+    'Wigs & Hairpieces'
+  ];
+
+  const visibleCategories = NAV_CATEGORIES.slice(0, 3);
+  const moreCategories = NAV_CATEGORIES.slice(3);
 
   React.useEffect(() => {
     fetch("/api/settings")
@@ -44,17 +60,15 @@ export default function Header() {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Fetch products for search
+  // Fetch products for search and dropdowns
   React.useEffect(() => {
-    if (isSearchOpen && products.length === 0) {
-      fetch('/api/frontpage')
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) setProducts(data.products);
-        })
-        .catch(err => console.error("Search fetch error:", err));
-    }
-  }, [isSearchOpen, products.length]);
+    fetch('/api/frontpage')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setProducts(data.products);
+      })
+      .catch(err => console.error("Frontpage fetch error:", err));
+  }, []);
 
   // Filter products as user types
   React.useEffect(() => {
@@ -199,12 +213,81 @@ export default function Header() {
                 />
               </Link>
 
-              <nav className="hidden xl:flex items-center space-x-6 lg:space-x-[28px]">
-                <Link href="/" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-medium text-sm lg:text-[15px] transition-colors">Home</Link>
-                <a href="#" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[15px] transition-colors">Premium Hair Extensions</a>
-                <a href="#" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[15px] transition-colors">Premium Clip-In Hair Extensions</a>
-                <a href="#" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[15px] transition-colors">Premium Keratin Bond Extensions</a>
-                <a href="#" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[15px] transition-colors">More</a>
+              <nav className="hidden xl:flex items-center space-x-6 lg:space-x-[24px]">
+                <Link href="/" className="whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-bold text-sm lg:text-[15px] transition-colors">Home</Link>
+                
+                {visibleCategories.map(cat => (
+                  <div 
+                    key={cat}
+                    onMouseEnter={() => setActiveDropdown(cat)}
+                    onMouseLeave={() => setActiveDropdown(null)}
+                    className="relative py-8"
+                  >
+                    <button className="flex items-center gap-1 whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[15px] transition-colors">
+                      {cat}
+                      <ChevronDown className={`w-3 h-3 opacity-50 transition-transform ${activeDropdown === cat ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {activeDropdown === cat && (
+                      <div className="absolute top-[100%] left-1/2 -translate-x-1/2 w-[400px] bg-white border border-gray-100 shadow-2xl rounded-xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Top {cat}</p>
+                        <div className="grid grid-cols-1 gap-2">
+                           {products.filter(p => p.category?.toLowerCase().includes(cat.toLowerCase()) || p.name?.toLowerCase().includes(cat.toLowerCase())).slice(0, 4).map(p => {
+                             let img = p.img;
+                             try { const parsed = JSON.parse(p.img); if(Array.isArray(parsed)) img = parsed[0]; } catch(e){}
+                             
+                             const queryParams = new URLSearchParams({ id: String(p.id), name: p.name, price: `₹${Number(p.price).toFixed(2)}`, img: p.img });
+
+                             return (
+                               <Link 
+                                 key={p.id} 
+                                 href={`/product?${queryParams.toString()}`}
+                                 className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition group"
+                               >
+                                 <img src={img} className="w-12 h-12 rounded object-cover border border-gray-100" alt="" />
+                                 <span className="text-sm font-medium text-gray-700 group-hover:text-amber-600 transition-colors truncate">{p.name}</span>
+                               </Link>
+                             );
+                           })}
+                           {products.filter(p => p.category?.toLowerCase().includes(cat.toLowerCase()) || p.name?.toLowerCase().includes(cat.toLowerCase())).length === 0 && (
+                             <p className="text-xs text-gray-400 italic py-2">No products in this category yet.</p>
+                           )}
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-gray-50">
+                          <Link href={`/products?category=${encodeURIComponent(cat)}`} className="text-xs font-bold text-amber-600 hover:underline">View All {cat} →</Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                <div 
+                  onMouseEnter={() => setActiveDropdown('more')}
+                  onMouseLeave={() => setActiveDropdown(null)}
+                  className="relative py-8"
+                >
+                  <button className="flex items-center gap-1 whitespace-nowrap text-[#1a202c] hover:text-[#CAA45D] font-normal text-sm lg:text-[15px] transition-colors">
+                    More
+                    <ChevronDown className={`w-3 h-3 opacity-50 transition-transform ${activeDropdown === 'more' ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {activeDropdown === 'more' && (
+                    <div className="absolute top-[100%] right-0 w-[300px] bg-white border border-gray-100 shadow-2xl rounded-xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Other Categories</p>
+                       <div className="grid grid-cols-1 gap-1">
+                          {moreCategories.map(cat => (
+                            <Link 
+                              key={cat} 
+                              href={`/products?category=${encodeURIComponent(cat)}`}
+                              className="px-3 py-2 text-sm text-gray-600 hover:text-amber-600 hover:bg-amber-50/30 rounded-lg transition"
+                            >
+                              {cat}
+                            </Link>
+                          ))}
+                       </div>
+                    </div>
+                  )}
+                </div>
               </nav>
             </div>
 

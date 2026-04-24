@@ -248,7 +248,9 @@ export default function AdminReviewsPage() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-slate-900">{review.name}</p>
-                    <p className="text-[10px] text-amber-600 font-bold uppercase tracking-wider">{review.company}</p>
+                    <p className="text-[10px] text-amber-600 font-bold uppercase tracking-wider">
+                      {review.product_name ? `Product: ${review.product_name}` : (review.company || 'Direct Review')}
+                    </p>
                   </div>
                 </div>
 

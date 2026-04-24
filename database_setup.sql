@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS products (
 -- 2. Create Reviews Table
 CREATE TABLE IF NOT EXISTS reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT DEFAULT 0,
     text TEXT NOT NULL,
     name VARCHAR(150) NOT NULL,
     company VARCHAR(150),
