@@ -5,6 +5,7 @@ import {
   ArrowUpRight, ArrowDownRight, AlertCircle 
 } from 'lucide-react';
 import pool from '@/lib/db';
+import DashboardStats from './DashboardStats';
 
 const FALLBACK_ORDERS = [
   { id: 1, order_number: '#ORD-001', customer_name: 'Emma Watson',    product_name: '100% Brazilian Human Hair Bundles',    created_at: '2 mins ago',   status: 'Processing', amount: '345.00' },
@@ -14,16 +15,16 @@ const FALLBACK_ORDERS = [
   { id: 5, order_number: '#ORD-005', customer_name: 'Olivia Williams', product_name: 'Indian Deep Wave 3 Bundles',           created_at: 'Yesterday',    status: 'Processing', amount: '118.00' },
 ];
 
-export default async function AdminDashboard() {
+async function getDashboardData() {
   let recentOrders = FALLBACK_ORDERS;
   let lowStockProducts: any[] = [];
   let dbConnected = false;
   let dbError = "";
   let stats = [
-    { id: 1, title: 'Total Revenue',   value: '₹0.00', change: '+0%', positive: true, icon: DollarSign },
-    { id: 2, title: 'Active Orders',   value: '0',     change: '+0%', positive: true, icon: ShoppingCart },
-    { id: 3, title: 'Total Customers', value: '0',     change: '+0%', positive: true, icon: Users },
-    { id: 4, title: 'Monthly Growth',  value: '+0%',   change: '+0%', positive: true, icon: TrendingUp },
+    { id: 1, title: 'Total Revenue',   value: '₹0.00', change: '+0%', positive: true, icon: 'DollarSign' },
+    { id: 2, title: 'Active Orders',   value: '0',     change: '+0%', positive: true, icon: 'ShoppingCart' },
+    { id: 3, title: 'Total Customers', value: '0',     change: '+0%', positive: true, icon: 'Users' },
+    { id: 4, title: 'Monthly Growth',  value: '+0%',   change: '+0%', positive: true, icon: 'TrendingUp' },
   ];
 
   try {
@@ -88,11 +89,45 @@ export default async function AdminDashboard() {
       // We leave lowStockProducts as empty array
     }
 
+    // 4. Fetch Chart Data (Last 7 Days)
+    const [chartRows]: any = await pool.query(`
+      SELECT 
+        DAYNAME(created_at) as day_name, 
+        DATE(created_at) as day_date,
+        SUM(amount) as total 
+      FROM orders 
+      WHERE status = 'Completed' 
+        AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+      GROUP BY day_date, day_name
+      ORDER BY day_date ASC
+    `);
+
     dbConnected = true;
+    return { stats, recentOrders, lowStockProducts, chartData: chartRows, dbConnected, dbError: "" };
   } catch (error: any) {
-    dbError = error.message;
     console.log("Database fetch failed. Error:", error.message);
+    return { stats, recentOrders, lowStockProducts, chartData: [], dbConnected: false, dbError: error.message };
   }
+}
+
+export default async function AdminDashboard() {
+  const { stats, recentOrders, lowStockProducts, chartData, dbConnected, dbError } = await getDashboardData();
+
+  // Process chart data to ensure we have 7 days even if some are missing
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const processedChartData = [...Array(7)].map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    const dayNameLong = d.toLocaleDateString('en-US', { weekday: 'long' });
+    const dayNameShort = d.toLocaleDateString('en-US', { weekday: 'short' });
+    const match = chartData.find((row: any) => row.day_name === dayNameLong);
+    return {
+      name: dayNameShort,
+      total: match ? Number(match.total) : 0
+    };
+  });
+
+  const maxTotal = Math.max(...processedChartData.map(d => d.total), 1000);
 
   const formatDate = (dateInput: any) => {
     if (typeof dateInput === 'string' && (dateInput.includes('ago') || dateInput === 'Yesterday')) return dateInput;
@@ -136,28 +171,11 @@ export default async function AdminDashboard() {
       )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <div key={stat.id} className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm relative overflow-hidden group hover:border-amber-500/30 transition-all duration-300 hover:shadow-md">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/[0.03] rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-500/[0.06] transition-colors"></div>
-            
-            <div className="flex justify-between items-start mb-4 relative z-10">
-              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-amber-600">
-                <stat.icon className="w-5 h-5" strokeWidth={2}/>
-              </div>
-              <div className={`flex items-center space-x-1 text-xs font-bold px-2.5 py-1 rounded-full ${stat.positive ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'}`}>
-                {stat.positive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                <span>{stat.change}</span>
-              </div>
-            </div>
-            
-            <div className="relative z-10">
-              <h3 className="text-slate-500 text-sm font-semibold mb-1">{stat.title}</h3>
-              <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      <DashboardStats 
+        stats={stats} 
+        recentOrders={recentOrders} 
+        customersCount={Number(stats[2].value)} 
+      />
 
       {/* Analytics Graph & Recent Orders */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -179,23 +197,26 @@ export default async function AdminDashboard() {
               {[...Array(5)].map((_, i) => <div key={i} className="w-full h-px bg-slate-100"></div>)}
             </div>
             
-            {[45, 60, 30, 80, 50, 95, 65].map((height, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center group cursor-pointer z-10 h-full">
-                <div className="w-full relative flex items-end justify-center h-[200px]">
-                  <div 
-                    style={{ height: `${height}%` }} 
-                    className="w-full max-w-[40px] bg-gradient-to-t from-amber-500 to-amber-400 rounded-t-md opacity-60 group-hover:opacity-100 transition-all duration-300 relative group-hover:-translate-y-1 shadow-[0_0_15px_rgba(251,191,36,0.1)]"
-                  >
-                     <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
-                        ₹{(height * 123.4).toFixed(0)}
-                     </div>
+            {processedChartData.map((data, i) => {
+              const height = (data.total / maxTotal) * 100;
+              return (
+                <div key={i} className="flex-1 flex flex-col items-center group cursor-pointer z-10 h-full">
+                  <div className="w-full relative flex items-end justify-center h-[200px]">
+                    <div 
+                      style={{ height: `${Math.max(height, 5)}%` }} 
+                      className="w-full max-w-[40px] bg-gradient-to-t from-amber-500 to-amber-400 rounded-t-md opacity-60 group-hover:opacity-100 transition-all duration-300 relative group-hover:-translate-y-1 shadow-[0_0_15px_rgba(251,191,36,0.1)]"
+                    >
+                       <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] px-2 py-1 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
+                          ₹{data.total.toLocaleString()}
+                       </div>
+                    </div>
                   </div>
+                  <span className="text-[10px] text-slate-400 mt-3 font-bold uppercase">
+                    {data.name}
+                  </span>
                 </div>
-                <span className="text-[10px] text-slate-400 mt-3 font-bold uppercase">
-                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i]}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

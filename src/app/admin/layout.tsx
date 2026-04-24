@@ -49,10 +49,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         
         {/* Logo Area */}
         <div className="h-20 flex items-center px-8 border-b border-slate-100 space-x-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
-            <span className="font-serif font-bold text-white text-sm">LH</span>
-          </div>
-          <span className="font-serif font-bold tracking-widest text-[13px] text-slate-900 uppercase">Admin</span>
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="w-14 h-14 rounded-lg bg-white flex items-center justify-center shadow-sm border border-slate-100 overflow-hidden group-hover:border-amber-500/50 transition-all">
+              <img src="/logo1.png" alt="Logo" className="w-full h-full object-contain scale-110" />
+            </div>
+            <span className="font-serif font-bold tracking-widest text-[13px] text-slate-900 uppercase group-hover:text-amber-600 transition-colors">Admin</span>
+          </Link>
         </div>
 
         {/* Navigation */}

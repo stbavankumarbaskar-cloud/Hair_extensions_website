@@ -44,10 +44,9 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md relative z-10 animate-in fade-in zoom-in duration-700">
         <div className="bg-white/90 backdrop-blur-xl border border-slate-200 rounded-3xl p-8 shadow-xl shadow-slate-200/50">
 
-          {/* Logo */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/20 mb-4">
-              <span className="font-serif font-bold text-white text-2xl tracking-tighter">LH</span>
+            <div className="w-24 h-24 rounded-2xl bg-white flex items-center justify-center shadow-lg border border-slate-100 overflow-hidden mb-4 p-2">
+              <img src="/logo1.png" alt="Logo" className="w-full h-full object-contain scale-110" />
             </div>
             <h1 className="text-2xl font-serif font-bold text-slate-900 tracking-tight">Admin Login</h1>
             <p className="text-slate-500 text-sm mt-1">Sign in to manage your store</p>
